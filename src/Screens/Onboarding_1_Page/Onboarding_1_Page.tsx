@@ -54,7 +54,7 @@ const Onboarding1Page: FunctionComponent = () => {
                     />
                 </View>
                 <Text style={styles.op_m_main_txt}>
-                    Various selection of foods! from favorite restaurant
+                    Various selection of foods from favorite restaurant!
                 </Text>
                 <Image
                     source={require('../../Images/Onboarding/Food_1.png')}
@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
         color: Colors().Black,
         textAlign: 'center',
         marginTop: 160,
-        width: 307,
+        width: 290,
         lineHeight: 32,
         alignSelf: 'center',
-        marginBottom: 54,
+        marginBottom: 22,
     },
     op_m_main_img: {
         width: 260,

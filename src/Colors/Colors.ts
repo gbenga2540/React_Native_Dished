@@ -11,7 +11,7 @@ const Colors = () => {
         InputTextGrey: 'rgba(0, 0, 0, 0.45)',
         Blue: '#6891FA',
         Dot: '#C4C4C4',
-        LightPink: '#F2B3B5',
+        LightPink: '#F29395',
     };
 };
 

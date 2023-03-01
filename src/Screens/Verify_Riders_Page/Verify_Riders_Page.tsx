@@ -133,5 +133,6 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_700,
         fontSize: 16,
         lineHeight: 32,
+        color: Colors().Black,
     },
 });

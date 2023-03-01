@@ -10,7 +10,6 @@ import BasicButton from '../../Components/Basic_Button/Basic_Button';
 
 const VerifyOTPPage: FunctionComponent = () => {
     const [OTP, setOTP] = useState<string>('');
-    console.log(OTP);
 
     return (
         <View style={styles.verify_otp_main}>
@@ -25,6 +24,9 @@ const VerifyOTPPage: FunctionComponent = () => {
                 <View style={{ marginTop: 110, marginBottom: 65 }}>
                     <DishedLogo />
                 </View>
+                <Text style={styles.v_o_m_info}>
+                    Please input the One Time Password (OTP) sent to your mail
+                </Text>
                 <View style={{ marginHorizontal: 26 }}>
                     <OTPTextView
                         inputCount={6}
@@ -90,5 +92,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderBottomWidth: 1,
+    },
+    v_o_m_info: {
+        fontFamily: fonts.Poppins_400,
+        color: Colors().Black,
+        textAlign: 'center',
+        width: 250,
+        alignSelf: 'center',
+        marginBottom: 10,
+        fontSize: 15,
     },
 });

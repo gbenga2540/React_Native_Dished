@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogoImage from '../../Images/Logo/Dished_Logo.svg';
+import Colors from '../../Colors/Colors';
 
 const DishedLogo: FunctionComponent = () => {
     return (
@@ -30,5 +31,6 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_500,
         fontSize: 40,
         letterSpacing: 10,
+        color: Colors().Black,
     },
 });
