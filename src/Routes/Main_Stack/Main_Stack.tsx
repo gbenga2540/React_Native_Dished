@@ -1,14 +1,22 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import AuthStack from '../Auth_Stack/Auth_Stack';
 import OnboardingStack from '../Onboarding_Stack/Onboarding_Stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppStack from '../App_Stack/App_Stack';
+import ErrorPage from '../../Screens/Error_Page/Error_Page';
 
 type RootStackParamList = {
     Home: undefined;
     AuthStack: {};
     OnboardingStack: {};
+    AppStack: {};
+    ErrorPage: {
+        error_mssg: string;
+    };
 };
+
 const Main_Stack = createNativeStackNavigator<RootStackParamList>();
 
 const MainStack: FunctionComponent = () => {
@@ -53,6 +61,20 @@ const MainStack: FunctionComponent = () => {
                 <Main_Stack.Screen
                     name="OnboardingStack"
                     component={OnboardingStack}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Main_Stack.Screen
+                    name="AppStack"
+                    component={AppStack}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Main_Stack.Screen
+                    name="ErrorPage"
+                    component={ErrorPage}
                     options={{
                         headerShown: false,
                     }}

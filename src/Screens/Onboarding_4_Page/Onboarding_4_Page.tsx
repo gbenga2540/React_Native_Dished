@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import {
     Image,
+    PanResponderGestureState,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -15,6 +16,7 @@ import SliderHandler from '../../Components/Slider_Handler/Slider_Handler';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Onboarding4Page: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -38,50 +40,65 @@ const Onboarding4Page: FunctionComponent = () => {
         }
     };
 
+    const gesture_config = {
+        velocityThreshold: 0.3,
+        directionalOffsetThreshold: 80,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const OnSwipeRight = (gestureState: PanResponderGestureState) => {
+        navigation.navigate<never>('Onboarding3Page' as never);
+    };
+
     return (
-        <View style={styles.op_main}>
-            <StatusBar
-                barStyle={'dark-content'}
-                backgroundColor={Colors().White}
-            />
-            <ScrollView>
-                <View style={styles.op_m_skip}>
-                    <TextButton
-                        buttonText="Skip"
-                        textColor={Colors().Secondary}
-                        isFontLight={true}
+        <GestureRecognizer
+            style={{ flex: 1 }}
+            config={gesture_config}
+            onSwipeRight={state => OnSwipeRight(state)}>
+            <View style={styles.op_main}>
+                <StatusBar
+                    barStyle={'dark-content'}
+                    backgroundColor={Colors().White}
+                />
+                <ScrollView>
+                    <View style={styles.op_m_skip}>
+                        <TextButton
+                            buttonText="Skip"
+                            textColor={Colors().Secondary}
+                            isFontLight={true}
+                            execFunc={() => skip_onboarding()}
+                        />
+                    </View>
+                    <Text style={styles.op_m_main_txt}>
+                        Instant notification on your WhatsApp and scheduling
+                    </Text>
+                    <Image
+                        source={require('../../Images/Onboarding/Food_4.png')}
+                        style={styles.op_m_main_img}
+                    />
+                    <Text style={styles.op_m_sub_txt}>
+                        your scheduled meals and orders can be tracked with
+                        WhatsApp
+                    </Text>
+                    <SliderHandler sliderNumber={4} />
+                    <BasicButton
+                        buttonText="Next"
+                        buttonHeight={43}
+                        marginHorizontal={19}
+                        marginTop={50}
+                        borderRaduis={20}
                         execFunc={() => skip_onboarding()}
                     />
-                </View>
-                <Text style={styles.op_m_main_txt}>
-                    Instant notification on your WhatsApp and scheduling
-                </Text>
-                <Image
-                    source={require('../../Images/Onboarding/Food_4.png')}
-                    style={styles.op_m_main_img}
-                />
-                <Text style={styles.op_m_sub_txt}>
-                    your scheduled meals and orders can be tracked with WhatsApp
-                </Text>
-                <SliderHandler sliderNumber={4} />
-                <BasicButton
-                    buttonText="Next"
-                    buttonHeight={43}
-                    marginHorizontal={19}
-                    marginTop={50}
-                    borderRaduis={20}
-                    execFunc={() => skip_onboarding()}
-                />
-                <Image
-                    source={require('../../Images/Onboarding/Woman_Chef_Art.png')}
-                    style={styles.op_m_wca}
-                />
-                <Image
-                    source={require('../../Images/Onboarding/Cooking_Pot.png')}
-                    style={styles.op_m_cp}
-                />
-            </ScrollView>
-        </View>
+                    <Image
+                        source={require('../../Images/Onboarding/Woman_Chef_Art.png')}
+                        style={styles.op_m_wca}
+                    />
+                    <Image
+                        source={require('../../Images/Onboarding/Cooking_Pot.png')}
+                        style={styles.op_m_cp}
+                    />
+                </ScrollView>
+            </View>
+        </GestureRecognizer>
     );
 };
 

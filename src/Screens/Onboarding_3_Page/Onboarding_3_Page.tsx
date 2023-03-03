@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import {
     Image,
+    PanResponderGestureState,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -15,6 +16,7 @@ import SliderHandler from '../../Components/Slider_Handler/Slider_Handler';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Onboarding3Page: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -38,53 +40,74 @@ const Onboarding3Page: FunctionComponent = () => {
         }
     };
 
+    const gesture_config = {
+        velocityThreshold: 0.3,
+        directionalOffsetThreshold: 80,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const OnSwipeLeft = (gestureState: PanResponderGestureState) => {
+        navigation.navigate<never>('Onboarding4Page' as never);
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const OnSwipeRight = (gestureState: PanResponderGestureState) => {
+        navigation.navigate<never>('Onboarding2Page' as never);
+    };
+
     return (
-        <View style={styles.op_main}>
-            <StatusBar
-                barStyle={'dark-content'}
-                backgroundColor={Colors().White}
-            />
-            <ScrollView>
-                <View style={styles.op_m_skip}>
-                    <TextButton
-                        buttonText="Skip"
-                        textColor={Colors().Secondary}
-                        isFontLight={true}
-                        execFunc={() => skip_onboarding()}
+        <GestureRecognizer
+            style={{ flex: 1 }}
+            config={gesture_config}
+            onSwipeLeft={state => OnSwipeLeft(state)}
+            onSwipeRight={state => OnSwipeRight(state)}>
+            <View style={styles.op_main}>
+                <StatusBar
+                    barStyle={'dark-content'}
+                    backgroundColor={Colors().White}
+                />
+                <ScrollView>
+                    <View style={styles.op_m_skip}>
+                        <TextButton
+                            buttonText="Skip"
+                            textColor={Colors().Secondary}
+                            isFontLight={true}
+                            execFunc={() => skip_onboarding()}
+                        />
+                    </View>
+                    <Text style={styles.op_m_main_txt}>
+                        Home delivery with real time tracking available
+                    </Text>
+                    <Image
+                        source={require('../../Images/Onboarding/Food_3.png')}
+                        style={styles.op_m_main_img}
                     />
-                </View>
-                <Text style={styles.op_m_main_txt}>
-                    Home delivery with real time tracking available
-                </Text>
-                <Image
-                    source={require('../../Images/Onboarding/Food_3.png')}
-                    style={styles.op_m_main_img}
-                />
-                <Text style={styles.op_m_sub_txt}>
-                    We provide a stress-free home delivery service with real
-                    time tracking
-                </Text>
-                <SliderHandler sliderNumber={3} />
-                <BasicButton
-                    buttonText="Next"
-                    buttonHeight={43}
-                    marginHorizontal={19}
-                    marginTop={50}
-                    borderRaduis={20}
-                    execFunc={() =>
-                        navigation.navigate<never>('Onboarding4Page' as never)
-                    }
-                />
-                <Image
-                    source={require('../../Images/Onboarding/Woman_Chef_Art.png')}
-                    style={styles.op_m_wca}
-                />
-                <Image
-                    source={require('../../Images/Onboarding/Cooking_Pot.png')}
-                    style={styles.op_m_cp}
-                />
-            </ScrollView>
-        </View>
+                    <Text style={styles.op_m_sub_txt}>
+                        We provide a stress-free home delivery service with real
+                        time tracking
+                    </Text>
+                    <SliderHandler sliderNumber={3} />
+                    <BasicButton
+                        buttonText="Next"
+                        buttonHeight={43}
+                        marginHorizontal={19}
+                        marginTop={50}
+                        borderRaduis={20}
+                        execFunc={() =>
+                            navigation.navigate<never>(
+                                'Onboarding4Page' as never,
+                            )
+                        }
+                    />
+                    <Image
+                        source={require('../../Images/Onboarding/Woman_Chef_Art.png')}
+                        style={styles.op_m_wca}
+                    />
+                    <Image
+                        source={require('../../Images/Onboarding/Cooking_Pot.png')}
+                        style={styles.op_m_cp}
+                    />
+                </ScrollView>
+            </View>
+        </GestureRecognizer>
     );
 };
 

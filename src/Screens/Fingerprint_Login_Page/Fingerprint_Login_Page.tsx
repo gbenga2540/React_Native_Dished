@@ -14,17 +14,24 @@ import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import LottieView from 'lottie-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const [password, setPassword] = useState<string>('');
     const [isFPA, setIsFPA] = useState<boolean>(true);
     const [animState, setAnimState] = useState<string>('idle');
 
     const authenticate = () => {
-        // authentication code
-        console.log('authenticated');
+        navigation.push(
+            'AppStack' as never,
+            {
+                screen: 'HomePage',
+            } as never,
+        );
     };
 
     const biometric_login = async () => {

@@ -6,9 +6,11 @@ import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
+import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordPage: FunctionComponent = () => {
     const [email, setEmail] = useState<string>('');
+    const navigation = useNavigation();
 
     return (
         <View style={styles.fp_main}>
@@ -40,7 +42,10 @@ const ForgotPasswordPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={60}
                         marginBottom={16}
-                        execFunc={() => console.log('Send OTP')}
+                        execFunc={() =>
+                            navigation.navigate('FingerprintLoginPage' as never)
+                        }
+                        // update with real code
                     />
                 </View>
             </ScrollView>

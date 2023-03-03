@@ -87,11 +87,21 @@ const SignUpPage: FunctionComponent = () => {
                         logoName="Facebook"
                         inputText="Sign Up with Facebook"
                         marginTop={32}
+                        execFunc={() => console.log('facebook')}
                     />
                     <BasicLogoButton
                         logoName="Google"
                         inputText="Sign Up with Google"
                         marginTop={16}
+                        execFunc={() =>
+                            navigation.navigate(
+                                'ErrorPage' as never,
+                                {
+                                    error_mssg:
+                                        'An error occured, please go back and try again later...',
+                                } as never,
+                            )
+                        }
                     />
                     <View style={styles.s_m_acc}>
                         <Text style={styles.s_m_acc_text}>

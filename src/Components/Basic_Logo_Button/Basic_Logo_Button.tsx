@@ -9,15 +9,18 @@ interface BasicLogoButtonProps {
     logoName: string;
     inputText: string;
     marginTop?: number;
+    execFunc: () => void;
 }
 
 const BasicLogoButton: FunctionComponent<BasicLogoButtonProps> = ({
     logoName,
     inputText,
     marginTop,
+    execFunc,
 }) => {
     return (
         <TouchableOpacity
+            onPress={() => execFunc()}
             activeOpacity={0.65}
             style={[styles.b_l_b_main, { marginTop: marginTop || 0 }]}>
             {logoName === 'Facebook' && <FacebookLogo width={22} height={22} />}
