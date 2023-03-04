@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+// import { getAnalytics } from 'firebase/analytics';
 import {
     FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN,
@@ -12,7 +13,6 @@ import {
     FIREBASE_APP_ID,
     FIREBASE_MEASUREMENT_ID,
 } from '@env';
-// import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,
@@ -27,9 +27,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const auth = getAuth();
-// const analytics = getAnalytics(app);
+export const fireb_db = getFirestore(app);
+export const fireb_storage = getStorage(app);
+export const fireb_auth = getAuth();
+// export const fireb_analytics = getAnalytics(app);
 
 export default app;

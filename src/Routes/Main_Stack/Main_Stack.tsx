@@ -6,6 +6,7 @@ import AuthStack from '../Auth_Stack/Auth_Stack';
 import OnboardingStack from '../Onboarding_Stack/Onboarding_Stack';
 import AppStack from '../App_Stack/App_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
+import InfoPage from '../../Screens/Info_Page/Info_Page';
 
 type RootStackParamList = {
     Home: undefined;
@@ -14,6 +15,14 @@ type RootStackParamList = {
     AppStack: {};
     ErrorPage: {
         error_mssg: string;
+        svr_error_mssg: string;
+    };
+    InfoPage: {
+        title: string;
+        message: string;
+        info_type: string;
+        show_retry?: boolean;
+        retry_btn_text?: string;
     };
 };
 
@@ -75,6 +84,13 @@ const MainStack: FunctionComponent = () => {
                 <Main_Stack.Screen
                     name="ErrorPage"
                     component={ErrorPage}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Main_Stack.Screen
+                    name="InfoPage"
+                    component={InfoPage}
                     options={{
                         headerShown: false,
                     }}

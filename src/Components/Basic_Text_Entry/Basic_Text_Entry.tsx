@@ -20,8 +20,10 @@ const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'johndoe@gmail.com'}
                 placeholderTextColor={Colors().InputTextPH}
-                onChangeText={(text: string) => setInputValue(text?.trim())}
+                onChangeText={(text: string) => setInputValue(text)}
                 value={inputValue}
+                autoCapitalize={'none'}
+                autoCorrect={false}
             />
         </View>
     );

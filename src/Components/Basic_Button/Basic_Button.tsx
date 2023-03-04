@@ -6,8 +6,8 @@ import { fonts } from '../../Fonts/Fonts';
 interface BasicButtonProps {
     buttonHeight: number | string;
     buttonText: string;
-    marginTop?: number;
-    marginBottom?: number;
+    marginTop?: number | string;
+    marginBottom?: number | string;
     borderRaduis?: number;
     marginHorizontal?: number;
     execFunc: () => void;

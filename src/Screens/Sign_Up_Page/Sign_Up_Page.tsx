@@ -2,8 +2,6 @@ import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
@@ -11,31 +9,128 @@ import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
 import TextButton from '../../Components/Text_Button/Text_Button';
-import RNDropDown from '../../Components/RN_Drop_Down/RN_Drop_Down';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import { fireb_auth } from '../../Configs/Firebase/Firebase';
+import {
+    User,
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+} from 'firebase/auth';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { InfoPageType } from '../../Data/Info_Page_Type/Info_Page_Type';
 
 const SignUpPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [identityValue, setIdentityValue] = useState<string>(
-        Sign_Up_Identity_Data[0]?.value,
-    );
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
     const on_get_started = () => {
-        switch (identityValue) {
-            case Sign_Up_Identity_Data[0]?.value:
-                navigation.navigate<never>('VerifyConsumerPage' as never);
-                break;
-            case Sign_Up_Identity_Data[1]?.value:
-                navigation.navigate<never>('VerifyRidersPage' as never);
-                break;
-            case Sign_Up_Identity_Data[2]?.value:
-                navigation.navigate<never>('VerifyRestaurantPage' as never);
-                break;
-            default:
-                break;
+        if (email_checker(email)) {
+            if (password?.length >= 6) {
+                try {
+                    setShowSpinner(true);
+                    setTimeout(() => {
+                        createUserWithEmailAndPassword(
+                            fireb_auth,
+                            email?.trim(),
+                            password?.trim(),
+                        )
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                            .then(userCredential => {
+                                if (fireb_auth?.currentUser?.uid) {
+                                    try {
+                                        sendEmailVerification(
+                                            fireb_auth?.currentUser as User,
+                                        )
+                                            .then(() => {
+                                                setShowSpinner(false);
+                                                navigation.navigate(
+                                                    'InfoPage' as never,
+                                                    {
+                                                        title: 'Verify Email',
+                                                        message:
+                                                            'A verification link has been sent to your email. Please click the link to verify your Email Address.',
+                                                        info_type:
+                                                            InfoPageType.VerifyMail,
+                                                        show_retry: true,
+                                                        retry_btn_text:
+                                                            'Resend Mail',
+                                                    } as never,
+                                                );
+                                            })
+                                            .catch(() => {
+                                                setShowSpinner(false);
+                                                navigation.navigate(
+                                                    'InfoPage' as never,
+                                                    {
+                                                        title: 'Verify Email',
+                                                        message:
+                                                            'A verification link has been sent to your email. Please click the link to verify your Email Address.',
+                                                        info_type:
+                                                            InfoPageType.VerifyMail,
+                                                        show_retry: true,
+                                                        retry_btn_text:
+                                                            'Resend Mail',
+                                                    } as never,
+                                                );
+                                            });
+                                    } catch (err) {
+                                        setShowSpinner(false);
+                                        navigation.navigate(
+                                            'InfoPage' as never,
+                                            {
+                                                title: 'Verify Email',
+                                                message:
+                                                    'A verification link has been sent to your email. Please click the link to verify your Email Address.',
+                                                info_type:
+                                                    InfoPageType.VerifyMail,
+                                                show_retry: true,
+                                                retry_btn_text: 'Resend Mail',
+                                            } as never,
+                                        );
+                                    }
+                                } else {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg: 'Not signed in!',
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to sign up!',
+                                    svr_error_mssg: error?.code as string,
+                                });
+                            })
+                            .finally(() => {
+                                setShowSpinner(false);
+                            });
+                    }, 500);
+                } catch (err) {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg: 'An error occured while trying to sign up!',
+                    });
+                }
+            } else {
+                error_handler({
+                    navigation: navigation,
+                    error_mssg: 'Password must not be less than six!',
+                });
+            }
+        } else {
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Please, input a valid Email Address!',
+            });
         }
     };
 
@@ -44,6 +139,10 @@ const SignUpPage: FunctionComponent = () => {
             <StatusBar
                 barStyle={'light-content'}
                 backgroundColor={Colors().Primary}
+            />
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
             />
             <ScrollView>
                 <View style={styles.top_cont}>
@@ -60,25 +159,17 @@ const SignUpPage: FunctionComponent = () => {
                         inputValue={email}
                         setInputValue={setEmail}
                     />
-                    <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
+                    <Text style={[styles.s_m_input_text, { marginTop: 20 }]}>
                         Password
                     </Text>
                     <SecureTextEntry
                         inputValue={password}
                         setInputValue={setPassword}
                     />
-                    <Text style={[styles.s_m_input_text, { marginTop: 23 }]}>
-                        Register as
-                    </Text>
-                    <RNDropDown
-                        dropdownData={Sign_Up_Identity_Data}
-                        value={identityValue}
-                        setValue={setIdentityValue}
-                    />
                     <BasicButton
                         buttonText="Get Started"
                         buttonHeight={52}
-                        marginTop={35}
+                        marginTop={45}
                         marginBottom={16}
                         execFunc={() => on_get_started()}
                     />
@@ -93,15 +184,7 @@ const SignUpPage: FunctionComponent = () => {
                         logoName="Google"
                         inputText="Sign Up with Google"
                         marginTop={16}
-                        execFunc={() =>
-                            navigation.navigate(
-                                'ErrorPage' as never,
-                                {
-                                    error_mssg:
-                                        'An error occured, please go back and try again later...',
-                                } as never,
-                            )
-                        }
+                        execFunc={() => console.log('google')}
                     />
                     <View style={styles.s_m_acc}>
                         <Text style={styles.s_m_acc_text}>

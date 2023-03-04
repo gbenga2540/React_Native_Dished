@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import OTPTextView from 'react-native-otp-textinput';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
@@ -19,13 +18,15 @@ const VerifyOTPPage: FunctionComponent = () => {
             />
             <ScrollView>
                 <View style={styles.top_cont}>
-                    <Text style={styles.top_cont_txt}>Verify OTP</Text>
+                    <Text style={styles.top_cont_txt}>{'Verify OTP'}</Text>
                 </View>
                 <View style={{ marginTop: 110, marginBottom: 65 }}>
                     <DishedLogo />
                 </View>
                 <Text style={styles.v_o_m_info}>
-                    Please input the One Time Password (OTP) sent to your mail
+                    {
+                        'Please input the One-Time-Password (OTP) sent to your Email.'
+                    }
                 </Text>
                 <View style={{ marginHorizontal: 26 }}>
                     <OTPTextView

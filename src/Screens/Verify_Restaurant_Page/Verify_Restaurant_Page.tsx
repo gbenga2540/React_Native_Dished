@@ -10,10 +10,8 @@ import TextWithButton from '../../Components/Text_With_Button/Text_With_Button';
 
 const VerifyRestaurantPage: FunctionComponent = () => {
     const [businessName, setBusinessName] = useState<string>('');
-    const [contact, setContact] = useState<string>('');
+    const [phoneNo, setPhoneNo] = useState<string>('');
     const [location, setLocation] = useState<string>('');
-
-    // Text_With_Buttons Controllers
     const [CACText, setCACText] = useState<string>('');
 
     return (
@@ -39,12 +37,12 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         setInputValue={setBusinessName}
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
-                        Contact
+                        Phone Number
                     </Text>
                     <BasicTextEntry
                         placeHolderText="08101234567"
-                        inputValue={contact}
-                        setInputValue={setContact}
+                        inputValue={phoneNo}
+                        setInputValue={setPhoneNo}
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Location
