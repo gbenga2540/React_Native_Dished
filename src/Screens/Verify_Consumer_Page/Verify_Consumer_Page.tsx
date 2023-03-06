@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
@@ -11,13 +11,27 @@ import { doc, setDoc } from 'firebase/firestore';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 
 const VerifyConsumerPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
     const [fullName, setFullName] = useState<string>('');
     const [phoneNo, setPhoneNo] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    interface userInfoProps {
+        email: string;
+        password: string;
+        uid: string;
+    }
+    const [userInfo, setUserInfo] = useState<userInfoProps>({
+        email: '',
+        password: '',
+        uid: '',
+    });
 
     const on_verify = async () => {
         if (
@@ -27,20 +41,12 @@ const VerifyConsumerPage: FunctionComponent = () => {
         ) {
             setShowSpinner(true);
             try {
-                await setDoc(doc(fireb_db, 'Users', 'Consumers'), {
-                    FullName: fullName?.trim(),
-                    PhoneNo: phoneNo?.trim(),
-                    Address: address?.trim(),
+                await setDoc(doc(fireb_db, 'Users', userInfo?.email), {
+                    fullName: fullName?.trim(),
+                    phoneNo: phoneNo?.trim(),
+                    address: address?.trim(),
+                    accountType: Sign_Up_Identity_Data[0]?.value,
                 })
-                    .catch(error => {
-                        setShowSpinner(false);
-                        error_handler({
-                            navigation: navigation,
-                            error_mssg:
-                                'An error occured while uploading user info to the server.',
-                            svr_error_mssg: error?.code as string,
-                        });
-                    })
                     .then(() => {
                         setShowSpinner(false);
                         navigation.push(
@@ -49,6 +55,15 @@ const VerifyConsumerPage: FunctionComponent = () => {
                                 screen: 'HomePage',
                             } as never,
                         );
+                    })
+                    .catch(error => {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while uploading user info to the server.',
+                            svr_error_mssg: error?.code as string,
+                        });
                     });
             } catch (error) {
                 setShowSpinner(false);
@@ -66,6 +81,29 @@ const VerifyConsumerPage: FunctionComponent = () => {
             });
         }
     };
+
+    useEffect(() => {
+        const get_user_data = async () => {
+            await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
+                sharedPreferencesName: SECURE_STORAGE_NAME,
+                keychainService: SECURE_STORAGE_NAME,
+            })
+                .then(async res => {
+                    if (res !== null || res !== undefined) {
+                        const json_res = JSON.parse(res);
+                        setUserInfo({ ...json_res });
+                    } else {
+                        navigation.navigate('SignUpPage' as never);
+                    }
+                })
+                .catch(error => {
+                    if (error) {
+                        navigation.navigate('SignUpPage' as never);
+                    }
+                });
+        };
+        get_user_data();
+    }, [navigation]);
 
     return (
         <View style={styles.vr_main}>

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { fireb_auth } from '../../Configs/Firebase/Firebase';
-
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import SignUpPage from '../../Screens/Sign_Up_Page/Sign_Up_Page';
 import SignInPage from '../../Screens/Sign_In_Page/Sign_In_Page ';
 import VerifyOTPPage from '../../Screens/Verify_OTP_Page/Verify_OTP_Page';
@@ -34,16 +34,40 @@ const AuthStack: FunctionComponent = () => {
     const [userPresent, setUserPresent] = useState<boolean>(false);
 
     useEffect(() => {
-        fireb_auth?.onAuthStateChanged(user => {
-            // secure storage
-            // profile type || name || uid || email || password
-            if (user) {
-                setUserPresent(true);
-            } else {
+        setRender(false);
+        const does_user_exist = async () => {
+            try {
+                await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
+                    sharedPreferencesName: SECURE_STORAGE_NAME,
+                    keychainService: SECURE_STORAGE_NAME,
+                })
+                    .then(async res => {
+                        if (res === null) {
+                            setUserPresent(false);
+                            setRender(true);
+                        } else {
+                            const json_res = JSON.parse(res);
+                            if (json_res?.email && json_res?.password) {
+                                setUserPresent(true);
+                                setRender(true);
+                            } else {
+                                setUserPresent(false);
+                                setRender(true);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        if (error) {
+                            setUserPresent(false);
+                            setRender(true);
+                        }
+                    });
+            } catch (err) {
                 setUserPresent(false);
+                setRender(true);
             }
-        });
-        setRender(true);
+        };
+        does_user_exist();
     }, []);
 
     if (render) {
@@ -51,6 +75,7 @@ const AuthStack: FunctionComponent = () => {
             <Auth_Stack.Navigator
                 screenOptions={{
                     headerShown: false,
+                    animation: 'slide_from_right',
                 }}
                 initialRouteName={
                     userPresent ? 'FingerprintLoginPage' : 'SignUpPage'

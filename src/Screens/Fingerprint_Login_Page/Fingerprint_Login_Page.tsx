@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import {
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
@@ -16,6 +15,12 @@ import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { fireb_auth } from '../../Configs/Firebase/Firebase';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -24,14 +29,109 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [password, setPassword] = useState<string>('');
     const [isFPA, setIsFPA] = useState<boolean>(true);
     const [animState, setAnimState] = useState<string>('idle');
+    const [render, setRender] = useState<boolean>(false);
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    interface userInfoProps {
+        email: string;
+        password: string;
+    }
+    const [userInfo, setUserInfo] = useState<userInfoProps>({
+        email: '',
+        password: '',
+    });
 
-    const authenticate = () => {
-        navigation.push(
-            'AppStack' as never,
-            {
-                screen: 'HomePage',
-            } as never,
-        );
+    const nav_to_home_page = () => {
+        navigation.push('AppStack' as never, { screen: 'HomePage' } as never);
+    };
+
+    const manual_authenticate = () => {
+        if (password) {
+            if (userInfo?.email) {
+                setShowSpinner(true);
+                setTimeout(() => {
+                    try {
+                        signInWithEmailAndPassword(
+                            fireb_auth,
+                            userInfo?.email,
+                            password,
+                        )
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                            .then(userCredential => {
+                                setShowSpinner(false);
+                                nav_to_home_page();
+                            })
+                            .catch(error => {
+                                setShowSpinner(false);
+                                if (error) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg: 'Unable to Sign In User!',
+                                        svr_error_mssg: error?.code as string,
+                                    });
+                                }
+                            });
+                    } catch (err) {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg: 'Unable to Sign In User!',
+                        });
+                    }
+                }, 500);
+            } else {
+                error_handler({
+                    navigation: navigation,
+                    error_mssg:
+                        'Unable to retrieve User Information, Please manually sign in into your Account.',
+                });
+            }
+        } else {
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Password field cannot be empty!',
+            });
+        }
+    };
+
+    const fingerprint_authenticate = async () => {
+        if (userInfo?.email && userInfo?.password) {
+            setShowSpinner(true);
+            setTimeout(() => {
+                try {
+                    signInWithEmailAndPassword(
+                        fireb_auth,
+                        userInfo?.email,
+                        userInfo?.password,
+                    )
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        .then(userCredential => {
+                            setShowSpinner(false);
+                            nav_to_home_page();
+                        })
+                        .catch(error => {
+                            setShowSpinner(false);
+                            if (error) {
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg: 'Unable to Sign In User!',
+                                    svr_error_mssg: error?.code as string,
+                                });
+                            }
+                        });
+                } catch (err) {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg: 'Unable to Sign In User!',
+                    });
+                }
+            }, 500);
+        } else {
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Unable to retrieve User Information.',
+            });
+        }
     };
 
     const biometric_login = async () => {
@@ -65,7 +165,8 @@ const FingerprintLoginPage: FunctionComponent = () => {
             } else {
                 setIsFPA(false);
             }
-        } else if (Platform.OS === 'android') {
+        }
+        if (Platform.OS === 'android') {
             if (available && biometryType === BiometryTypes.Biometrics) {
                 setIsFPA(true);
                 prompt_biometrics();
@@ -77,9 +178,38 @@ const FingerprintLoginPage: FunctionComponent = () => {
 
     useEffect(() => {
         setAnimState('idle');
+        setShowSpinner(false);
+        setRender(false);
+
+        const get_user_info = async () => {
+            try {
+                await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
+                    sharedPreferencesName: SECURE_STORAGE_NAME,
+                    keychainService: SECURE_STORAGE_NAME,
+                })
+                    .then(async res => {
+                        if (res === null) {
+                            navigation.navigate('SignUpPage' as never);
+                        } else {
+                            const json_res = JSON.parse(res);
+                            setUserInfo({ ...json_res });
+                            setRender(true);
+                        }
+                    })
+                    .catch(err => {
+                        if (err) {
+                            navigation.navigate('SignUpPage' as never);
+                        }
+                    });
+            } catch (error) {
+                navigation.navigate('SignUpPage' as never);
+            }
+        };
+
         const is_biometrics_available = async () => {
             const { available, biometryType } =
                 await rnBiometrics.isSensorAvailable();
+
             if (
                 Platform.OS === 'ios' &&
                 available &&
@@ -89,6 +219,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
             } else {
                 setIsFPA(false);
             }
+
             if (
                 Platform.OS === 'android' &&
                 available &&
@@ -99,132 +230,144 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 setIsFPA(false);
             }
         };
+
         is_biometrics_available();
-    }, [rnBiometrics]);
+        get_user_info();
+    }, [rnBiometrics, navigation]);
 
-    return (
-        <ScrollView style={styles.flp_main}>
-            <StatusBar
-                barStyle={'dark-content'}
-                backgroundColor={Colors().Background}
-            />
-            <View style={styles.flp_main_cont}>
-                <Text style={styles.f_m_txt1}>Hello Restaurant</Text>
-                <Text style={styles.f_m_txt2}>
-                    Use {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'} to
-                    sign in into your Dished account
-                </Text>
-
-                <TouchableOpacity
-                    style={{
-                        width: 200,
-                        height: 200,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        alignSelf: 'center',
-                    }}
-                    disabled={!isFPA}
-                    activeOpacity={0.65}
-                    onPress={() => biometric_login()}>
-                    {animState === 'idle' && (
-                        <LottieView
-                            style={{
-                                transform: [{ scale: 0.93 }],
-                                minWidth: 200,
-                                minHeight: 200,
-                                maxWidth: 200,
-                                maxHeight: 200,
-                                position: 'relative',
-                                alignSelf: 'center',
-                            }}
-                            source={require('../../Animations/Fingerprint_Idle.json')}
-                            autoPlay
-                            loop={isFPA}
-                            resizeMode="cover"
-                        />
-                    )}
-                    {animState === 'failed' && (
-                        <LottieView
-                            style={{
-                                transform: [{ scale: 1 }],
-                                minWidth: 200,
-                                minHeight: 200,
-                                maxWidth: 200,
-                                maxHeight: 200,
-                                position: 'relative',
-                                alignSelf: 'center',
-                            }}
-                            source={require('../../Animations/Fingerprint_Failed.json')}
-                            autoPlay
-                            loop={false}
-                            resizeMode="cover"
-                            speed={1.7}
-                        />
-                    )}
-                    {animState === 'success' && (
-                        <LottieView
-                            style={{
-                                transform: [{ scale: 0.87 }],
-                                minWidth: 200,
-                                minHeight: 200,
-                                maxWidth: 200,
-                                maxHeight: 200,
-                                position: 'relative',
-                                alignSelf: 'center',
-                            }}
-                            source={require('../../Animations/Fingerprint_Verified.json')}
-                            autoPlay
-                            loop={false}
-                            onAnimationFinish={() => authenticate()}
-                            resizeMode="cover"
-                        />
-                    )}
-                </TouchableOpacity>
-
-                {!isFPA && (
-                    <Text style={styles.f_m_fpc}>
-                        {Platform.OS === 'ios'
-                            ? 'Touch ID is not available!'
-                            : 'Fingerprint is not available!'}
-                    </Text>
-                )}
-                {isFPA && animState === 'idle' && (
-                    <Text style={[styles.f_m_fpc, { color: 'green' }]}>
-                        Click the Icon above to prompt the
-                        {Platform.OS === 'ios'
-                            ? ' Touch ID'
-                            : ' Fingerprint'}{' '}
-                        sensor.
-                    </Text>
-                )}
-                {isFPA && animState === 'failed' && (
-                    <Text style={styles.f_m_fpc}>
-                        Please input your password instead!
-                    </Text>
-                )}
-                {isFPA && animState === 'success' && (
-                    <Text style={[styles.f_m_fpc, { color: 'green' }]}>
-                        Authenticating...
-                    </Text>
-                )}
-
-                <Text style={styles.f_m_txt3}>
-                    Or just use password instead
-                </Text>
-                <SecureTextEntry
-                    placeHolderText="Enter your password"
-                    inputValue={password}
-                    setInputValue={setPassword}
+    if (render) {
+        return (
+            <View style={styles.flp_main}>
+                <StatusBar
+                    barStyle={'dark-content'}
+                    backgroundColor={Colors().Background}
                 />
-                <BasicButton
-                    execFunc={() => password === '123' && authenticate()}
-                    buttonText="Login"
-                    buttonHeight={55}
-                    marginTop={15}
+                <OverlaySpinner
+                    showSpinner={showSpinner}
+                    setShowSpinner={setShowSpinner}
                 />
+                <View style={styles.flp_main_cont}>
+                    <Text style={styles.f_m_txt1}>Welcome Back!</Text>
+                    <Text style={styles.f_m_txt2}>
+                        Use {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}
+                        to sign in into your Dished account
+                    </Text>
+
+                    <TouchableOpacity
+                        style={{
+                            width: 200,
+                            height: 200,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            alignSelf: 'center',
+                        }}
+                        disabled={!isFPA}
+                        activeOpacity={0.65}
+                        onPress={() => biometric_login()}>
+                        {animState === 'idle' && (
+                            <LottieView
+                                style={{
+                                    transform: [{ scale: 0.93 }],
+                                    minWidth: 200,
+                                    minHeight: 200,
+                                    maxWidth: 200,
+                                    maxHeight: 200,
+                                    position: 'relative',
+                                    alignSelf: 'center',
+                                }}
+                                source={require('../../Animations/Fingerprint_Idle.json')}
+                                autoPlay
+                                loop={isFPA}
+                                resizeMode="cover"
+                            />
+                        )}
+                        {animState === 'failed' && (
+                            <LottieView
+                                style={{
+                                    transform: [{ scale: 1 }],
+                                    minWidth: 200,
+                                    minHeight: 200,
+                                    maxWidth: 200,
+                                    maxHeight: 200,
+                                    position: 'relative',
+                                    alignSelf: 'center',
+                                }}
+                                source={require('../../Animations/Fingerprint_Failed.json')}
+                                autoPlay
+                                loop={false}
+                                resizeMode="cover"
+                                speed={1.7}
+                            />
+                        )}
+                        {animState === 'success' && (
+                            <LottieView
+                                style={{
+                                    transform: [{ scale: 0.87 }],
+                                    minWidth: 200,
+                                    minHeight: 200,
+                                    maxWidth: 200,
+                                    maxHeight: 200,
+                                    position: 'relative',
+                                    alignSelf: 'center',
+                                }}
+                                source={require('../../Animations/Fingerprint_Verified.json')}
+                                autoPlay
+                                loop={false}
+                                onAnimationFinish={() =>
+                                    fingerprint_authenticate()
+                                }
+                                resizeMode="cover"
+                            />
+                        )}
+                    </TouchableOpacity>
+
+                    {!isFPA && (
+                        <Text style={styles.f_m_fpc}>
+                            {Platform.OS === 'ios'
+                                ? 'Touch ID is not available!'
+                                : 'Fingerprint is not available!'}
+                        </Text>
+                    )}
+                    {isFPA && animState === 'idle' && (
+                        <Text style={[styles.f_m_fpc, { color: 'green' }]}>
+                            Click the Icon above to prompt the
+                            {Platform.OS === 'ios'
+                                ? ' Touch ID'
+                                : ' Fingerprint'}{' '}
+                            sensor.
+                        </Text>
+                    )}
+                    {isFPA && animState === 'failed' && (
+                        <Text style={styles.f_m_fpc}>
+                            Please input your password instead!
+                        </Text>
+                    )}
+                    {isFPA && animState === 'success' && (
+                        <Text style={[styles.f_m_fpc, { color: 'green' }]}>
+                            Authenticating...
+                        </Text>
+                    )}
+                    <Text style={styles.f_m_txt3}>
+                        Or just use password instead
+                    </Text>
+                    <SecureTextEntry
+                        placeHolderText="Enter your password"
+                        inputValue={password}
+                        setInputValue={setPassword}
+                    />
+                    <BasicButton
+                        execFunc={() => manual_authenticate()}
+                        buttonText="Login"
+                        buttonHeight={55}
+                        marginTop={15}
+                        marginBottom={10}
+                    />
+                </View>
             </View>
-        </ScrollView>
-    );
+        );
+    } else {
+        return null;
+    }
 };
 
 export default FingerprintLoginPage;

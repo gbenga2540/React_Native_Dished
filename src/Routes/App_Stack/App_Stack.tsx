@@ -15,6 +15,7 @@ const AppStack: FunctionComponent = () => {
         <App_Stack.Navigator
             screenOptions={{
                 headerShown: false,
+                animation: 'slide_from_right',
             }}
             initialRouteName="HomePage">
             <App_Stack.Screen name="HomePage" component={HomePage} />

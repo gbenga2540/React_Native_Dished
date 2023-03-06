@@ -6,7 +6,7 @@ const HomePage: FunctionComponent = () => {
     return (
         <View style={styles.home_page_main}>
             <StatusBar
-                backgroundColor={Colors().White}
+                backgroundColor={Colors().Background}
                 barStyle={'dark-content'}
             />
             <Text style={{ color: 'black' }}>Home page for Dished!</Text>
@@ -21,5 +21,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: Colors().Background,
     },
 });

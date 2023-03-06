@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
@@ -11,11 +10,91 @@ import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import { useNavigation } from '@react-navigation/native';
+import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { fireb_auth } from '../../Configs/Firebase/Firebase';
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 
 const SignInPage: FunctionComponent = () => {
+    const navigation = useNavigation();
+
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const navigation = useNavigation();
+
+    const nav_to_home_page = () => {
+        navigation.navigate(
+            'AppStack' as never,
+            { screen: 'HomePage' } as never,
+        );
+    };
+
+    const sign_in_user = async () => {
+        if (email_checker(email)) {
+            if (password) {
+                try {
+                    await signInWithEmailAndPassword(
+                        fireb_auth,
+                        email?.trim(),
+                        password,
+                    )
+                        .catch(error => {
+                            if (error) {
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to sign in!',
+                                });
+                            }
+                        })
+                        .then(async res => {
+                            const user_data = {
+                                email: res?.user?.email,
+                                password: password,
+                                uid: res?.user?.uid,
+                            };
+                            try {
+                                await SInfo.setItem(
+                                    SECURE_STORAGE_USER_INFO,
+                                    JSON.stringify({ ...user_data }),
+                                    {
+                                        sharedPreferencesName:
+                                            SECURE_STORAGE_NAME,
+                                        keychainService: SECURE_STORAGE_NAME,
+                                    },
+                                )
+                                    .then(() => {
+                                        nav_to_home_page();
+                                    })
+                                    .catch(error => {
+                                        if (error) {
+                                            nav_to_home_page();
+                                        }
+                                    });
+                            } catch (error) {
+                                nav_to_home_page();
+                            }
+                        });
+                } catch (err) {
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg: 'An error occured while trying to sign in!',
+                    });
+                }
+            } else {
+                error_handler({
+                    navigation: navigation,
+                    error_mssg: 'Password field cannot be empty!',
+                });
+            }
+        } else {
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Please, input a valid Email Address!',
+            });
+        }
+    };
 
     return (
         <View style={styles.signin_main}>
@@ -50,7 +129,7 @@ const SignInPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={23}
                         marginBottom={16}
-                        execFunc={() => console.log('Login')}
+                        execFunc={() => sign_in_user()}
                     />
                     <View style={styles.s_m_fp}>
                         <TextButton
@@ -70,11 +149,13 @@ const SignInPage: FunctionComponent = () => {
                         logoName="Facebook"
                         inputText="Sign In with Facebook"
                         marginTop={32}
+                        execFunc={() => console.log('facebook')}
                     />
                     <BasicLogoButton
                         logoName="Google"
                         inputText="Sign In with Google"
                         marginTop={16}
+                        execFunc={() => console.log('google')}
                     />
                     <View style={styles.s_m_acc}>
                         <Text style={styles.s_m_acc_text}>New to Dished?</Text>

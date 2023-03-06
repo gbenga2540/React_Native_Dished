@@ -15,7 +15,7 @@ const SelectProfilePage: FunctionComponent = () => {
         Sign_Up_Identity_Data[0]?.value,
     );
 
-    const on_get_started = () => {
+    const on_get_started = async () => {
         switch (identityValue) {
             case Sign_Up_Identity_Data[0]?.value:
                 navigation.navigate<never>('VerifyConsumerPage' as never);

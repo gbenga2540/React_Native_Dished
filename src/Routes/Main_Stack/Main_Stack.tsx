@@ -57,6 +57,10 @@ const MainStack: FunctionComponent = () => {
     } else {
         return (
             <Main_Stack.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    animation: 'slide_from_right',
+                }}
                 initialRouteName={
                     showOnboarding ? 'OnboardingStack' : 'AuthStack'
                 }>

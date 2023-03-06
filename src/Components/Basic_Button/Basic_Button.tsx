@@ -29,6 +29,7 @@ const BasicButton: FunctionComponent<BasicButtonProps> = ({
                 styles.b_b_main,
                 {
                     height: buttonHeight,
+                    minHeight: buttonHeight,
                     maxHeight: buttonHeight,
                     marginTop: marginTop || 0,
                     marginBottom: marginBottom || 0,

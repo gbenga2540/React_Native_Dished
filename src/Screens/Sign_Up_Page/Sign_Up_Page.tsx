@@ -20,6 +20,8 @@ import {
 } from 'firebase/auth';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { InfoPageType } from '../../Data/Info_Page_Type/Info_Page_Type';
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -28,72 +30,79 @@ const SignUpPage: FunctionComponent = () => {
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
+    const open_info_page = () => {
+        navigation.navigate(
+            'InfoPage' as never,
+            {
+                title: 'Verify Email',
+                message:
+                    'A verification link has been sent to your email. Please click the link to verify your Email Address.',
+                info_type: InfoPageType.VerifyMail,
+                show_retry: true,
+                retry_btn_text: 'Resend Mail',
+            } as never,
+        );
+    };
+
+    const send_email_ver = async () => {
+        try {
+            await sendEmailVerification(fireb_auth?.currentUser as User)
+                .then(() => {
+                    setShowSpinner(false);
+                    open_info_page();
+                })
+                .catch(() => {
+                    setShowSpinner(false);
+                    open_info_page();
+                });
+        } catch (err) {
+            setShowSpinner(false);
+            open_info_page();
+        }
+    };
+
     const on_get_started = () => {
         if (email_checker(email)) {
             if (password?.length >= 6) {
                 try {
                     setShowSpinner(true);
-                    setTimeout(() => {
-                        createUserWithEmailAndPassword(
+                    setTimeout(async () => {
+                        await createUserWithEmailAndPassword(
                             fireb_auth,
                             email?.trim(),
                             password?.trim(),
                         )
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                            .then(userCredential => {
+                            .then(async userCredential => {
                                 if (fireb_auth?.currentUser?.uid) {
+                                    const user_data = {
+                                        email: userCredential?.user?.email,
+                                        password: password,
+                                        uid: userCredential?.user?.uid,
+                                    };
                                     try {
-                                        sendEmailVerification(
-                                            fireb_auth?.currentUser as User,
+                                        await SInfo.setItem(
+                                            SECURE_STORAGE_USER_INFO,
+                                            JSON.stringify({ ...user_data }),
+                                            {
+                                                sharedPreferencesName:
+                                                    SECURE_STORAGE_NAME,
+                                                keychainService:
+                                                    SECURE_STORAGE_NAME,
+                                            },
                                         )
                                             .then(() => {
-                                                setShowSpinner(false);
-                                                navigation.navigate(
-                                                    'InfoPage' as never,
-                                                    {
-                                                        title: 'Verify Email',
-                                                        message:
-                                                            'A verification link has been sent to your email. Please click the link to verify your Email Address.',
-                                                        info_type:
-                                                            InfoPageType.VerifyMail,
-                                                        show_retry: true,
-                                                        retry_btn_text:
-                                                            'Resend Mail',
-                                                    } as never,
-                                                );
+                                                send_email_ver();
                                             })
-                                            .catch(() => {
-                                                setShowSpinner(false);
-                                                navigation.navigate(
-                                                    'InfoPage' as never,
-                                                    {
-                                                        title: 'Verify Email',
-                                                        message:
-                                                            'A verification link has been sent to your email. Please click the link to verify your Email Address.',
-                                                        info_type:
-                                                            InfoPageType.VerifyMail,
-                                                        show_retry: true,
-                                                        retry_btn_text:
-                                                            'Resend Mail',
-                                                    } as never,
-                                                );
+                                            .catch(error => {
+                                                if (error) {
+                                                    send_email_ver();
+                                                }
                                             });
                                     } catch (err) {
-                                        setShowSpinner(false);
-                                        navigation.navigate(
-                                            'InfoPage' as never,
-                                            {
-                                                title: 'Verify Email',
-                                                message:
-                                                    'A verification link has been sent to your email. Please click the link to verify your Email Address.',
-                                                info_type:
-                                                    InfoPageType.VerifyMail,
-                                                show_retry: true,
-                                                retry_btn_text: 'Resend Mail',
-                                            } as never,
-                                        );
+                                        send_email_ver();
                                     }
                                 } else {
+                                    setShowSpinner(false);
                                     error_handler({
                                         navigation: navigation,
                                         error_mssg: 'Not signed in!',

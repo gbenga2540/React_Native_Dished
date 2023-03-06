@@ -19,8 +19,10 @@ const Onboarding_Stack = createNativeStackNavigator<RootStackParamList>();
 const OnboardingStack: FunctionComponent = () => {
     return (
         <Onboarding_Stack.Navigator
+            initialRouteName="Onboarding1Page"
             screenOptions={{
                 headerShown: false,
+                animation: 'slide_from_right',
             }}>
             <Onboarding_Stack.Screen
                 name="Onboarding1Page"
