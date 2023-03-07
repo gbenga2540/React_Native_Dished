@@ -1,5 +1,5 @@
 import React, { Dispatch, FunctionComponent } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 
@@ -15,7 +15,7 @@ const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
     setInputValue,
 }) => {
     return (
-        <View style={styles.b_t_e_main}>
+        <KeyboardAvoidingView style={styles.b_t_e_main}>
             <TextInput
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'johndoe@gmail.com'}
@@ -25,7 +25,7 @@ const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
                 autoCapitalize={'none'}
                 autoCorrect={false}
             />
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

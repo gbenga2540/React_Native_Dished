@@ -1,5 +1,10 @@
 import React, { Dispatch, FunctionComponent, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+} from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 import Feather from 'react-native-vector-icons/Feather';
@@ -18,7 +23,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
     const [hidePswd, setHidePswd] = useState<boolean>(true);
 
     return (
-        <View style={styles.b_t_e_main}>
+        <KeyboardAvoidingView style={styles.b_t_e_main}>
             <TextInput
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'password'}
@@ -50,7 +55,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
                     />
                 </TouchableOpacity>
             )}
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

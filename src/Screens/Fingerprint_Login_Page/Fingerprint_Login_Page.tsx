@@ -300,14 +300,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
     if (render) {
         return (
             <View style={styles.flp_main}>
+                <OverlaySpinner
+                    showSpinner={showSpinner}
+                    setShowSpinner={setShowSpinner}
+                />
                 <ScrollView style={{ flex: 1 }}>
                     <StatusBar
                         barStyle={'dark-content'}
                         backgroundColor={Colors().Background}
-                    />
-                    <OverlaySpinner
-                        showSpinner={showSpinner}
-                        setShowSpinner={setShowSpinner}
                     />
                     <View style={styles.flp_main_cont}>
                         <Text style={styles.f_m_txt1}>Welcome Back!</Text>

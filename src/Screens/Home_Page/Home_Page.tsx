@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../Colors/Colors';
 
 const HomePage: FunctionComponent = () => {
@@ -9,7 +9,9 @@ const HomePage: FunctionComponent = () => {
                 backgroundColor={Colors().Background}
                 barStyle={'dark-content'}
             />
-            <Text style={{ color: 'black' }}>Home page for Dished!</Text>
+            <ScrollView style={{ flex: 1 }}>
+                <Text style={{ color: 'black' }}>Home page for Dished!</Text>
+            </ScrollView>
         </View>
     );
 };
