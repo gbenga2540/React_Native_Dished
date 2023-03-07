@@ -18,9 +18,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { fireb_auth } from '../../Configs/Firebase/Firebase';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import TextButton from '../../Components/Text_Button/Text_Button';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { FIREBASE_USERS_COLLECTION } from '@env';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -32,33 +34,79 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [render, setRender] = useState<boolean>(false);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     interface userInfoProps {
-        email: string;
         password: string;
     }
     const [userInfo, setUserInfo] = useState<userInfoProps>({
-        email: '',
         password: '',
     });
 
-    const nav_to_home_page = () => {
-        navigation.push('AppStack' as never, { screen: 'HomePage' } as never);
+    const check_user_info = () => {
+        try {
+            firestore()
+                .collection(FIREBASE_USERS_COLLECTION)
+                .doc(auth()?.currentUser?.email as string)
+                .get()
+                .catch(err => {
+                    if (err) {
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                "An Error occures while trying to verify User's Information on the Server.",
+                            svr_error_mssg: err?.code as string,
+                        });
+                    }
+                })
+                .then(info_res => {
+                    if (
+                        info_res?.data() === undefined ||
+                        info_res?.data() === null ||
+                        info_res?.exists === false
+                    ) {
+                        navigation.navigate('SelectProfilePage' as never);
+                    } else {
+                        navigation.push(
+                            'AppStack' as never,
+                            { screen: 'HomePage' } as never,
+                        );
+                    }
+                });
+        } catch (error) {
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    "An Error occures while trying to verify User's Information on the Server.",
+            });
+        }
     };
 
     const manual_authenticate = () => {
         if (password) {
-            if (userInfo?.email) {
+            if (auth()?.currentUser?.email) {
                 setShowSpinner(true);
-                setTimeout(() => {
+                setTimeout(async () => {
                     try {
-                        signInWithEmailAndPassword(
-                            fireb_auth,
-                            userInfo?.email,
-                            password,
-                        )
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        await auth()
+                            .signInWithEmailAndPassword(
+                                auth()?.currentUser?.email as string,
+                                password,
+                            )
                             .then(userCredential => {
-                                setShowSpinner(false);
-                                nav_to_home_page();
+                                if (
+                                    userCredential === undefined ||
+                                    userCredential === null
+                                ) {
+                                    setShowSpinner(false);
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to sign in!',
+                                        svr_error_mssg:
+                                            'Please check your Internet Connection!',
+                                    });
+                                } else {
+                                    setShowSpinner(false);
+                                    check_user_info();
+                                }
                             })
                             .catch(error => {
                                 setShowSpinner(false);
@@ -94,19 +142,32 @@ const FingerprintLoginPage: FunctionComponent = () => {
     };
 
     const fingerprint_authenticate = async () => {
-        if (userInfo?.email && userInfo?.password) {
+        if (auth()?.currentUser?.email && userInfo?.password) {
             setShowSpinner(true);
-            setTimeout(() => {
+            setTimeout(async () => {
                 try {
-                    signInWithEmailAndPassword(
-                        fireb_auth,
-                        userInfo?.email,
-                        userInfo?.password,
-                    )
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    auth()
+                        .signInWithEmailAndPassword(
+                            auth()?.currentUser?.email as string,
+                            userInfo?.password,
+                        )
                         .then(userCredential => {
-                            setShowSpinner(false);
-                            nav_to_home_page();
+                            if (
+                                userCredential === null ||
+                                userCredential === undefined
+                            ) {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to sign in!',
+                                    svr_error_mssg:
+                                        'Please check your Internet Connection!',
+                                });
+                            } else {
+                                setShowSpinner(false);
+                                check_user_info();
+                            }
                         })
                         .catch(error => {
                             setShowSpinner(false);
@@ -188,7 +249,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     keychainService: SECURE_STORAGE_NAME,
                 })
                     .then(async res => {
-                        if (res === null) {
+                        if (res === null || res === undefined) {
                             navigation.navigate('SignUpPage' as never);
                         } else {
                             const json_res = JSON.parse(res);
@@ -229,10 +290,10 @@ const FingerprintLoginPage: FunctionComponent = () => {
             } else {
                 setIsFPA(false);
             }
+            get_user_info();
         };
 
         is_biometrics_available();
-        get_user_info();
     }, [rnBiometrics, navigation]);
 
     if (render) {
@@ -362,6 +423,20 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         marginTop={15}
                         marginBottom={10}
                     />
+                    <View style={styles.f_m_acc}>
+                        <Text style={styles.f_m_acc_text}>
+                            Login with another Account?
+                        </Text>
+                        <TextButton
+                            buttonText="Sign In"
+                            marginLeft={3}
+                            execFunc={() =>
+                                navigation.navigate<never>(
+                                    'SignInPage' as never,
+                                )
+                            }
+                        />
+                    </View>
                 </View>
             </View>
         );
@@ -410,5 +485,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         width: 200,
         textAlign: 'center',
+    },
+    f_m_acc: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    f_m_acc_text: {
+        fontFamily: fonts.Poppins_400,
+        color: Colors().InputTextGrey,
     },
 });

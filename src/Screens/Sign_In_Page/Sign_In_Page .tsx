@@ -12,76 +12,131 @@ import TextButton from '../../Components/Text_Button/Text_Button';
 import { useNavigation } from '@react-navigation/native';
 import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { fireb_auth } from '../../Configs/Firebase/Firebase';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FIREBASE_USERS_COLLECTION } from '@env';
 
 const SignInPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
-    const nav_to_home_page = () => {
-        navigation.navigate(
-            'AppStack' as never,
-            { screen: 'HomePage' } as never,
-        );
+    const check_user_info = () => {
+        try {
+            firestore()
+                .collection(FIREBASE_USERS_COLLECTION)
+                .doc(auth()?.currentUser?.email as string)
+                .get()
+                .catch(err => {
+                    if (err) {
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                "An Error occures while trying to verify User's Information on the Server.",
+                            svr_error_mssg: err?.code as string,
+                        });
+                    }
+                })
+                .then(info_res => {
+                    if (
+                        info_res?.data() === undefined ||
+                        info_res?.data() === null ||
+                        info_res?.exists === false
+                    ) {
+                        navigation.navigate('SelectProfilePage' as never);
+                    } else {
+                        navigation.push(
+                            'AppStack' as never,
+                            { screen: 'HomePage' } as never,
+                        );
+                    }
+                });
+        } catch (error) {
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    "An Error occures while trying to verify User's Information on the Server.",
+            });
+        }
     };
 
-    const sign_in_user = async () => {
+    const sign_in_user = () => {
         if (email_checker(email)) {
             if (password) {
-                try {
-                    await signInWithEmailAndPassword(
-                        fireb_auth,
-                        email?.trim(),
-                        password,
-                    )
-                        .catch(error => {
-                            if (error) {
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg:
-                                        'An error occured while trying to sign in!',
-                                });
-                            }
-                        })
-                        .then(async res => {
-                            const user_data = {
-                                email: res?.user?.email,
-                                password: password,
-                                uid: res?.user?.uid,
-                            };
-                            try {
-                                await SInfo.setItem(
-                                    SECURE_STORAGE_USER_INFO,
-                                    JSON.stringify({ ...user_data }),
-                                    {
-                                        sharedPreferencesName:
-                                            SECURE_STORAGE_NAME,
-                                        keychainService: SECURE_STORAGE_NAME,
-                                    },
-                                )
-                                    .then(() => {
-                                        nav_to_home_page();
-                                    })
-                                    .catch(error => {
-                                        if (error) {
-                                            nav_to_home_page();
-                                        }
+                setShowSpinner(true);
+                setTimeout(async () => {
+                    try {
+                        await auth()
+                            .signInWithEmailAndPassword(email?.trim(), password)
+                            .catch(error => {
+                                setShowSpinner(false);
+                                if (error) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to sign in!',
+                                        svr_error_mssg: error?.code as string,
                                     });
-                            } catch (error) {
-                                nav_to_home_page();
-                            }
+                                }
+                            })
+                            .then(async userCredential => {
+                                if (
+                                    userCredential === undefined ||
+                                    userCredential === null
+                                ) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to sign in!',
+                                        svr_error_mssg:
+                                            'Please check your Internet Connection!',
+                                    });
+                                } else {
+                                    const user_data = {
+                                        password: password,
+                                    };
+                                    try {
+                                        await SInfo.setItem(
+                                            SECURE_STORAGE_USER_INFO,
+                                            JSON.stringify({ ...user_data }),
+                                            {
+                                                sharedPreferencesName:
+                                                    SECURE_STORAGE_NAME,
+                                                keychainService:
+                                                    SECURE_STORAGE_NAME,
+                                            },
+                                        )
+                                            .then(() => {
+                                                setShowSpinner(false);
+                                                check_user_info();
+                                            })
+                                            .catch(error => {
+                                                setShowSpinner(false);
+                                                if (error) {
+                                                    check_user_info();
+                                                }
+                                            });
+                                    } catch (error) {
+                                        setShowSpinner(false);
+                                        check_user_info();
+                                    }
+                                }
+                            });
+                    } catch (err) {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while trying to sign in!',
                         });
-                } catch (err) {
-                    error_handler({
-                        navigation: navigation,
-                        error_mssg: 'An error occured while trying to sign in!',
-                    });
-                }
+                    }
+                }, 500);
             } else {
                 error_handler({
                     navigation: navigation,
@@ -101,6 +156,10 @@ const SignInPage: FunctionComponent = () => {
             <StatusBar
                 barStyle={'light-content'}
                 backgroundColor={Colors().Primary}
+            />
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
             />
             <ScrollView>
                 <View style={styles.top_cont}>
@@ -144,17 +203,17 @@ const SignInPage: FunctionComponent = () => {
                             }
                         />
                     </View>
-                    <TextDivider text={'or'} marginBottom={20} />
+                    <TextDivider text={'or'} marginBottom={0} />
                     <BasicLogoButton
                         logoName="Facebook"
                         inputText="Sign In with Facebook"
-                        marginTop={32}
+                        marginTop={25}
                         execFunc={() => console.log('facebook')}
                     />
                     <BasicLogoButton
                         logoName="Google"
                         inputText="Sign In with Google"
-                        marginTop={16}
+                        marginTop={15}
                         execFunc={() => console.log('google')}
                     />
                     <View style={styles.s_m_acc}>
@@ -221,7 +280,7 @@ const styles = StyleSheet.create({
     },
     s_m_fp: {
         marginTop: 10,
-        marginBottom: 18,
+        marginBottom: 10,
         marginRight: 'auto',
     },
 });

@@ -12,16 +12,10 @@ import TextButton from '../../Components/Text_Button/Text_Button';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
-import { fireb_auth } from '../../Configs/Firebase/Firebase';
-import {
-    User,
-    createUserWithEmailAndPassword,
-    sendEmailVerification,
-} from 'firebase/auth';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
-import { InfoPageType } from '../../Data/Info_Page_Type/Info_Page_Type';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import auth from '@react-native-firebase/auth';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -30,34 +24,25 @@ const SignUpPage: FunctionComponent = () => {
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
-    const open_info_page = () => {
-        navigation.navigate(
-            'InfoPage' as never,
-            {
-                title: 'Verify Email',
-                message:
-                    'A verification link has been sent to your email. Please click the link to verify your Email Address.',
-                info_type: InfoPageType.VerifyMail,
-                show_retry: true,
-                retry_btn_text: 'Resend Mail',
-            } as never,
-        );
+    const verify_mail_page = () => {
+        navigation.navigate('VerifyMailPage' as never);
     };
 
     const send_email_ver = async () => {
         try {
-            await sendEmailVerification(fireb_auth?.currentUser as User)
+            await auth()
+                .currentUser?.sendEmailVerification()
                 .then(() => {
                     setShowSpinner(false);
-                    open_info_page();
+                    verify_mail_page();
                 })
                 .catch(() => {
                     setShowSpinner(false);
-                    open_info_page();
+                    verify_mail_page();
                 });
         } catch (err) {
             setShowSpinner(false);
-            open_info_page();
+            verify_mail_page();
         }
     };
 
@@ -67,17 +52,25 @@ const SignUpPage: FunctionComponent = () => {
                 try {
                     setShowSpinner(true);
                     setTimeout(async () => {
-                        await createUserWithEmailAndPassword(
-                            fireb_auth,
-                            email?.trim(),
-                            password?.trim(),
-                        )
+                        await auth()
+                            .createUserWithEmailAndPassword(
+                                email?.trim(),
+                                password,
+                            )
                             .then(async userCredential => {
-                                if (fireb_auth?.currentUser?.uid) {
+                                if (
+                                    userCredential === null ||
+                                    userCredential === undefined
+                                ) {
+                                    setShowSpinner(false);
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to register User!',
+                                    });
+                                } else {
                                     const user_data = {
-                                        email: userCredential?.user?.email,
-                                        password: password,
-                                        uid: userCredential?.user?.uid,
+                                        user_password: password,
                                     };
                                     try {
                                         await SInfo.setItem(
@@ -101,12 +94,6 @@ const SignUpPage: FunctionComponent = () => {
                                     } catch (err) {
                                         send_email_ver();
                                     }
-                                } else {
-                                    setShowSpinner(false);
-                                    error_handler({
-                                        navigation: navigation,
-                                        error_mssg: 'Not signed in!',
-                                    });
                                 }
                             })
                             .catch(error => {
@@ -114,7 +101,7 @@ const SignUpPage: FunctionComponent = () => {
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
-                                        'An error occured while trying to sign up!',
+                                        'An error occured while trying to register User!',
                                     svr_error_mssg: error?.code as string,
                                 });
                             })
@@ -126,7 +113,8 @@ const SignUpPage: FunctionComponent = () => {
                     setShowSpinner(false);
                     error_handler({
                         navigation: navigation,
-                        error_mssg: 'An error occured while trying to sign up!',
+                        error_mssg:
+                            'An error occured while trying to register User!',
                     });
                 }
             } else {

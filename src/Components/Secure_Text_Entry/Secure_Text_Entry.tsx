@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
     b_t_e_m_ti: {
         flex: 1,
         maxWidth: '100%',
-        height: '100%',
         fontFamily: fonts.Poppins_400,
         fontSize: 16,
+        height: 50,
         marginLeft: 10,
         marginRight: 10,
         textAlignVertical: 'center',
         color: Colors().InputText,
-        letterSpacing: 1,
+        letterSpacing: 0.2,
     },
 });

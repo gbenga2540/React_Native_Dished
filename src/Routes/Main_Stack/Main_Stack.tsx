@@ -6,7 +6,6 @@ import AuthStack from '../Auth_Stack/Auth_Stack';
 import OnboardingStack from '../Onboarding_Stack/Onboarding_Stack';
 import AppStack from '../App_Stack/App_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
-import InfoPage from '../../Screens/Info_Page/Info_Page';
 
 type RootStackParamList = {
     Home: undefined;
@@ -17,42 +16,34 @@ type RootStackParamList = {
         error_mssg: string;
         svr_error_mssg: string;
     };
-    InfoPage: {
-        title: string;
-        message: string;
-        info_type: string;
-        show_retry?: boolean;
-        retry_btn_text?: string;
-    };
 };
 
 const Main_Stack = createNativeStackNavigator<RootStackParamList>();
 
 const MainStack: FunctionComponent = () => {
-    const [isStorageLoading, setIsStorageLoading] = useState<boolean>(true);
+    const [isInitializing, setIsInitializing] = useState<boolean>(true);
     const [showOnboarding, setShowOnboarding] = useState<boolean>(true);
 
-    const check_onboarding = async () => {
-        const has_shown_onboarding = await AsyncStorage.getItem(
-            'show_onboarding',
-        );
-        if (
-            has_shown_onboarding === null ||
-            has_shown_onboarding === undefined
-        ) {
-            setShowOnboarding(true);
-            setIsStorageLoading(false);
-        } else {
-            setShowOnboarding(false);
-            setIsStorageLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const check_onboarding = async () => {
+            const has_shown_onboarding = await AsyncStorage.getItem(
+                'show_onboarding',
+            );
+            if (
+                has_shown_onboarding === null ||
+                has_shown_onboarding === undefined
+            ) {
+                setShowOnboarding(true);
+                setIsInitializing(false);
+            } else {
+                setShowOnboarding(false);
+                setIsInitializing(false);
+            }
+        };
         check_onboarding();
     }, []);
 
-    if (isStorageLoading) {
+    if (isInitializing) {
         return null;
     } else {
         return (
@@ -88,13 +79,6 @@ const MainStack: FunctionComponent = () => {
                 <Main_Stack.Screen
                     name="ErrorPage"
                     component={ErrorPage}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-                <Main_Stack.Screen
-                    name="InfoPage"
-                    component={InfoPage}
                     options={{
                         headerShown: false,
                     }}

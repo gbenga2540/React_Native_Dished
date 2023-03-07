@@ -23,6 +23,8 @@ end
 
 target 'base_app' do
   config = use_native_modules!
+  use_frameworks! :linkage => :static # for Firebase
+  $RNFirebaseAsStaticFramework = true # for Firebase
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -38,11 +40,12 @@ target 'base_app' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => flipper_config,
+#    :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  $FirebaseSDKVersion = '10.5.0'
   target 'base_appTests' do
     inherit! :complete
     # Pods for testing
@@ -56,5 +59,46 @@ target 'base_app' do
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings["GCC_WARN_INHIBIT_ALL_WARNINGS"] = "YES"
+        end
+      end
+      
+      installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings["CC"] = "clang"
+          config.build_settings["LD"] = "clang"
+          config.build_settings["CXX"] = "clang++"
+          config.build_settings["LDPLUSPLUS"] = "clang++"
+        end
+      end
+      
+      installer.aggregate_targets.each do |aggregate_target|
+        aggregate_target.user_project.native_targets.each do |target|
+          target.build_configurations.each do |config|
+            config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+            config.build_settings['EXCLUDED_ARCHS'] = 'i386'
+          end
+        end
+        aggregate_target.user_project.save
+      end
+      installer.pods_project.targets.each do |target|
+        if (target.name.eql?('FBReactNativeSpec'))
+          target.build_phases.each do |build_phase|
+            if (build_phase.respond_to?(:name) && build_phase.name.eql?('[CP-User] Generate Specs'))
+              target.build_phases.move(build_phase, 0)
+            end
+          end
+        end
+      end
+      
+      installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings["ENABLE_BITCODE"] = "NO"
+        end
+      end
   end
 end
+

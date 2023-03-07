@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SInfo from 'react-native-sensitive-info';
-import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+
 import SignUpPage from '../../Screens/Sign_Up_Page/Sign_Up_Page';
 import SignInPage from '../../Screens/Sign_In_Page/Sign_In_Page ';
 import VerifyOTPPage from '../../Screens/Verify_OTP_Page/Verify_OTP_Page';
@@ -12,6 +12,7 @@ import VerifyRestaurantPage from '../../Screens/Verify_Restaurant_Page/Verify_Re
 import VerifyConsumerPage from '../../Screens/Verify_Consumer_Page/Verify_Consumer_Page';
 import FingerprintLoginPage from '../../Screens/Fingerprint_Login_Page/Fingerprint_Login_Page';
 import SelectProfilePage from '../../Screens/Select_Profile_Page/Select_Profile_Page';
+import VerifyMailPage from '../../Screens/Verify_Mail_Page/Verify_Mail_Page';
 
 type RootStackParamList = {
     Home: undefined;
@@ -25,52 +26,29 @@ type RootStackParamList = {
     ChangePasswordPage: {};
     VerifyOTPPage: {};
     SignInPage: {};
+    VerifyMailPage: {};
 };
 
 const Auth_Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AuthStack: FunctionComponent = () => {
-    const [render, setRender] = useState<boolean>(false);
-    const [userPresent, setUserPresent] = useState<boolean>(false);
+    const [initializing, setInitializing] = useState<boolean>(true);
+    const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+
+    const onAuthStateChanged = (res_user: FirebaseAuthTypes.User | null) => {
+        setUser(res_user);
+        setInitializing(false);
+    };
 
     useEffect(() => {
-        setRender(false);
-        const does_user_exist = async () => {
-            try {
-                await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
-                    sharedPreferencesName: SECURE_STORAGE_NAME,
-                    keychainService: SECURE_STORAGE_NAME,
-                })
-                    .then(async res => {
-                        if (res === null) {
-                            setUserPresent(false);
-                            setRender(true);
-                        } else {
-                            const json_res = JSON.parse(res);
-                            if (json_res?.email && json_res?.password) {
-                                setUserPresent(true);
-                                setRender(true);
-                            } else {
-                                setUserPresent(false);
-                                setRender(true);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        if (error) {
-                            setUserPresent(false);
-                            setRender(true);
-                        }
-                    });
-            } catch (err) {
-                setUserPresent(false);
-                setRender(true);
-            }
-        };
-        does_user_exist();
+        setInitializing(true);
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber;
     }, []);
 
-    if (render) {
+    if (initializing) {
+        return null;
+    } else {
         return (
             <Auth_Stack.Navigator
                 screenOptions={{
@@ -78,7 +56,11 @@ const AuthStack: FunctionComponent = () => {
                     animation: 'slide_from_right',
                 }}
                 initialRouteName={
-                    userPresent ? 'FingerprintLoginPage' : 'SignUpPage'
+                    user
+                        ? user?.emailVerified
+                            ? 'FingerprintLoginPage'
+                            : 'VerifyMailPage'
+                        : 'SignUpPage'
                 }>
                 <Auth_Stack.Screen
                     name="SelectProfilePage"
@@ -114,10 +96,15 @@ const AuthStack: FunctionComponent = () => {
                     component={ForgotPasswordPage}
                 />
                 <Auth_Stack.Screen name="SignInPage" component={SignInPage} />
+                <Auth_Stack.Screen
+                    name="VerifyMailPage"
+                    component={VerifyMailPage}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
             </Auth_Stack.Navigator>
         );
-    } else {
-        return null;
     }
 };
 

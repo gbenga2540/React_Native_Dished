@@ -33,14 +33,14 @@ export default BasicTextEntry;
 
 const styles = StyleSheet.create({
     b_t_e_main: {
-        width: '100%',
+        flex: 1,
         height: 50,
         borderRadius: 10,
         borderColor: Colors().BorderLineGrey,
         borderWidth: 1,
     },
     b_t_e_m_ti: {
-        width: '100%',
+        flex: 1,
         height: '100%',
         fontFamily: fonts.Poppins_400,
         fontSize: 16,

@@ -5,15 +5,14 @@ import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
-import { fireb_db } from '../../Configs/Firebase/Firebase';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
-import { doc, setDoc } from 'firebase/firestore';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import SInfo from 'react-native-sensitive-info';
-import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import { FIREBASE_USERS_COLLECTION } from '@env';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const VerifyConsumerPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -22,56 +21,53 @@ const VerifyConsumerPage: FunctionComponent = () => {
     const [phoneNo, setPhoneNo] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
-    interface userInfoProps {
-        email: string;
-        password: string;
-        uid: string;
-    }
-    const [userInfo, setUserInfo] = useState<userInfoProps>({
-        email: '',
-        password: '',
-        uid: '',
-    });
 
-    const on_verify = async () => {
+    const on_verify_profile = async () => {
         if (
             fullName?.length > 0 &&
             phoneNo?.length > 0 &&
             address?.length > 0
         ) {
-            setShowSpinner(true);
-            try {
-                await setDoc(doc(fireb_db, 'Users', userInfo?.email), {
-                    fullName: fullName?.trim(),
-                    phoneNo: phoneNo?.trim(),
-                    address: address?.trim(),
-                    accountType: Sign_Up_Identity_Data[0]?.value,
-                })
-                    .then(() => {
-                        setShowSpinner(false);
-                        navigation.push(
-                            'AppStack' as never,
-                            {
-                                screen: 'HomePage',
-                            } as never,
-                        );
-                    })
-                    .catch(error => {
-                        setShowSpinner(false);
-                        error_handler({
-                            navigation: navigation,
-                            error_mssg:
-                                'An error occured while uploading user info to the server.',
-                            svr_error_mssg: error?.code as string,
+            if (auth()?.currentUser?.email) {
+                setShowSpinner(true);
+                try {
+                    firestore()
+                        .collection(FIREBASE_USERS_COLLECTION)
+                        .doc(auth()?.currentUser?.email as string)
+                        .set({
+                            fullName: fullName?.trim(),
+                            phoneNo: phoneNo?.trim(),
+                            address: address?.trim(),
+                            accountType: Sign_Up_Identity_Data[0]?.value,
+                        })
+                        .then(() => {
+                            setShowSpinner(false);
+                            navigation.push(
+                                'AppStack' as never,
+                                {
+                                    screen: 'HomePage',
+                                } as never,
+                            );
+                        })
+                        .catch(err => {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    'An error occured while uploading user info to the server.',
+                                svr_error_mssg: err?.code as string,
+                            });
                         });
+                } catch (error) {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg:
+                            'An error occured while uploading user info to the server.',
                     });
-            } catch (error) {
-                setShowSpinner(false);
-                error_handler({
-                    navigation: navigation,
-                    error_mssg:
-                        'An error occured while uploading user info to the server.',
-                });
+                }
+            } else {
+                navigation.push('SignInPage' as never);
             }
         } else {
             error_handler({
@@ -83,26 +79,9 @@ const VerifyConsumerPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
-        const get_user_data = async () => {
-            await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
-                sharedPreferencesName: SECURE_STORAGE_NAME,
-                keychainService: SECURE_STORAGE_NAME,
-            })
-                .then(async res => {
-                    if (res !== null || res !== undefined) {
-                        const json_res = JSON.parse(res);
-                        setUserInfo({ ...json_res });
-                    } else {
-                        navigation.navigate('SignUpPage' as never);
-                    }
-                })
-                .catch(error => {
-                    if (error) {
-                        navigation.navigate('SignUpPage' as never);
-                    }
-                });
-        };
-        get_user_data();
+        if (!auth()?.currentUser?.email) {
+            navigation.push('SignInPage' as never);
+        }
     }, [navigation]);
 
     return (
@@ -152,7 +131,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={23}
                         marginBottom={16}
-                        execFunc={() => on_verify()}
+                        execFunc={() => on_verify_profile()}
                     />
                 </View>
             </ScrollView>
