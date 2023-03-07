@@ -34,10 +34,10 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [render, setRender] = useState<boolean>(false);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     interface userInfoProps {
-        password: string;
+        user_password: string;
     }
     const [userInfo, setUserInfo] = useState<userInfoProps>({
-        password: '',
+        user_password: '',
     });
 
     const check_user_info = () => {
@@ -142,14 +142,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
     };
 
     const fingerprint_authenticate = async () => {
-        if (auth()?.currentUser?.email && userInfo?.password) {
+        if (auth()?.currentUser?.email && userInfo?.user_password) {
             setShowSpinner(true);
             setTimeout(async () => {
                 try {
                     auth()
                         .signInWithEmailAndPassword(
                             auth()?.currentUser?.email as string,
-                            userInfo?.password,
+                            userInfo?.user_password,
                         )
                         .then(userCredential => {
                             if (
@@ -401,11 +401,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     {isFPA && animState === 'failed' && (
                         <Text style={styles.f_m_fpc}>
                             Please input your password instead!
-                        </Text>
-                    )}
-                    {isFPA && animState === 'success' && (
-                        <Text style={[styles.f_m_fpc, { color: 'green' }]}>
-                            Authenticating...
                         </Text>
                     )}
                     <Text style={styles.f_m_txt3}>

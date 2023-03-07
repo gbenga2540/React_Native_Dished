@@ -99,7 +99,7 @@ const SignInPage: FunctionComponent = () => {
                                     });
                                 } else {
                                     const user_data = {
-                                        password: password,
+                                        user_password: password,
                                     };
                                     try {
                                         await SInfo.setItem(
