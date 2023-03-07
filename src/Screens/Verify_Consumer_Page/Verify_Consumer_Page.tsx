@@ -54,7 +54,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                             error_handler({
                                 navigation: navigation,
                                 error_mssg:
-                                    'An error occured while uploading user info to the server.',
+                                    "An error occured while uploading User's information to the server.",
                                 svr_error_mssg: err?.code as string,
                             });
                         });
@@ -63,7 +63,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                     error_handler({
                         navigation: navigation,
                         error_mssg:
-                            'An error occured while uploading user info to the server.',
+                            "An error occured while uploading User's information to the server.",
                     });
                 }
             } else {

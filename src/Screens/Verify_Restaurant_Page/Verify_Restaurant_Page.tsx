@@ -1,18 +1,90 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import TextWithButton from '../../Components/Text_With_Button/Text_With_Button';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import { FIREBASE_USERS_COLLECTION } from '@env';
 
 const VerifyRestaurantPage: FunctionComponent = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
     const [businessName, setBusinessName] = useState<string>('');
     const [phoneNo, setPhoneNo] = useState<string>('');
     const [location, setLocation] = useState<string>('');
     const [CACText, setCACText] = useState<string>('');
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
+
+    const on_verify_profile = async () => {
+        if (
+            businessName?.length > 0 &&
+            phoneNo?.length > 0 &&
+            location?.length > 0
+        ) {
+            if (auth()?.currentUser?.email) {
+                setShowSpinner(true);
+                try {
+                    firestore()
+                        .collection(FIREBASE_USERS_COLLECTION)
+                        .doc(auth()?.currentUser?.email as string)
+                        .set({
+                            businessName: businessName?.trim(),
+                            phoneNo: phoneNo?.trim(),
+                            location: location?.trim(),
+                            accountType: Sign_Up_Identity_Data[2]?.value,
+                        })
+                        .then(() => {
+                            setShowSpinner(false);
+                            navigation.push(
+                                'AppStack' as never,
+                                {
+                                    screen: 'HomePage',
+                                } as never,
+                            );
+                        })
+                        .catch(err => {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    "An error occured while uploading User's information to the server.",
+                                svr_error_mssg: err?.code as string,
+                            });
+                        });
+                } catch (error) {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg:
+                            "An error occured while uploading User's information to the server.",
+                    });
+                }
+            } else {
+                navigation.push('SignInPage' as never);
+            }
+        } else {
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    'Some fields are empty! \nPlease fill all the fields with the appropraite information.',
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (!auth()?.currentUser?.email) {
+            navigation.push('SignInPage' as never);
+        }
+    }, [navigation]);
 
     return (
         <View style={styles.vr_main}>
@@ -20,7 +92,11 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                 barStyle={'light-content'}
                 backgroundColor={Colors().Primary}
             />
-            <ScrollView>
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
+            />
+            <ScrollView style={{ flex: 1 }}>
                 <View style={styles.top_cont}>
                     <Text style={styles.top_cont_txt}>Complete Profile</Text>
                 </View>
@@ -66,7 +142,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={23}
                         marginBottom={16}
-                        execFunc={() => console.log('Verify')}
+                        execFunc={() => on_verify_profile()}
                     />
                 </View>
             </ScrollView>

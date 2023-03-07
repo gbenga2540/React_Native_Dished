@@ -6,6 +6,7 @@ import {
     View,
     Platform,
     TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
@@ -299,140 +300,143 @@ const FingerprintLoginPage: FunctionComponent = () => {
     if (render) {
         return (
             <View style={styles.flp_main}>
-                <StatusBar
-                    barStyle={'dark-content'}
-                    backgroundColor={Colors().Background}
-                />
-                <OverlaySpinner
-                    showSpinner={showSpinner}
-                    setShowSpinner={setShowSpinner}
-                />
-                <View style={styles.flp_main_cont}>
-                    <Text style={styles.f_m_txt1}>Welcome Back!</Text>
-                    <Text style={styles.f_m_txt2}>
-                        Use {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}
-                        to sign in into your Dished account
-                    </Text>
-
-                    <TouchableOpacity
-                        style={{
-                            width: 200,
-                            height: 200,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            alignSelf: 'center',
-                        }}
-                        disabled={!isFPA}
-                        activeOpacity={0.65}
-                        onPress={() => biometric_login()}>
-                        {animState === 'idle' && (
-                            <LottieView
-                                style={{
-                                    transform: [{ scale: 0.93 }],
-                                    minWidth: 200,
-                                    minHeight: 200,
-                                    maxWidth: 200,
-                                    maxHeight: 200,
-                                    position: 'relative',
-                                    alignSelf: 'center',
-                                }}
-                                source={require('../../Animations/Fingerprint_Idle.json')}
-                                autoPlay
-                                loop={isFPA}
-                                resizeMode="cover"
-                            />
-                        )}
-                        {animState === 'failed' && (
-                            <LottieView
-                                style={{
-                                    transform: [{ scale: 1 }],
-                                    minWidth: 200,
-                                    minHeight: 200,
-                                    maxWidth: 200,
-                                    maxHeight: 200,
-                                    position: 'relative',
-                                    alignSelf: 'center',
-                                }}
-                                source={require('../../Animations/Fingerprint_Failed.json')}
-                                autoPlay
-                                loop={false}
-                                resizeMode="cover"
-                                speed={1.7}
-                            />
-                        )}
-                        {animState === 'success' && (
-                            <LottieView
-                                style={{
-                                    transform: [{ scale: 0.87 }],
-                                    minWidth: 200,
-                                    minHeight: 200,
-                                    maxWidth: 200,
-                                    maxHeight: 200,
-                                    position: 'relative',
-                                    alignSelf: 'center',
-                                }}
-                                source={require('../../Animations/Fingerprint_Verified.json')}
-                                autoPlay
-                                loop={false}
-                                onAnimationFinish={() =>
-                                    fingerprint_authenticate()
-                                }
-                                resizeMode="cover"
-                            />
-                        )}
-                    </TouchableOpacity>
-
-                    {!isFPA && (
-                        <Text style={styles.f_m_fpc}>
-                            {Platform.OS === 'ios'
-                                ? 'Touch ID is not available!'
-                                : 'Fingerprint is not available!'}
-                        </Text>
-                    )}
-                    {isFPA && animState === 'idle' && (
-                        <Text style={[styles.f_m_fpc, { color: 'green' }]}>
-                            Click the Icon above to prompt the
-                            {Platform.OS === 'ios'
-                                ? ' Touch ID'
-                                : ' Fingerprint'}{' '}
-                            sensor.
-                        </Text>
-                    )}
-                    {isFPA && animState === 'failed' && (
-                        <Text style={styles.f_m_fpc}>
-                            Please input your password instead!
-                        </Text>
-                    )}
-                    <Text style={styles.f_m_txt3}>
-                        Or just use password instead
-                    </Text>
-                    <SecureTextEntry
-                        placeHolderText="Enter your password"
-                        inputValue={password}
-                        setInputValue={setPassword}
+                <ScrollView style={{ flex: 1 }}>
+                    <StatusBar
+                        barStyle={'dark-content'}
+                        backgroundColor={Colors().Background}
                     />
-                    <BasicButton
-                        execFunc={() => manual_authenticate()}
-                        buttonText="Login"
-                        buttonHeight={55}
-                        marginTop={15}
-                        marginBottom={10}
+                    <OverlaySpinner
+                        showSpinner={showSpinner}
+                        setShowSpinner={setShowSpinner}
                     />
-                    <View style={styles.f_m_acc}>
-                        <Text style={styles.f_m_acc_text}>
-                            Login with another Account?
+                    <View style={styles.flp_main_cont}>
+                        <Text style={styles.f_m_txt1}>Welcome Back!</Text>
+                        <Text style={styles.f_m_txt2}>
+                            Use{' '}
+                            {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}
+                            to sign in into your Dished account
                         </Text>
-                        <TextButton
-                            buttonText="Sign In"
-                            marginLeft={3}
-                            execFunc={() =>
-                                navigation.navigate<never>(
-                                    'SignInPage' as never,
-                                )
-                            }
+
+                        <TouchableOpacity
+                            style={{
+                                width: 200,
+                                height: 200,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                alignSelf: 'center',
+                            }}
+                            disabled={!isFPA}
+                            activeOpacity={0.65}
+                            onPress={() => biometric_login()}>
+                            {animState === 'idle' && (
+                                <LottieView
+                                    style={{
+                                        transform: [{ scale: 0.93 }],
+                                        minWidth: 200,
+                                        minHeight: 200,
+                                        maxWidth: 200,
+                                        maxHeight: 200,
+                                        position: 'relative',
+                                        alignSelf: 'center',
+                                    }}
+                                    source={require('../../Animations/Fingerprint_Idle.json')}
+                                    autoPlay
+                                    loop={isFPA}
+                                    resizeMode="cover"
+                                />
+                            )}
+                            {animState === 'failed' && (
+                                <LottieView
+                                    style={{
+                                        transform: [{ scale: 1 }],
+                                        minWidth: 200,
+                                        minHeight: 200,
+                                        maxWidth: 200,
+                                        maxHeight: 200,
+                                        position: 'relative',
+                                        alignSelf: 'center',
+                                    }}
+                                    source={require('../../Animations/Fingerprint_Failed.json')}
+                                    autoPlay
+                                    loop={false}
+                                    resizeMode="cover"
+                                    speed={1.7}
+                                />
+                            )}
+                            {animState === 'success' && (
+                                <LottieView
+                                    style={{
+                                        transform: [{ scale: 0.87 }],
+                                        minWidth: 200,
+                                        minHeight: 200,
+                                        maxWidth: 200,
+                                        maxHeight: 200,
+                                        position: 'relative',
+                                        alignSelf: 'center',
+                                    }}
+                                    source={require('../../Animations/Fingerprint_Verified.json')}
+                                    autoPlay
+                                    loop={false}
+                                    onAnimationFinish={() =>
+                                        fingerprint_authenticate()
+                                    }
+                                    resizeMode="cover"
+                                />
+                            )}
+                        </TouchableOpacity>
+
+                        {!isFPA && (
+                            <Text style={styles.f_m_fpc}>
+                                {Platform.OS === 'ios'
+                                    ? 'Touch ID is not available!'
+                                    : 'Fingerprint is not available!'}
+                            </Text>
+                        )}
+                        {isFPA && animState === 'idle' && (
+                            <Text style={[styles.f_m_fpc, { color: 'green' }]}>
+                                Click the Icon above to prompt the
+                                {Platform.OS === 'ios'
+                                    ? ' Touch ID'
+                                    : ' Fingerprint'}{' '}
+                                sensor.
+                            </Text>
+                        )}
+                        {isFPA && animState === 'failed' && (
+                            <Text style={styles.f_m_fpc}>
+                                Please input your password instead!
+                            </Text>
+                        )}
+                        <Text style={styles.f_m_txt3}>
+                            Or just use password instead
+                        </Text>
+                        <SecureTextEntry
+                            placeHolderText="Enter your password"
+                            inputValue={password}
+                            setInputValue={setPassword}
                         />
+                        <BasicButton
+                            execFunc={() => manual_authenticate()}
+                            buttonText="Login"
+                            buttonHeight={55}
+                            marginTop={15}
+                            marginBottom={10}
+                        />
+                        <View style={styles.f_m_acc}>
+                            <Text style={styles.f_m_acc_text}>
+                                Login with another Account?
+                            </Text>
+                            <TextButton
+                                buttonText="Sign In"
+                                marginLeft={3}
+                                execFunc={() =>
+                                    navigation.navigate<never>(
+                                        'SignInPage' as never,
+                                    )
+                                }
+                            />
+                        </View>
                     </View>
-                </View>
+                </ScrollView>
             </View>
         );
     } else {
