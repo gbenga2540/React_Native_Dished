@@ -35,6 +35,7 @@ const SignInPage: FunctionComponent = () => {
                 .get()
                 .catch(err => {
                     if (err) {
+                        setShowSpinner(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -49,8 +50,10 @@ const SignInPage: FunctionComponent = () => {
                         info_res?.data() === null ||
                         info_res?.exists === false
                     ) {
+                        setShowSpinner(false);
                         navigation.navigate('SelectProfilePage' as never);
                     } else {
+                        setShowSpinner(false);
                         navigation.push(
                             'AppStack' as never,
                             { screen: 'HomePage' } as never,
@@ -58,6 +61,7 @@ const SignInPage: FunctionComponent = () => {
                     }
                 });
         } catch (error) {
+            setShowSpinner(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -113,17 +117,14 @@ const SignInPage: FunctionComponent = () => {
                                             },
                                         )
                                             .then(() => {
-                                                setShowSpinner(false);
                                                 check_user_info();
                                             })
                                             .catch(error => {
-                                                setShowSpinner(false);
                                                 if (error) {
                                                     check_user_info();
                                                 }
                                             });
                                     } catch (error) {
-                                        setShowSpinner(false);
                                         check_user_info();
                                     }
                                 }

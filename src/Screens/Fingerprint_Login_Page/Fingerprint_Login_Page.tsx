@@ -49,6 +49,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 .get()
                 .catch(err => {
                     if (err) {
+                        setShowSpinner(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -63,8 +64,10 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         info_res?.data() === null ||
                         info_res?.exists === false
                     ) {
+                        setShowSpinner(false);
                         navigation.navigate('SelectProfilePage' as never);
                     } else {
+                        setShowSpinner(false);
                         navigation.push(
                             'AppStack' as never,
                             { screen: 'HomePage' } as never,
@@ -72,6 +75,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                 });
         } catch (error) {
+            setShowSpinner(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -105,7 +109,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             'Please check your Internet Connection!',
                                     });
                                 } else {
-                                    setShowSpinner(false);
                                     check_user_info();
                                 }
                             })
@@ -166,7 +169,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         'Please check your Internet Connection!',
                                 });
                             } else {
-                                setShowSpinner(false);
                                 check_user_info();
                             }
                         })
