@@ -55,7 +55,7 @@ const SignInPage: FunctionComponent = () => {
                     } else {
                         setShowSpinner(false);
                         navigation.push(
-                            'AppStack' as never,
+                            'HomeStack' as never,
                             { screen: 'HomePage' } as never,
                         );
                     }

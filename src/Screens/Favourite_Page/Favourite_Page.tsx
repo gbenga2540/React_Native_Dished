@@ -2,28 +2,26 @@ import React, { FunctionComponent } from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../Colors/Colors';
 
-const HomePage: FunctionComponent = () => {
+const FavouritePage: FunctionComponent = () => {
     return (
-        <View style={styles.home_page_main}>
+        <View style={styles.fav_page_main}>
             <StatusBar
                 backgroundColor={Colors().Background}
                 barStyle={'dark-content'}
             />
             <ScrollView style={{ flex: 1 }}>
-                <View style={{ flex: 1 }}>
-                    <Text style={{ color: 'black' }}>
-                        Home page for Dished!
-                    </Text>
-                </View>
+                <Text style={{ color: 'black' }}>
+                    Favourite page for Dished!
+                </Text>
             </ScrollView>
         </View>
     );
 };
 
-export default HomePage;
+export default FavouritePage;
 
 const styles = StyleSheet.create({
-    home_page_main: {
+    fav_page_main: {
         flex: 1,
         backgroundColor: Colors().Background,
     },

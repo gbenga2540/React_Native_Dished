@@ -24,11 +24,14 @@ import TextButton from '../../Components/Text_Button/Text_Button';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { FIREBASE_USERS_COLLECTION } from '@env';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
+    const [welcomeText, setWelcomeText] = useState<string>('Welcome Back!');
     const [password, setPassword] = useState<string>('');
     const [isFPA, setIsFPA] = useState<boolean>(true);
     const [animState, setAnimState] = useState<string>('idle');
@@ -69,7 +72,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     } else {
                         setShowSpinner(false);
                         navigation.push(
-                            'AppStack' as never,
+                            'HomeStack' as never,
                             { screen: 'HomePage' } as never,
                         );
                     }
@@ -95,7 +98,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 auth()?.currentUser?.email as string,
                                 password,
                             )
-                            .then(userCredential => {
+                            .then(async userCredential => {
                                 if (
                                     userCredential === undefined ||
                                     userCredential === null
@@ -109,7 +112,31 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             'Please check your Internet Connection!',
                                     });
                                 } else {
-                                    check_user_info();
+                                    const user_data = {
+                                        user_password: password,
+                                    };
+                                    try {
+                                        await SInfo.setItem(
+                                            SECURE_STORAGE_USER_INFO,
+                                            JSON.stringify({ ...user_data }),
+                                            {
+                                                sharedPreferencesName:
+                                                    SECURE_STORAGE_NAME,
+                                                keychainService:
+                                                    SECURE_STORAGE_NAME,
+                                            },
+                                        )
+                                            .then(() => {
+                                                check_user_info();
+                                            })
+                                            .catch(error => {
+                                                if (error) {
+                                                    check_user_info();
+                                                }
+                                            });
+                                    } catch (error) {
+                                        check_user_info();
+                                    }
                                 }
                             })
                             .catch(error => {
@@ -245,6 +272,53 @@ const FingerprintLoginPage: FunctionComponent = () => {
         setShowSpinner(false);
         setRender(false);
 
+        const get_user_name_from_svr = () => {
+            setRender(true);
+            if (auth().currentUser) {
+                try {
+                    firestore()
+                        .collection(FIREBASE_USERS_COLLECTION)
+                        .doc(auth().currentUser?.email as string)
+                        .get()
+                        .then(user_info => {
+                            if (
+                                // Consumer
+                                user_info.data()?.accountType ===
+                                Sign_Up_Identity_Data[0]?.value
+                            ) {
+                                setWelcomeText(
+                                    `Hello ${analyze_first_name({
+                                        name: user_info.data()
+                                            ?.fullName as string,
+                                    })}`,
+                                );
+                            } else if (
+                                // Dispatch Rider
+                                user_info.data()?.accountType ===
+                                Sign_Up_Identity_Data[1]?.value
+                            ) {
+                                setWelcomeText(
+                                    `Hello ${analyze_first_name({
+                                        name: user_info.data()
+                                            ?.fullName as string,
+                                    })}`,
+                                );
+                            } else if (
+                                // Restaurant
+                                user_info.data()?.accountType ===
+                                Sign_Up_Identity_Data[2]?.value
+                            ) {
+                                setWelcomeText('Hello Restaurant');
+                            } else {
+                                setWelcomeText('Welcome Back!');
+                            }
+                        });
+                } catch (error) {
+                    setRender(true);
+                }
+            }
+        };
+
         const get_user_info = async () => {
             try {
                 await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
@@ -257,7 +331,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         } else {
                             const json_res = JSON.parse(res);
                             setUserInfo({ ...json_res });
-                            setRender(true);
+                            get_user_name_from_svr();
                         }
                     })
                     .catch(err => {
@@ -312,7 +386,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         backgroundColor={Colors().Background}
                     />
                     <View style={styles.flp_main_cont}>
-                        <Text style={styles.f_m_txt1}>Welcome Back!</Text>
+                        <Text style={styles.f_m_txt1}>{welcomeText}</Text>
                         <Text style={styles.f_m_txt2}>
                             Use{' '}
                             {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}

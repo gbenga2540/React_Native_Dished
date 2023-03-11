@@ -2,7 +2,7 @@ import React, { Dispatch, FunctionComponent } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
-import FileUploadIcon from '../../Images/Icons/File_Upload.svg';
+import FileUploadIcon from '../../Images/Icons/File_Upload_Icon.svg';
 
 interface TextWithButtonProps {
     inputValue: string;

@@ -45,7 +45,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         .then(() => {
                             setShowSpinner(false);
                             navigation.push(
-                                'AppStack' as never,
+                                'HomeStack' as never,
                                 {
                                     screen: 'HomePage',
                                 } as never,

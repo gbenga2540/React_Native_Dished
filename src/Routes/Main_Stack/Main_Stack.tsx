@@ -4,14 +4,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthStack from '../Auth_Stack/Auth_Stack';
 import OnboardingStack from '../Onboarding_Stack/Onboarding_Stack';
-import AppStack from '../App_Stack/App_Stack';
+import HomeStack from '../Home_Stack/Home_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
 
 type RootStackParamList = {
     Home: undefined;
     AuthStack: {};
     OnboardingStack: {};
-    AppStack: {};
+    HomeStack: {};
     ErrorPage: {
         error_mssg: string;
         svr_error_mssg: string;
@@ -50,7 +50,6 @@ const MainStack: FunctionComponent = () => {
             <Main_Stack.Navigator
                 screenOptions={{
                     headerShown: false,
-                    animation: 'slide_from_right',
                 }}
                 initialRouteName={
                     showOnboarding ? 'OnboardingStack' : 'AuthStack'
@@ -70,8 +69,8 @@ const MainStack: FunctionComponent = () => {
                     }}
                 />
                 <Main_Stack.Screen
-                    name="AppStack"
-                    component={AppStack}
+                    name="HomeStack"
+                    component={HomeStack}
                     options={{
                         headerShown: false,
                     }}
