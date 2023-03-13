@@ -16,6 +16,7 @@ import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import auth from '@react-native-firebase/auth';
+import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -123,10 +124,17 @@ const SignUpPage: FunctionComponent = () => {
                     error_mssg: 'Password must not be less than six!',
                 });
             }
+        } else if (email?.length > 8) {
+            const phone_no = phone_no_converter({
+                phone_no: email,
+                country_code: '234',
+            });
+            console.log(phone_no);
         } else {
             error_handler({
                 navigation: navigation,
-                error_mssg: 'Please, input a valid Email Address!',
+                error_mssg:
+                    'Please, input a valid Email Address or Mobile Number to proceed!',
             });
         }
     };
@@ -150,11 +158,12 @@ const SignUpPage: FunctionComponent = () => {
                 </View>
                 <View style={styles.s_m_input_cont}>
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
-                        Email
+                        Email/Phone
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
+                        placeHolderText="johndoe@gmail.com / 08011223344"
                     />
                     <Text style={[styles.s_m_input_text, { marginTop: 20 }]}>
                         Password

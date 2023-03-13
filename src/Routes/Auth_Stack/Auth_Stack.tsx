@@ -13,6 +13,7 @@ import VerifyConsumerPage from '../../Screens/Verify_Consumer_Page/Verify_Consum
 import FingerprintLoginPage from '../../Screens/Fingerprint_Login_Page/Fingerprint_Login_Page';
 import SelectProfilePage from '../../Screens/Select_Profile_Page/Select_Profile_Page';
 import VerifyMailPage from '../../Screens/Verify_Mail_Page/Verify_Mail_Page';
+import SelectDPPage from '../../Screens/Select_DP_Page/Select_DP_Page';
 
 type RootStackParamList = {
     Home: undefined;
@@ -27,6 +28,7 @@ type RootStackParamList = {
     VerifyOTPPage: {};
     SignInPage: {};
     VerifyMailPage: {};
+    SelectDPPage: {};
 };
 
 const Auth_Stack = createNativeStackNavigator<RootStackParamList>();
@@ -98,6 +100,13 @@ const AuthStack: FunctionComponent = () => {
                 <Auth_Stack.Screen
                     name="VerifyMailPage"
                     component={VerifyMailPage}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Auth_Stack.Screen
+                    name="SelectDPPage"
+                    component={SelectDPPage}
                     options={{
                         headerShown: false,
                     }}

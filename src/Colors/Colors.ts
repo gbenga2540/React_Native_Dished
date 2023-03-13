@@ -12,6 +12,13 @@ const Colors = () => {
         Blue: '#6891FA',
         Dot: '#C4C4C4',
         LightPink: '#F29395',
+        DarkGrey: '#3A3A3A',
+        LightGrey: '#CBCBD4',
+        LightGreen: '#EAF8EC',
+        Green: '#51B960',
+        MeduimGrey: '#A6A6AA',
+        LightBlue: '#ECF6FF',
+        MeduimBlue: '#5FA1D5',
     };
 };
 

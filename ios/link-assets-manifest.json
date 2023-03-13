@@ -3,7 +3,19 @@
   "data": [
     {
       "path": "src/Fonts/Fonts.ts",
-      "sha1": "cd6ac83ab8a1b94f442642a6fd687823018a75d7"
+      "sha1": "e48b61d18caacb1b25819f63f74c8cc6e9993d4f"
+    },
+    {
+      "path": "src/Fonts/Lato-Black.ttf",
+      "sha1": "a001eb827743636e04f8efa7d4aeedf0541c46ac"
+    },
+    {
+      "path": "src/Fonts/Lato-Bold.ttf",
+      "sha1": "542498221d97bee5bdbccf86ee8890bf8e8005c9"
+    },
+    {
+      "path": "src/Fonts/Lato-Regular.ttf",
+      "sha1": "e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3"
     },
     {
       "path": "src/Fonts/Poppins-Bold.ttf",

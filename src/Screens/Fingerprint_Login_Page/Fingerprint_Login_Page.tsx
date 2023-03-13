@@ -26,6 +26,7 @@ import firestore from '@react-native-firebase/firestore';
 import { FIREBASE_USERS_COLLECTION } from '@env';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
+import storage from '@react-native-firebase/storage';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -56,12 +57,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         error_handler({
                             navigation: navigation,
                             error_mssg:
-                                "An Error occures while trying to verify User's Information on the Server.",
+                                "An Error occured while trying to verify User's Information on the Server.",
                             svr_error_mssg: err?.code as string,
                         });
                     }
                 })
-                .then(info_res => {
+                .then(async info_res => {
                     if (
                         info_res?.data() === undefined ||
                         info_res?.data() === null ||
@@ -70,11 +71,54 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         setShowSpinner(false);
                         navigation.navigate('SelectProfilePage' as never);
                     } else {
-                        setShowSpinner(false);
-                        navigation.push(
-                            'HomeStack' as never,
-                            { screen: 'HomePage' } as never,
+                        const dp_ref = storage().ref(
+                            `Users_Display_Picture/${
+                                auth().currentUser?.uid
+                            }/dp.jpeg`,
                         );
+
+                        try {
+                            await dp_ref
+                                .getDownloadURL()
+                                .catch(err => {
+                                    if (
+                                        err &&
+                                        err?.code === 'storage/object-not-found'
+                                    ) {
+                                        setShowSpinner(false);
+                                    } else {
+                                        setShowSpinner(false);
+                                        error_handler({
+                                            navigation: navigation,
+                                            error_mssg:
+                                                "An Error occured while trying to verify User's Information on the Server.",
+                                            svr_error_mssg: err?.code,
+                                        });
+                                    }
+                                })
+                                .then(res => {
+                                    if (res === null || res === undefined) {
+                                        setShowSpinner(false);
+                                        navigation.push(
+                                            'AuthStack' as never,
+                                            { screen: 'SelectDPPage' } as never,
+                                        );
+                                    } else {
+                                        setShowSpinner(false);
+                                        navigation.push(
+                                            'HomeStack' as never,
+                                            { screen: 'HomePage' } as never,
+                                        );
+                                    }
+                                });
+                        } catch (error) {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    "An Error occured while trying to verify User's Information on the Server.",
+                            });
+                        }
                     }
                 });
         } catch (error) {
@@ -82,7 +126,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
             error_handler({
                 navigation: navigation,
                 error_mssg:
-                    "An Error occures while trying to verify User's Information on the Server.",
+                    "An Error occured while trying to verify User's Information on the Server.",
             });
         }
     };
@@ -490,11 +534,24 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             inputValue={password}
                             setInputValue={setPassword}
                         />
+                        <View style={styles.f_m_fp}>
+                            <TextButton
+                                buttonText="Forgot Password"
+                                marginLeft={3}
+                                textColor={Colors().InputText}
+                                isFontLight={true}
+                                execFunc={() =>
+                                    navigation.navigate(
+                                        'ForgotPasswordPage' as never,
+                                    )
+                                }
+                            />
+                        </View>
                         <BasicButton
                             execFunc={() => manual_authenticate()}
                             buttonText="Login"
                             buttonHeight={55}
-                            marginTop={15}
+                            marginTop={10}
                             marginBottom={10}
                         />
                         <View style={styles.f_m_acc}>
@@ -569,5 +626,10 @@ const styles = StyleSheet.create({
     f_m_acc_text: {
         fontFamily: fonts.Poppins_400,
         color: Colors().InputTextGrey,
+    },
+    f_m_fp: {
+        marginTop: 20,
+        marginBottom: 0,
+        marginLeft: 'auto',
     },
 });

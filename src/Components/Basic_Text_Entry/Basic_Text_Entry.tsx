@@ -1,4 +1,4 @@
-import React, { Dispatch, FunctionComponent } from 'react';
+import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
@@ -6,7 +6,7 @@ import Colors from '../../Colors/Colors';
 interface BasicTextEntryProps {
     inputValue: string;
     placeHolderText?: string;
-    setInputValue: Dispatch<React.SetStateAction<string>>;
+    setInputValue: Dispatch<SetStateAction<string>>;
 }
 
 const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({

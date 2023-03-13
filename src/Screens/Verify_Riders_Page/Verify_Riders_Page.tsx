@@ -47,9 +47,9 @@ const VerifyRidersPage: FunctionComponent = () => {
                         .then(() => {
                             setShowSpinner(false);
                             navigation.push(
-                                'HomeStack' as never,
+                                'AuthStack' as never,
                                 {
-                                    screen: 'HomePage',
+                                    screen: 'SelectDPPage',
                                 } as never,
                             );
                         })

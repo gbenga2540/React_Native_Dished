@@ -31,11 +31,12 @@ const ForgotPasswordPage: FunctionComponent = () => {
                             styles.f_p_input_text,
                             { marginTop: 26, marginBottom: 5 },
                         ]}>
-                        Email
+                        Email/Phone
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
+                        placeHolderText="johndoe@gmail.com / 08011223344"
                     />
                     <BasicButton
                         buttonText="Send OTP"

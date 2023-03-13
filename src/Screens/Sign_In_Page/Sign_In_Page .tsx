@@ -19,6 +19,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FIREBASE_USERS_COLLECTION } from '@env';
+import storage from '@react-native-firebase/storage';
 
 const SignInPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -39,12 +40,12 @@ const SignInPage: FunctionComponent = () => {
                         error_handler({
                             navigation: navigation,
                             error_mssg:
-                                "An Error occures while trying to verify User's Information on the Server.",
+                                "An Error occured while trying to verify User's Information on the Server.",
                             svr_error_mssg: err?.code as string,
                         });
                     }
                 })
-                .then(info_res => {
+                .then(async info_res => {
                     if (
                         info_res?.data() === undefined ||
                         info_res?.data() === null ||
@@ -53,11 +54,54 @@ const SignInPage: FunctionComponent = () => {
                         setShowSpinner(false);
                         navigation.navigate('SelectProfilePage' as never);
                     } else {
-                        setShowSpinner(false);
-                        navigation.push(
-                            'HomeStack' as never,
-                            { screen: 'HomePage' } as never,
+                        const dp_ref = storage().ref(
+                            `Users_Display_Picture/${
+                                auth().currentUser?.uid
+                            }/dp.jpeg`,
                         );
+
+                        try {
+                            await dp_ref
+                                .getDownloadURL()
+                                .catch(err => {
+                                    if (
+                                        err &&
+                                        err?.code === 'storage/object-not-found'
+                                    ) {
+                                        setShowSpinner(false);
+                                    } else {
+                                        setShowSpinner(false);
+                                        error_handler({
+                                            navigation: navigation,
+                                            error_mssg:
+                                                "An Error occured while trying to verify User's Information on the Server.",
+                                            svr_error_mssg: err?.code,
+                                        });
+                                    }
+                                })
+                                .then(res => {
+                                    if (res === null || res === undefined) {
+                                        setShowSpinner(false);
+                                        navigation.push(
+                                            'AuthStack' as never,
+                                            { screen: 'SelectDPPage' } as never,
+                                        );
+                                    } else {
+                                        setShowSpinner(false);
+                                        navigation.push(
+                                            'HomeStack' as never,
+                                            { screen: 'HomePage' } as never,
+                                        );
+                                    }
+                                });
+                        } catch (error) {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    "An Error occured while trying to verify User's Information on the Server.",
+                            });
+                        }
                     }
                 });
         } catch (error) {
@@ -65,7 +109,7 @@ const SignInPage: FunctionComponent = () => {
             error_handler({
                 navigation: navigation,
                 error_mssg:
-                    "An Error occures while trying to verify User's Information on the Server.",
+                    "An Error occured while trying to verify User's Information on the Server.",
             });
         }
     };
@@ -171,11 +215,12 @@ const SignInPage: FunctionComponent = () => {
                 </View>
                 <View style={styles.s_m_input_cont}>
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
-                        Email
+                        Email/Phone
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
+                        placeHolderText="johndoe@gmail.com / 08011223344"
                     />
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
                         Password
