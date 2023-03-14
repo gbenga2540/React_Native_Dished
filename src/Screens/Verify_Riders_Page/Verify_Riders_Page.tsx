@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 import { FIREBASE_USERS_COLLECTION } from '@env';
+import storage from '@react-native-firebase/storage';
 
 const VerifyRidersPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -32,26 +33,17 @@ const VerifyRidersPage: FunctionComponent = () => {
             phoneNo?.length > 0 &&
             guarantor?.length > 0
         ) {
-            if (auth()?.currentUser?.email) {
+            if (auth()?.currentUser?.uid) {
                 setShowSpinner(true);
                 try {
                     firestore()
                         .collection(FIREBASE_USERS_COLLECTION)
-                        .doc(auth()?.currentUser?.email as string)
+                        .doc(auth()?.currentUser?.uid as string)
                         .set({
                             fullName: fullName?.trim(),
                             phoneNo: phoneNo?.trim(),
                             guarantor: guarantor?.trim(),
                             accountType: Sign_Up_Identity_Data[1]?.value,
-                        })
-                        .then(() => {
-                            setShowSpinner(false);
-                            navigation.push(
-                                'AuthStack' as never,
-                                {
-                                    screen: 'SelectDPPage',
-                                } as never,
-                            );
                         })
                         .catch(err => {
                             setShowSpinner(false);
@@ -61,6 +53,68 @@ const VerifyRidersPage: FunctionComponent = () => {
                                     "An error occured while uploading User's information to the server.",
                                 svr_error_mssg: err?.code as string,
                             });
+                        })
+                        .then(async () => {
+                            if (auth()?.currentUser?.uid) {
+                                const dp_ref = storage().ref(
+                                    `Users_Display_Picture/${
+                                        auth().currentUser?.uid
+                                    }/dp.jpeg`,
+                                );
+                                try {
+                                    await dp_ref
+                                        .getDownloadURL()
+                                        .catch(err => {
+                                            if (
+                                                err &&
+                                                err?.code ===
+                                                    'storage/object-not-found'
+                                            ) {
+                                                setShowSpinner(false);
+                                            } else {
+                                                setShowSpinner(false);
+                                                error_handler({
+                                                    navigation: navigation,
+                                                    error_mssg:
+                                                        "An Error occured while trying to verify User's Information on the Server.",
+                                                    svr_error_mssg: err?.code,
+                                                });
+                                            }
+                                        })
+                                        .then(res => {
+                                            if (
+                                                res === null ||
+                                                res === undefined
+                                            ) {
+                                                setShowSpinner(false);
+                                                navigation.push(
+                                                    'AuthStack' as never,
+                                                    {
+                                                        screen: 'SelectDPPage',
+                                                    } as never,
+                                                );
+                                            } else {
+                                                setShowSpinner(false);
+                                                navigation.push(
+                                                    'HomeStack' as never,
+                                                    {
+                                                        screen: 'HomePage',
+                                                    } as never,
+                                                );
+                                            }
+                                        });
+                                } catch (error) {
+                                    setShowSpinner(false);
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            "An Error occured while trying to verify User's Information on the Server.",
+                                    });
+                                }
+                            } else {
+                                setShowSpinner(false);
+                                navigation.push('SignInPage' as never);
+                            }
                         });
                 } catch (error) {
                     setShowSpinner(false);

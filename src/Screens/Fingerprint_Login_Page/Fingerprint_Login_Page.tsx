@@ -49,7 +49,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
         try {
             firestore()
                 .collection(FIREBASE_USERS_COLLECTION)
-                .doc(auth()?.currentUser?.email as string)
+                .doc(auth()?.currentUser?.uid as string)
                 .get()
                 .catch(err => {
                     if (err) {
@@ -76,7 +76,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 auth().currentUser?.uid
                             }/dp.jpeg`,
                         );
-
                         try {
                             await dp_ref
                                 .getDownloadURL()
@@ -318,11 +317,11 @@ const FingerprintLoginPage: FunctionComponent = () => {
 
         const get_user_name_from_svr = () => {
             setRender(true);
-            if (auth().currentUser) {
+            if (auth().currentUser?.uid) {
                 try {
                     firestore()
                         .collection(FIREBASE_USERS_COLLECTION)
-                        .doc(auth().currentUser?.email as string)
+                        .doc(auth().currentUser?.uid as string)
                         .get()
                         .then(user_info => {
                             if (

@@ -32,7 +32,7 @@ const SignInPage: FunctionComponent = () => {
         try {
             firestore()
                 .collection(FIREBASE_USERS_COLLECTION)
-                .doc(auth()?.currentUser?.email as string)
+                .doc(auth()?.currentUser?.uid as string)
                 .get()
                 .catch(err => {
                     if (err) {
@@ -59,7 +59,6 @@ const SignInPage: FunctionComponent = () => {
                                 auth().currentUser?.uid
                             }/dp.jpeg`,
                         );
-
                         try {
                             await dp_ref
                                 .getDownloadURL()
