@@ -58,7 +58,9 @@ const AuthStack: FunctionComponent = () => {
                 }}
                 initialRouteName={
                     user
-                        ? user?.emailVerified
+                        ? user?.email === null && user?.phoneNumber
+                            ? 'FingerprintLoginPage'
+                            : user?.email && user?.emailVerified
                             ? 'FingerprintLoginPage'
                             : 'VerifyMailPage'
                         : 'SignUpPage'

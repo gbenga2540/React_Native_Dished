@@ -15,10 +15,13 @@ import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import { validate_phone_no } from '../../Utils/Validate_Phone_No/Validate_Phone_No';
+import { Sign_Up_Type } from '../../Data/Sign_Up_Type/Sign_Up_Type';
+import RNDropDown from '../../Components/RN_Drop_Down/RN_Drop_Down';
+import { otp_page_type } from '../../Data/OTP_Page_Type/OTP_Page_Type';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -26,9 +29,25 @@ const SignUpPage: FunctionComponent = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [signUpType, setSignUpType] = useState<string>(
+        Sign_Up_Type[0]?.value,
+    );
 
     const verify_mail_page = () => {
         navigation.navigate('VerifyMailPage' as never);
+    };
+    const verify_otp_page = ({
+        userCredential,
+    }: {
+        userCredential: FirebaseAuthTypes.ConfirmationResult;
+    }) => {
+        navigation.navigate(
+            'VerifyOTPPage' as never,
+            {
+                phone_auth: JSON.stringify(userCredential),
+                page_type: otp_page_type?.sign_up,
+            } as never,
+        );
     };
 
     const send_email_ver = async () => {
@@ -126,47 +145,86 @@ const SignUpPage: FunctionComponent = () => {
                     error_mssg: 'Password must not be less than six!',
                 });
             }
+            // Email shows because it was integrated first. This is to avoid renaming the variables.
         } else if (email?.length > 8) {
             const phone_no = phone_no_converter({
                 phone_no: email,
                 country_code: '234',
             });
             if (validate_phone_no({ phone_no: phone_no })) {
-                if (password?.length >= 6) {
-                    setShowSpinner(true);
-                    try {
-                        await auth()
-                            ?.signInWithPhoneNumber(phone_no)
-                            .catch(err => {
+                setShowSpinner(true);
+                try {
+                    await auth()
+                        ?.signInWithPhoneNumber(phone_no)
+                        .catch(err => {
+                            setShowSpinner(false);
+                            if (err) {
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to register User!',
+                                    svr_error_mssg: err?.code as string,
+                                });
+                            }
+                        })
+                        .then(async userCredential => {
+                            if (
+                                userCredential === null ||
+                                userCredential === undefined
+                            ) {
                                 setShowSpinner(false);
-                                if (err) {
-                                    error_handler({
-                                        navigation: navigation,
-                                        error_mssg:
-                                            'An error occured while trying to register User!',
-                                        svr_error_mssg: err?.code as string,
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to register User!',
+                                });
+                            } else {
+                                const user_data = {
+                                    phone_number: phone_no,
+                                };
+                                try {
+                                    await SInfo.setItem(
+                                        SECURE_STORAGE_USER_INFO,
+                                        JSON.stringify({ ...user_data }),
+                                        {
+                                            sharedPreferencesName:
+                                                SECURE_STORAGE_NAME,
+                                            keychainService:
+                                                SECURE_STORAGE_NAME,
+                                        },
+                                    )
+                                        .then(() => {
+                                            setShowSpinner(false);
+                                            verify_otp_page({
+                                                userCredential: userCredential,
+                                            });
+                                        })
+                                        .catch(error => {
+                                            if (error) {
+                                                setShowSpinner(false);
+                                                verify_otp_page({
+                                                    userCredential:
+                                                        userCredential,
+                                                });
+                                            }
+                                        });
+                                } catch (err) {
+                                    setShowSpinner(false);
+                                    verify_otp_page({
+                                        userCredential: userCredential,
                                     });
                                 }
-                            })
-                            .then(res => {
-                                setShowSpinner(false);
-                                console.log(res);
-                            })
-                            .finally(() => {
-                                setShowSpinner(false);
-                            });
-                    } catch (error) {
-                        setShowSpinner(false);
-                        error_handler({
-                            navigation: navigation,
-                            error_mssg:
-                                'An error occured while trying to register User!',
+                            }
+                        })
+                        .finally(() => {
+                            setShowSpinner(false);
                         });
-                    }
-                } else {
+                } catch (error) {
+                    setShowSpinner(false);
                     error_handler({
                         navigation: navigation,
-                        error_mssg: 'Password must not be less than six!',
+                        error_mssg:
+                            'An error occured while trying to register User!',
                     });
                 }
             } else {
@@ -206,20 +264,39 @@ const SignUpPage: FunctionComponent = () => {
                 </View>
                 <View style={styles.s_m_input_cont}>
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
-                        Email/Phone
+                        Register with
+                    </Text>
+                    <RNDropDown
+                        dropdownData={Sign_Up_Type}
+                        value={signUpType}
+                        setValue={setSignUpType}
+                    />
+                    <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
+                        {signUpType === Sign_Up_Type[0]?.value
+                            ? 'Email'
+                            : 'Phone Number'}
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
-                        placeHolderText="johndoe@gmail.com / 08011223344"
+                        placeHolderText={
+                            signUpType === Sign_Up_Type[0]?.value
+                                ? 'johndoe@gmail.com'
+                                : '08011223344'
+                        }
                     />
-                    <Text style={[styles.s_m_input_text, { marginTop: 20 }]}>
-                        Password
-                    </Text>
-                    <SecureTextEntry
-                        inputValue={password}
-                        setInputValue={setPassword}
-                    />
+                    {signUpType === Sign_Up_Type[0]?.value && (
+                        <Text
+                            style={[styles.s_m_input_text, { marginTop: 20 }]}>
+                            Password
+                        </Text>
+                    )}
+                    {signUpType === Sign_Up_Type[0]?.value && (
+                        <SecureTextEntry
+                            inputValue={password}
+                            setInputValue={setPassword}
+                        />
+                    )}
                     <BasicButton
                         buttonText="Get Started"
                         buttonHeight={52}
@@ -228,12 +305,6 @@ const SignUpPage: FunctionComponent = () => {
                         execFunc={() => on_get_started()}
                     />
                     <TextDivider text={'or'} />
-                    <BasicLogoButton
-                        logoName="Facebook"
-                        inputText="Sign Up with Facebook"
-                        marginTop={32}
-                        execFunc={() => console.log('facebook')}
-                    />
                     <BasicLogoButton
                         logoName="Google"
                         inputText="Sign Up with Google"

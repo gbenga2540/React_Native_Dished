@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
@@ -33,17 +32,17 @@ const ForgotPasswordPage: FunctionComponent = () => {
                             styles.f_p_input_text,
                             { marginTop: 26, marginBottom: 5 },
                         ]}>
-                        Email/Phone
+                        Email
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
-                        placeHolderText="johndoe@gmail.com / 08011223344"
+                        placeHolderText="johndoe@gmail.com"
                     />
                     <BasicButton
                         buttonText="Send OTP"
                         buttonHeight={52}
-                        marginTop={60}
+                        marginTop={40}
                         marginBottom={16}
                         execFunc={() =>
                             navigation.navigate('FingerprintLoginPage' as never)

@@ -15,12 +15,17 @@ import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FIREBASE_USERS_COLLECTION } from '@env';
 import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
+import { validate_phone_no } from '../../Utils/Validate_Phone_No/Validate_Phone_No';
+import { Sign_Up_Type } from '../../Data/Sign_Up_Type/Sign_Up_Type';
+import RNDropDown from '../../Components/RN_Drop_Down/RN_Drop_Down';
+import { otp_page_type } from '../../Data/OTP_Page_Type/OTP_Page_Type';
 
 const SignInPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -28,6 +33,23 @@ const SignInPage: FunctionComponent = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [signUpType, setSignUpType] = useState<string>(
+        Sign_Up_Type[0]?.value,
+    );
+
+    const verify_otp_page = ({
+        userCredential,
+    }: {
+        userCredential: FirebaseAuthTypes.ConfirmationResult;
+    }) => {
+        navigation.navigate(
+            'VerifyOTPPage' as never,
+            {
+                phone_auth: JSON.stringify(userCredential),
+                page_type: otp_page_type?.sign_in,
+            } as never,
+        );
+    };
 
     const check_user_info = () => {
         try {
@@ -61,6 +83,7 @@ const SignInPage: FunctionComponent = () => {
                             }/dp.jpeg`,
                         );
                         try {
+                            let checkError: boolean = false;
                             await dp_ref
                                 .getDownloadURL()
                                 .catch(err => {
@@ -70,6 +93,7 @@ const SignInPage: FunctionComponent = () => {
                                     ) {
                                         setShowSpinner(false);
                                     } else {
+                                        checkError = true;
                                         setShowSpinner(false);
                                         error_handler({
                                             navigation: navigation,
@@ -80,18 +104,24 @@ const SignInPage: FunctionComponent = () => {
                                     }
                                 })
                                 .then(res => {
-                                    if (res === null || res === undefined) {
-                                        setShowSpinner(false);
-                                        navigation.push(
-                                            'AuthStack' as never,
-                                            { screen: 'SelectDPPage' } as never,
-                                        );
+                                    if (!checkError) {
+                                        if (res === null || res === undefined) {
+                                            setShowSpinner(false);
+                                            navigation.push(
+                                                'AuthStack' as never,
+                                                {
+                                                    screen: 'SelectDPPage',
+                                                } as never,
+                                            );
+                                        } else {
+                                            setShowSpinner(false);
+                                            navigation.push(
+                                                'HomeStack' as never,
+                                                { screen: 'HomePage' } as never,
+                                            );
+                                        }
                                     } else {
                                         setShowSpinner(false);
-                                        navigation.push(
-                                            'HomeStack' as never,
-                                            { screen: 'HomePage' } as never,
-                                        );
                                     }
                                 });
                         } catch (error) {
@@ -188,6 +218,99 @@ const SignInPage: FunctionComponent = () => {
                     error_mssg: 'Password field cannot be empty!',
                 });
             }
+        } else if (email?.length > 8) {
+            const phone_no = phone_no_converter({
+                phone_no: email,
+                country_code: '234',
+            });
+            if (validate_phone_no({ phone_no: phone_no })) {
+                setShowSpinner(true);
+                setTimeout(async () => {
+                    try {
+                        await auth()
+                            ?.signInWithPhoneNumber(phone_no)
+                            .catch(err => {
+                                setShowSpinner(false);
+                                if (err) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to sign in User!',
+                                        svr_error_mssg: err?.code as string,
+                                    });
+                                }
+                            })
+                            .then(async userCredential => {
+                                if (
+                                    userCredential === null ||
+                                    userCredential === undefined
+                                ) {
+                                    setShowSpinner(false);
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to sign in User!',
+                                    });
+                                } else {
+                                    setShowSpinner(false);
+                                    const user_data = {
+                                        phone_number: phone_no,
+                                    };
+                                    try {
+                                        await SInfo.setItem(
+                                            SECURE_STORAGE_USER_INFO,
+                                            JSON.stringify({ ...user_data }),
+                                            {
+                                                sharedPreferencesName:
+                                                    SECURE_STORAGE_NAME,
+                                                keychainService:
+                                                    SECURE_STORAGE_NAME,
+                                            },
+                                        )
+                                            .then(() => {
+                                                setShowSpinner(false);
+                                                verify_otp_page({
+                                                    userCredential:
+                                                        userCredential,
+                                                });
+                                            })
+                                            .catch(error => {
+                                                if (error) {
+                                                    setShowSpinner(false);
+                                                    verify_otp_page({
+                                                        userCredential:
+                                                            userCredential,
+                                                    });
+                                                }
+                                            });
+                                    } catch (err) {
+                                        setShowSpinner(false);
+                                        verify_otp_page({
+                                            userCredential: userCredential,
+                                        });
+                                    }
+                                }
+                            })
+                            .finally(() => {
+                                setShowSpinner(false);
+                            });
+                    } catch (error) {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while trying to sign in User!',
+                        });
+                    }
+                }, 500);
+            } else {
+                setShowSpinner(false);
+                error_handler({
+                    navigation: navigation,
+                    error_mssg:
+                        'Please, input a valid Mobile Number to proceed!',
+                });
+            }
         } else {
             error_handler({
                 navigation: navigation,
@@ -217,47 +340,64 @@ const SignInPage: FunctionComponent = () => {
                 </View>
                 <View style={styles.s_m_input_cont}>
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
-                        Email/Phone
+                        Login with
+                    </Text>
+                    <RNDropDown
+                        dropdownData={Sign_Up_Type}
+                        value={signUpType}
+                        setValue={setSignUpType}
+                    />
+                    <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
+                        {signUpType === Sign_Up_Type[0]?.value
+                            ? 'Email'
+                            : 'Phone Number'}
                     </Text>
                     <BasicTextEntry
                         inputValue={email}
                         setInputValue={setEmail}
-                        placeHolderText="johndoe@gmail.com / 08011223344"
+                        placeHolderText={
+                            signUpType === Sign_Up_Type[0]?.value
+                                ? 'johndoe@gmail.com'
+                                : '08011223344'
+                        }
                     />
-                    <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
-                        Password
-                    </Text>
-                    <SecureTextEntry
-                        inputValue={password}
-                        setInputValue={setPassword}
-                    />
+                    {signUpType === Sign_Up_Type[0]?.value && (
+                        <Text
+                            style={[styles.s_m_input_text, { marginTop: 26 }]}>
+                            Password
+                        </Text>
+                    )}
+                    {signUpType === Sign_Up_Type[0]?.value && (
+                        <SecureTextEntry
+                            inputValue={password}
+                            setInputValue={setPassword}
+                        />
+                    )}
                     <BasicButton
                         buttonText="Login"
                         buttonHeight={52}
                         marginTop={23}
-                        marginBottom={16}
+                        marginBottom={
+                            signUpType === Sign_Up_Type[0]?.value ? 16 : 32
+                        }
                         execFunc={() => sign_in_user()}
                     />
-                    <View style={styles.s_m_fp}>
-                        <TextButton
-                            buttonText="Forgot Password"
-                            marginLeft={3}
-                            textColor={Colors().InputText}
-                            isFontLight={true}
-                            execFunc={() =>
-                                navigation.navigate(
-                                    'ForgotPasswordPage' as never,
-                                )
-                            }
-                        />
-                    </View>
+                    {signUpType === Sign_Up_Type[0]?.value && (
+                        <View style={styles.s_m_fp}>
+                            <TextButton
+                                buttonText="Forgot Password"
+                                marginLeft={3}
+                                textColor={Colors().InputText}
+                                isFontLight={true}
+                                execFunc={() =>
+                                    navigation.navigate(
+                                        'ForgotPasswordPage' as never,
+                                    )
+                                }
+                            />
+                        </View>
+                    )}
                     <TextDivider text={'or'} marginBottom={0} />
-                    <BasicLogoButton
-                        logoName="Facebook"
-                        inputText="Sign In with Facebook"
-                        marginTop={25}
-                        execFunc={() => console.log('facebook')}
-                    />
                     <BasicLogoButton
                         logoName="Google"
                         inputText="Sign In with Google"

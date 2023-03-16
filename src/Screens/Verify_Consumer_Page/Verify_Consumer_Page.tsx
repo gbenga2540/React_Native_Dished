@@ -10,7 +10,7 @@ import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FIREBASE_USERS_COLLECTION } from '@env';
-import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Identity';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
@@ -134,7 +134,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
-        if (!auth()?.currentUser?.email) {
+        if (!auth()?.currentUser?.email && !auth()?.currentUser?.phoneNumber) {
             navigation.push('SignInPage' as never);
         }
     }, [navigation]);

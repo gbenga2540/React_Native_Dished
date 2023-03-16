@@ -23,10 +23,12 @@ import TextButton from '../../Components/Text_Button/Text_Button';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { FIREBASE_USERS_COLLECTION } from '@env';
-import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Identity';
 import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
 import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
+import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -40,9 +42,11 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     interface userInfoProps {
         user_password: string;
+        phone_number: string;
     }
     const [userInfo, setUserInfo] = useState<userInfoProps>({
         user_password: '',
+        phone_number: '',
     });
 
     const check_user_info = () => {
@@ -76,6 +80,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 auth().currentUser?.uid
                             }/dp.jpeg`,
                         );
+                        let checkError: boolean = false;
                         try {
                             await dp_ref
                                 .getDownloadURL()
@@ -86,6 +91,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     ) {
                                         setShowSpinner(false);
                                     } else {
+                                        checkError = true;
                                         setShowSpinner(false);
                                         error_handler({
                                             navigation: navigation,
@@ -96,18 +102,24 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     }
                                 })
                                 .then(res => {
-                                    if (res === null || res === undefined) {
-                                        setShowSpinner(false);
-                                        navigation.push(
-                                            'AuthStack' as never,
-                                            { screen: 'SelectDPPage' } as never,
-                                        );
+                                    if (!checkError) {
+                                        if (res === null || res === undefined) {
+                                            setShowSpinner(false);
+                                            navigation.push(
+                                                'AuthStack' as never,
+                                                {
+                                                    screen: 'SelectDPPage',
+                                                } as never,
+                                            );
+                                        } else {
+                                            setShowSpinner(false);
+                                            navigation.push(
+                                                'HomeStack' as never,
+                                                { screen: 'HomePage' } as never,
+                                            );
+                                        }
                                     } else {
                                         setShowSpinner(false);
-                                        navigation.push(
-                                            'HomeStack' as never,
-                                            { screen: 'HomePage' } as never,
-                                        );
                                     }
                                 });
                         } catch (error) {
@@ -200,6 +212,23 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         });
                     }
                 }, 500);
+            } else if (auth()?.currentUser?.phoneNumber) {
+                setShowSpinner(true);
+                setTimeout(async () => {
+                    if (
+                        phone_no_converter({ phone_no: password }) ===
+                        userInfo?.phone_number
+                    ) {
+                        check_user_info();
+                    } else {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'Incorrect Phone Number! Please input the correct phone number or Login manually in the SignIn Page.',
+                        });
+                    }
+                }, 500);
             } else {
                 error_handler({
                     navigation: navigation,
@@ -225,6 +254,16 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             auth()?.currentUser?.email as string,
                             userInfo?.user_password,
                         )
+                        .catch(error => {
+                            setShowSpinner(false);
+                            if (error) {
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg: 'Unable to Sign In User!',
+                                    svr_error_mssg: error?.code as string,
+                                });
+                            }
+                        })
                         .then(userCredential => {
                             if (
                                 userCredential === null ||
@@ -241,16 +280,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             } else {
                                 check_user_info();
                             }
-                        })
-                        .catch(error => {
-                            setShowSpinner(false);
-                            if (error) {
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg: 'Unable to Sign In User!',
-                                    svr_error_mssg: error?.code as string,
-                                });
-                            }
                         });
                 } catch (err) {
                     setShowSpinner(false);
@@ -260,7 +289,22 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     });
                 }
             }, 500);
+        } else if (auth()?.currentUser?.phoneNumber) {
+            setShowSpinner(true);
+            setTimeout(async () => {
+                if (userInfo?.phone_number) {
+                    check_user_info();
+                } else {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg:
+                            'Incorrect Phone Number! Please Login manually in the SignIn Page.',
+                    });
+                }
+            }, 500);
         } else {
+            setShowSpinner(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Unable to retrieve User Information.',
@@ -370,7 +414,9 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 })
                     .then(async res => {
                         if (res === null || res === undefined) {
-                            navigation.navigate('SignUpPage' as never);
+                            if (auth().currentUser?.email) {
+                                navigation.navigate('SignUpPage' as never);
+                            }
                         } else {
                             const json_res = JSON.parse(res);
                             setUserInfo({ ...json_res });
@@ -379,11 +425,15 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     })
                     .catch(err => {
                         if (err) {
-                            navigation.navigate('SignUpPage' as never);
+                            if (auth().currentUser?.email) {
+                                navigation.navigate('SignUpPage' as never);
+                            }
                         }
                     });
             } catch (error) {
-                navigation.navigate('SignUpPage' as never);
+                if (auth().currentUser?.email) {
+                    navigation.navigate('SignUpPage' as never);
+                }
             }
         };
 
@@ -523,31 +573,49 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             </Text>
                         )}
                         <Text style={styles.f_m_txt3}>
-                            Or just use password instead
+                            {userInfo?.phone_number
+                                ? 'Or login using your Phone Number'
+                                : 'Or just use password instead'}
                         </Text>
-                        <SecureTextEntry
-                            placeHolderText="Enter your password"
-                            inputValue={password}
-                            setInputValue={setPassword}
-                        />
-                        <View style={styles.f_m_fp}>
-                            <TextButton
-                                buttonText="Forgot Password"
-                                marginLeft={3}
-                                textColor={Colors().InputText}
-                                isFontLight={true}
-                                execFunc={() =>
-                                    navigation.navigate(
-                                        'ForgotPasswordPage' as never,
-                                    )
-                                }
+                        {userInfo?.phone_number ? (
+                            <BasicTextEntry
+                                placeHolderText="Enter your Mobile Number"
+                                inputValue={password}
+                                setInputValue={setPassword}
                             />
-                        </View>
+                        ) : (
+                            <SecureTextEntry
+                                placeHolderText={'Enter your password'}
+                                inputValue={password}
+                                setInputValue={setPassword}
+                            />
+                        )}
+                        {(userInfo?.user_password ||
+                            !userInfo?.phone_number) && (
+                            <View style={styles.f_m_fp}>
+                                <TextButton
+                                    buttonText="Forgot Password"
+                                    marginLeft={3}
+                                    textColor={Colors().InputText}
+                                    isFontLight={true}
+                                    execFunc={() =>
+                                        navigation.navigate(
+                                            'ForgotPasswordPage' as never,
+                                        )
+                                    }
+                                />
+                            </View>
+                        )}
                         <BasicButton
                             execFunc={() => manual_authenticate()}
                             buttonText="Login"
                             buttonHeight={55}
-                            marginTop={10}
+                            marginTop={
+                                userInfo?.user_password ||
+                                !userInfo?.phone_number
+                                    ? 10
+                                    : 30
+                            }
                             marginBottom={10}
                         />
                         <View style={styles.f_m_acc}>

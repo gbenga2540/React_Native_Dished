@@ -12,7 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
-import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
+import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Identity';
 import { FIREBASE_USERS_COLLECTION } from '@env';
 import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
@@ -138,7 +138,7 @@ const VerifyRidersPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
-        if (!auth()?.currentUser?.email) {
+        if (!auth()?.currentUser?.email && !auth()?.currentUser?.phoneNumber) {
             navigation.push('SignInPage' as never);
         }
     }, [navigation]);
