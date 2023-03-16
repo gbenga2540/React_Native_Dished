@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
@@ -7,6 +7,7 @@ import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import RNDropDown from '../../Components/RN_Drop_Down/RN_Drop_Down';
 import { useNavigation } from '@react-navigation/native';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const SelectProfilePage: FunctionComponent = () => {
     const navigation = useNavigation();
@@ -33,9 +34,10 @@ const SelectProfilePage: FunctionComponent = () => {
 
     return (
         <View style={styles.signup_main}>
-            <StatusBar
-                barStyle={'light-content'}
+            <CustomStatusBar
+                barStyleLight={true}
                 backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
             />
             <ScrollView>
                 <View style={styles.top_cont}>

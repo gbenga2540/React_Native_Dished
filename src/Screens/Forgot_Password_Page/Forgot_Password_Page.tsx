@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 
@@ -7,6 +7,7 @@ import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import { useNavigation } from '@react-navigation/native';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const ForgotPasswordPage: FunctionComponent = () => {
     const [email, setEmail] = useState<string>('');
@@ -14,9 +15,10 @@ const ForgotPasswordPage: FunctionComponent = () => {
 
     return (
         <View style={styles.fp_main}>
-            <StatusBar
-                barStyle={'light-content'}
+            <CustomStatusBar
+                barStyleLight={true}
                 backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
             />
             <ScrollView>
                 <View style={styles.top_cont}>

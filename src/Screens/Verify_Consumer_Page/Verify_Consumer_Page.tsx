@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -14,6 +14,7 @@ import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const VerifyConsumerPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -140,13 +141,15 @@ const VerifyConsumerPage: FunctionComponent = () => {
 
     return (
         <View style={styles.vr_main}>
-            <StatusBar
-                barStyle={'light-content'}
-                backgroundColor={Colors().Primary}
-            />
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
+            />
+            <CustomStatusBar
+                showSpinner={showSpinner}
+                backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
+                barStyleLight={true}
             />
             <ScrollView>
                 <View style={styles.top_cont}>

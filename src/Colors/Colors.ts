@@ -2,6 +2,7 @@ const Colors = () => {
     return {
         Background: '#F5F5F5',
         Primary: '#AC6CF6',
+        PrimaryDim: 'rgb(35.1, 21.2, 51.3)',
         Secondary: '#F56606',
         White: '#FFFFFF',
         Black: '#000000',

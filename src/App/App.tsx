@@ -6,11 +6,12 @@
  */
 
 import React, { FunctionComponent, useEffect } from 'react';
-import { StatusBar, StyleSheet, View, Platform } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import Colors from '../Colors/Colors';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import MainStack from '../Routes/Main_Stack/Main_Stack';
+import CustomStatusBar from '../Components/Custom_Status_Bar/Custom_Status_Bar';
 // import HomeStack from '../Routes/Home_Stack/Home_Stack';
 
 const App: FunctionComponent = () => {
@@ -31,10 +32,7 @@ const App: FunctionComponent = () => {
                 styles.app_main,
                 { backgroundColor: Colors()?.Background },
             ]}>
-            <StatusBar
-                barStyle={'dark-content'}
-                backgroundColor={Colors().Background}
-            />
+            <CustomStatusBar />
             <NavigationContainer>
                 <MainStack />
                 {/* <HomeStack /> */}

@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
     ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -12,60 +11,65 @@ import LottieView from 'lottie-react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const ErrorPage: FunctionComponent = () => {
     const navigation = useNavigation();
     const route = useRoute<RouteProp<any>>();
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: Colors().Background }}>
-            <View style={styles.error_main}>
-                <StatusBar
-                    barStyle={'dark-content'}
-                    backgroundColor={Colors().Background}
-                />
-                <TouchableOpacity
-                    style={styles.e_m_bb}
-                    onPress={() =>
-                        navigation.canGoBack() && navigation.goBack()
-                    }>
-                    <Feather name="chevron-left" size={35} color={'black'} />
-                </TouchableOpacity>
-                <LottieView
-                    style={{
-                        transform: [{ scale: 1 }],
-                        minWidth: 280,
-                        minHeight: 280,
-                        maxWidth: 280,
-                        maxHeight: 280,
-                        position: 'relative',
-                        alignSelf: 'center',
-                    }}
-                    source={require('../../Animations/An_Error_Occured.json')}
-                    autoPlay
-                    loop={true}
-                    resizeMode="cover"
-                    speed={1.7}
-                />
-                <Text style={[styles.e_m_err_txt, styles.e_m_err_txt_h]}>
-                    Error!
-                </Text>
-                <Text style={styles.e_m_err_txt}>
-                    {route?.params?.error_mssg}
-                </Text>
-                <Text
-                    style={[
-                        styles.e_m_err_txt,
-                        {
-                            fontSize: 14,
-                            color: Colors().LightPink,
-                            marginTop: 50,
-                        },
-                    ]}>
-                    {route?.params?.svr_error_mssg || ''}
-                </Text>
-            </View>
-        </ScrollView>
+        <View style={{ flex: 1 }}>
+            <CustomStatusBar />
+            <ScrollView
+                style={{ flex: 1, backgroundColor: Colors().Background }}>
+                <View style={styles.error_main}>
+                    <TouchableOpacity
+                        style={styles.e_m_bb}
+                        onPress={() =>
+                            navigation.canGoBack() && navigation.goBack()
+                        }>
+                        <Feather
+                            name="chevron-left"
+                            size={35}
+                            color={'black'}
+                        />
+                    </TouchableOpacity>
+                    <LottieView
+                        style={{
+                            transform: [{ scale: 1 }],
+                            minWidth: 280,
+                            minHeight: 280,
+                            maxWidth: 280,
+                            maxHeight: 280,
+                            position: 'relative',
+                            alignSelf: 'center',
+                        }}
+                        source={require('../../Animations/An_Error_Occured.json')}
+                        autoPlay
+                        loop={true}
+                        resizeMode="cover"
+                        speed={1.7}
+                    />
+                    <Text style={[styles.e_m_err_txt, styles.e_m_err_txt_h]}>
+                        Error!
+                    </Text>
+                    <Text style={styles.e_m_err_txt}>
+                        {route?.params?.error_mssg}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.e_m_err_txt,
+                            {
+                                fontSize: 14,
+                                color: Colors().LightPink,
+                                marginTop: 50,
+                            },
+                        ]}>
+                        {route?.params?.svr_error_mssg || ''}
+                    </Text>
+                </View>
+            </ScrollView>
+        </View>
     );
 };
 

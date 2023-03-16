@@ -4,7 +4,6 @@ import {
     View,
     Text,
     ScrollView,
-    StatusBar,
     Image,
     TouchableOpacity,
 } from 'react-native';
@@ -21,6 +20,7 @@ import storage from '@react-native-firebase/storage';
 import { get_image_format } from '../../Utils/Get_Image_Format/Get_Image_Format';
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const SelectDPPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -166,13 +166,15 @@ const SelectDPPage: FunctionComponent = () => {
 
     return (
         <View style={styles.selectdp_main}>
-            <StatusBar
-                barStyle={'light-content'}
-                backgroundColor={Colors().Primary}
-            />
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
+            />
+            <CustomStatusBar
+                showSpinner={showSpinner}
+                backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
+                barStyleLight={true}
             />
             <ScrollView>
                 <View style={styles.top_cont}>

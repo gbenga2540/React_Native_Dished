@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import {
-    StatusBar,
     StyleSheet,
     Text,
     View,
@@ -27,6 +26,7 @@ import { FIREBASE_USERS_COLLECTION } from '@env';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
 import storage from '@react-native-firebase/storage';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -423,11 +423,8 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     showSpinner={showSpinner}
                     setShowSpinner={setShowSpinner}
                 />
+                <CustomStatusBar showSpinner={showSpinner} />
                 <ScrollView style={{ flex: 1 }}>
-                    <StatusBar
-                        barStyle={'dark-content'}
-                        backgroundColor={Colors().Background}
-                    />
                     <View style={styles.flp_main_cont}>
                         <Text style={styles.f_m_txt1}>{welcomeText}</Text>
                         <Text style={styles.f_m_txt2}>

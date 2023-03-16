@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -10,6 +10,7 @@ import auth from '@react-native-firebase/auth';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const VerifyMailPage: FunctionComponent = () => {
     const route = useRoute<RouteProp<any>>();
@@ -84,13 +85,15 @@ const VerifyMailPage: FunctionComponent = () => {
 
     return (
         <View style={styles.verify_mail_main}>
-            <StatusBar
-                barStyle={'light-content'}
-                backgroundColor={Colors().Primary}
-            />
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
+            />
+            <CustomStatusBar
+                showSpinner={showSpinner}
+                backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
+                barStyleLight={true}
             />
             <View style={styles.top_cont}>
                 <Text style={styles.top_cont_txt}>Verify Email</Text>

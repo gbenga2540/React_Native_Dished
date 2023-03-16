@@ -1,14 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../Colors/Colors';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const CartPage: FunctionComponent = () => {
     return (
         <View style={styles.cart_page_main}>
-            <StatusBar
-                backgroundColor={Colors().Background}
-                barStyle={'dark-content'}
-            />
+            <CustomStatusBar />
             <ScrollView style={{ flex: 1 }}>
                 <Text style={{ color: 'black' }}>Cart page for Dished!</Text>
             </ScrollView>

@@ -1,20 +1,22 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import OTPTextView from 'react-native-otp-textinput';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const VerifyOTPPage: FunctionComponent = () => {
     const [OTP, setOTP] = useState<string>('');
 
     return (
         <View style={styles.verify_otp_main}>
-            <StatusBar
-                barStyle={'light-content'}
+            <CustomStatusBar
+                barStyleLight={true}
                 backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
             />
             <ScrollView>
                 <View style={styles.top_cont}>

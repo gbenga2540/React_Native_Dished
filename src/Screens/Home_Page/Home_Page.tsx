@@ -1,9 +1,10 @@
 import React, { FunctionComponent, useState } from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Platform } from 'react-native';
 import Colors from '../../Colors/Colors';
 import DishCard from '../../Components/Dish_Card/Dish_Card';
 import { Dish_Props } from '../../Interface/Dish_Props/Dish_Props';
 import SearchBar from '../../Components/Search_Bar/Search_Bar';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const HomePage: FunctionComponent = () => {
     const dummy_data: Dish_Props = {
@@ -22,11 +23,12 @@ const HomePage: FunctionComponent = () => {
     const [searchText, setSearchText] = useState<string>('');
     return (
         <View style={styles.home_page_main}>
-            <StatusBar
-                backgroundColor={Colors().Background}
-                barStyle={'dark-content'}
-            />
-            <ScrollView style={{ flex: 1, paddingTop: 80 }}>
+            <CustomStatusBar />
+            <ScrollView
+                style={{
+                    flex: 1,
+                    paddingTop: Platform?.OS === 'ios' ? 80 : 35,
+                }}>
                 <View style={{ flex: 1 }}>
                     <SearchBar
                         searchText={searchText}

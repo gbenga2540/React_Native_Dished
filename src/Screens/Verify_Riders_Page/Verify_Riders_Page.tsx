@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -15,6 +15,7 @@ import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up/Sign_Up_Identity';
 import { FIREBASE_USERS_COLLECTION } from '@env';
 import storage from '@react-native-firebase/storage';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const VerifyRidersPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -144,13 +145,15 @@ const VerifyRidersPage: FunctionComponent = () => {
 
     return (
         <View style={styles.vr_main}>
-            <StatusBar
-                barStyle={'light-content'}
-                backgroundColor={Colors().Primary}
-            />
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
+            />
+            <CustomStatusBar
+                showSpinner={showSpinner}
+                backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
+                barStyleLight={true}
             />
             <ScrollView style={{ flex: 1 }}>
                 <View style={styles.top_cont}>

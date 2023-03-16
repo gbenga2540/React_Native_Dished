@@ -3,7 +3,6 @@ import {
     Image,
     PanResponderGestureState,
     ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     View,
@@ -17,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const Onboarding4Page: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -55,10 +55,7 @@ const Onboarding4Page: FunctionComponent = () => {
             config={gesture_config}
             onSwipeRight={state => OnSwipeRight(state)}>
             <View style={styles.op_main}>
-                <StatusBar
-                    barStyle={'dark-content'}
-                    backgroundColor={Colors().White}
-                />
+                <CustomStatusBar backgroundColor={Colors().White} />
                 <ScrollView>
                     <View style={styles.op_m_skip}>
                         <TextButton

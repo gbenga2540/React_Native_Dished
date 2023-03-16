@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -17,6 +17,8 @@ import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import auth from '@react-native-firebase/auth';
 import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
+import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import { validate_phone_no } from '../../Utils/Validate_Phone_No/Validate_Phone_No';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -47,7 +49,7 @@ const SignUpPage: FunctionComponent = () => {
         }
     };
 
-    const on_get_started = () => {
+    const on_get_started = async () => {
         if (email_checker(email)) {
             if (password?.length >= 6) {
                 try {
@@ -58,6 +60,15 @@ const SignUpPage: FunctionComponent = () => {
                                 email?.trim(),
                                 password,
                             )
+                            .catch(error => {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to register User!',
+                                    svr_error_mssg: error?.code as string,
+                                });
+                            })
                             .then(async userCredential => {
                                 if (
                                     userCredential === null ||
@@ -97,15 +108,6 @@ const SignUpPage: FunctionComponent = () => {
                                     }
                                 }
                             })
-                            .catch(error => {
-                                setShowSpinner(false);
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg:
-                                        'An error occured while trying to register User!',
-                                    svr_error_mssg: error?.code as string,
-                                });
-                            })
                             .finally(() => {
                                 setShowSpinner(false);
                             });
@@ -129,7 +131,51 @@ const SignUpPage: FunctionComponent = () => {
                 phone_no: email,
                 country_code: '234',
             });
-            console.log(phone_no);
+            if (validate_phone_no({ phone_no: phone_no })) {
+                if (password?.length >= 6) {
+                    setShowSpinner(true);
+                    try {
+                        await auth()
+                            ?.signInWithPhoneNumber(phone_no)
+                            .catch(err => {
+                                setShowSpinner(false);
+                                if (err) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured while trying to register User!',
+                                        svr_error_mssg: err?.code as string,
+                                    });
+                                }
+                            })
+                            .then(res => {
+                                setShowSpinner(false);
+                                console.log(res);
+                            })
+                            .finally(() => {
+                                setShowSpinner(false);
+                            });
+                    } catch (error) {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while trying to register User!',
+                        });
+                    }
+                } else {
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg: 'Password must not be less than six!',
+                    });
+                }
+            } else {
+                error_handler({
+                    navigation: navigation,
+                    error_mssg:
+                        'Please, input a valid Mobile Number to proceed!',
+                });
+            }
         } else {
             error_handler({
                 navigation: navigation,
@@ -141,13 +187,15 @@ const SignUpPage: FunctionComponent = () => {
 
     return (
         <View style={styles.signup_main}>
-            <StatusBar
-                barStyle={'light-content'}
-                backgroundColor={Colors().Primary}
-            />
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
+            />
+            <CustomStatusBar
+                showSpinner={showSpinner}
+                backgroundColor={Colors().Primary}
+                backgroundDimColor={Colors().PrimaryDim}
+                barStyleLight={true}
             />
             <ScrollView>
                 <View style={styles.top_cont}>
