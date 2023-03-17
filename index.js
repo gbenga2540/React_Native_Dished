@@ -13,6 +13,7 @@ const Root = () => {
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
+    'ViewPropTypes',
 ]);
 
 AppRegistry.registerComponent(appName, () => Root);

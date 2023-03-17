@@ -3,14 +3,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthStack from '../Auth_Stack/Auth_Stack';
-import OnboardingStack from '../Onboarding_Stack/Onboarding_Stack';
+import OnboardingPage from '../../Screens/Onboarding_Page/Onboarding_Page';
 import HomeStack from '../Home_Stack/Home_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
 
 type RootStackParamList = {
     Home: undefined;
     AuthStack: {};
-    OnboardingStack: {};
+    OnboardingPage: {};
     HomeStack: {};
     ErrorPage: {
         error_mssg: string;
@@ -52,7 +52,7 @@ const MainStack: FunctionComponent = () => {
                     headerShown: false,
                 }}
                 initialRouteName={
-                    showOnboarding ? 'OnboardingStack' : 'AuthStack'
+                    showOnboarding ? 'OnboardingPage' : 'AuthStack'
                 }>
                 <Main_Stack.Screen
                     name="AuthStack"
@@ -62,8 +62,8 @@ const MainStack: FunctionComponent = () => {
                     }}
                 />
                 <Main_Stack.Screen
-                    name="OnboardingStack"
-                    component={OnboardingStack}
+                    name="OnboardingPage"
+                    component={OnboardingPage}
                     options={{
                         headerShown: false,
                     }}

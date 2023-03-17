@@ -27,8 +27,6 @@ import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Ident
 import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
 import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
-import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
-import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -42,11 +40,9 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     interface userInfoProps {
         user_password: string;
-        phone_number: string;
     }
     const [userInfo, setUserInfo] = useState<userInfoProps>({
         user_password: '',
-        phone_number: '',
     });
 
     const check_user_info = () => {
@@ -212,23 +208,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         });
                     }
                 }, 500);
-            } else if (auth()?.currentUser?.phoneNumber) {
-                setShowSpinner(true);
-                setTimeout(async () => {
-                    if (
-                        phone_no_converter({ phone_no: password }) ===
-                        userInfo?.phone_number
-                    ) {
-                        check_user_info();
-                    } else {
-                        setShowSpinner(false);
-                        error_handler({
-                            navigation: navigation,
-                            error_mssg:
-                                'Incorrect Phone Number! Please input the correct phone number or Login manually in the SignIn Page.',
-                        });
-                    }
-                }, 500);
             } else {
                 error_handler({
                     navigation: navigation,
@@ -286,20 +265,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     error_handler({
                         navigation: navigation,
                         error_mssg: 'Unable to Sign In User!',
-                    });
-                }
-            }, 500);
-        } else if (auth()?.currentUser?.phoneNumber) {
-            setShowSpinner(true);
-            setTimeout(async () => {
-                if (userInfo?.phone_number) {
-                    check_user_info();
-                } else {
-                    setShowSpinner(false);
-                    error_handler({
-                        navigation: navigation,
-                        error_mssg:
-                            'Incorrect Phone Number! Please Login manually in the SignIn Page.',
                     });
                 }
             }, 500);
@@ -573,49 +538,31 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             </Text>
                         )}
                         <Text style={styles.f_m_txt3}>
-                            {userInfo?.phone_number
-                                ? 'Or login using your Phone Number'
-                                : 'Or just use password instead'}
+                            Or just use password instead
                         </Text>
-                        {userInfo?.phone_number ? (
-                            <BasicTextEntry
-                                placeHolderText="Enter your Mobile Number"
-                                inputValue={password}
-                                setInputValue={setPassword}
+                        <SecureTextEntry
+                            placeHolderText={'Enter your password'}
+                            inputValue={password}
+                            setInputValue={setPassword}
+                        />
+                        <View style={styles.f_m_fp}>
+                            <TextButton
+                                buttonText="Forgot Password"
+                                marginLeft={3}
+                                textColor={Colors().InputText}
+                                isFontLight={true}
+                                execFunc={() =>
+                                    navigation.navigate(
+                                        'ForgotPasswordPage' as never,
+                                    )
+                                }
                             />
-                        ) : (
-                            <SecureTextEntry
-                                placeHolderText={'Enter your password'}
-                                inputValue={password}
-                                setInputValue={setPassword}
-                            />
-                        )}
-                        {(userInfo?.user_password ||
-                            !userInfo?.phone_number) && (
-                            <View style={styles.f_m_fp}>
-                                <TextButton
-                                    buttonText="Forgot Password"
-                                    marginLeft={3}
-                                    textColor={Colors().InputText}
-                                    isFontLight={true}
-                                    execFunc={() =>
-                                        navigation.navigate(
-                                            'ForgotPasswordPage' as never,
-                                        )
-                                    }
-                                />
-                            </View>
-                        )}
+                        </View>
                         <BasicButton
                             execFunc={() => manual_authenticate()}
                             buttonText="Login"
                             buttonHeight={55}
-                            marginTop={
-                                userInfo?.user_password ||
-                                !userInfo?.phone_number
-                                    ? 10
-                                    : 30
-                            }
+                            marginTop={10}
                             marginBottom={10}
                         />
                         <View style={styles.f_m_acc}>
