@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-
 import SignUpPage from '../../Screens/Sign_Up_Page/Sign_Up_Page';
 import SignInPage from '../../Screens/Sign_In_Page/Sign_In_Page ';
 import VerifyOTPPage from '../../Screens/Verify_OTP_Page/Verify_OTP_Page';
@@ -15,8 +14,7 @@ import SelectProfilePage from '../../Screens/Select_Profile_Page/Select_Profile_
 import VerifyMailPage from '../../Screens/Verify_Mail_Page/Verify_Mail_Page';
 import SelectDPPage from '../../Screens/Select_DP_Page/Select_DP_Page';
 
-type RootStackParamList = {
-    Home: undefined;
+type AuthStackParamList = {
     SelectProfilePage: {};
     FingerprintLoginPage: {};
     SignUpPage: {};
@@ -31,7 +29,7 @@ type RootStackParamList = {
     SelectDPPage: {};
 };
 
-const Auth_Stack = createNativeStackNavigator<RootStackParamList>();
+const Auth_Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack: FunctionComponent = () => {
     const [initializing, setInitializing] = useState<boolean>(true);
@@ -47,6 +45,8 @@ const AuthStack: FunctionComponent = () => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber;
     }, []);
+
+    console.log('Auth_Stack', user);
 
     if (initializing) {
         return null;

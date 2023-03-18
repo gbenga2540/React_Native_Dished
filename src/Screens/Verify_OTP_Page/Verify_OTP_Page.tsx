@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, LogBox } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import OTPTextView from 'react-native-otp-textinput';
@@ -26,10 +26,6 @@ const VerifyOTPPage: FunctionComponent = () => {
             });
         }
     };
-
-    LogBox.ignoreLogs([
-        'Non-serializable values were found in the navigation state',
-    ]);
 
     return (
         <View style={styles.verify_otp_main}>

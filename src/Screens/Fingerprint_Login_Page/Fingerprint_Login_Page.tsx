@@ -27,6 +27,9 @@ import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Ident
 import { analyze_first_name } from '../../Utils/Analyze_First_Name/Analyze_First_Name';
 import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
+import TextDivider from '../../Components/Text_Divider/Text_Divider';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const FingerprintLoginPage: FunctionComponent = () => {
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
@@ -40,18 +43,22 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     interface userInfoProps {
         user_password: string;
+        google_auth: boolean | undefined;
     }
     const [userInfo, setUserInfo] = useState<userInfoProps>({
         user_password: '',
+        google_auth: undefined,
     });
 
     const check_user_info = () => {
+        let checkError: boolean = false;
         try {
             firestore()
                 .collection(FIREBASE_USERS_COLLECTION)
                 .doc(auth()?.currentUser?.uid as string)
                 .get()
                 .catch(err => {
+                    checkError = true;
                     if (err) {
                         setShowSpinner(false);
                         error_handler({
@@ -63,69 +70,79 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                 })
                 .then(async info_res => {
-                    if (
-                        info_res?.data() === undefined ||
-                        info_res?.data() === null ||
-                        info_res?.exists === false
-                    ) {
-                        setShowSpinner(false);
-                        navigation.navigate('SelectProfilePage' as never);
-                    } else {
-                        const dp_ref = storage().ref(
-                            `Users_Display_Picture/${
-                                auth().currentUser?.uid
-                            }/dp.jpeg`,
-                        );
-                        let checkError: boolean = false;
-                        try {
-                            await dp_ref
-                                .getDownloadURL()
-                                .catch(err => {
-                                    if (
-                                        err &&
-                                        err?.code === 'storage/object-not-found'
-                                    ) {
-                                        setShowSpinner(false);
-                                    } else {
-                                        checkError = true;
-                                        setShowSpinner(false);
-                                        error_handler({
-                                            navigation: navigation,
-                                            error_mssg:
-                                                "An Error occured while trying to verify User's Information on the Server.",
-                                            svr_error_mssg: err?.code,
-                                        });
-                                    }
-                                })
-                                .then(res => {
-                                    if (!checkError) {
-                                        if (res === null || res === undefined) {
+                    if (!checkError) {
+                        if (
+                            info_res?.data() === undefined ||
+                            info_res?.data() === null ||
+                            info_res?.exists === false
+                        ) {
+                            setShowSpinner(false);
+                            navigation.navigate('SelectProfilePage' as never);
+                        } else {
+                            const dp_ref = storage().ref(
+                                `Users_Display_Picture/${
+                                    auth().currentUser?.uid
+                                }/dp.jpeg`,
+                            );
+                            let checkError2: boolean = false;
+                            try {
+                                await dp_ref
+                                    .getDownloadURL()
+                                    .catch(err => {
+                                        if (
+                                            err &&
+                                            err?.code ===
+                                                'storage/object-not-found'
+                                        ) {
                                             setShowSpinner(false);
-                                            navigation.push(
-                                                'AuthStack' as never,
-                                                {
-                                                    screen: 'SelectDPPage',
-                                                } as never,
-                                            );
+                                        } else {
+                                            checkError2 = true;
+                                            setShowSpinner(false);
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    "An Error occured while trying to verify User's Information on the Server.",
+                                                svr_error_mssg: err?.code,
+                                            });
+                                        }
+                                    })
+                                    .then(res => {
+                                        if (!checkError2) {
+                                            if (
+                                                res === null ||
+                                                res === undefined
+                                            ) {
+                                                setShowSpinner(false);
+                                                navigation.push(
+                                                    'AuthStack' as never,
+                                                    {
+                                                        screen: 'SelectDPPage',
+                                                    } as never,
+                                                );
+                                            } else {
+                                                setShowSpinner(false);
+                                                navigation.push(
+                                                    'HomeStack' as never,
+                                                    {
+                                                        screen: 'HomePage',
+                                                    } as never,
+                                                );
+                                            }
                                         } else {
                                             setShowSpinner(false);
-                                            navigation.push(
-                                                'HomeStack' as never,
-                                                { screen: 'HomePage' } as never,
-                                            );
                                         }
-                                    } else {
-                                        setShowSpinner(false);
-                                    }
+                                    });
+                            } catch (error) {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        "An Error occured while trying to verify User's Information on the Server.",
                                 });
-                        } catch (error) {
-                            setShowSpinner(false);
-                            error_handler({
-                                navigation: navigation,
-                                error_mssg:
-                                    "An Error occured while trying to verify User's Information on the Server.",
-                            });
+                            }
                         }
+                    } else {
+                        setShowSpinner(false);
                     }
                 });
         } catch (error) {
@@ -138,59 +155,253 @@ const FingerprintLoginPage: FunctionComponent = () => {
         }
     };
 
-    const manual_authenticate = () => {
-        if (password) {
-            if (auth()?.currentUser?.email) {
-                setShowSpinner(true);
-                setTimeout(async () => {
-                    try {
-                        await auth()
-                            .signInWithEmailAndPassword(
-                                auth()?.currentUser?.email as string,
-                                password,
-                            )
-                            .then(async userCredential => {
-                                if (
-                                    userCredential === undefined ||
-                                    userCredential === null
-                                ) {
-                                    setShowSpinner(false);
-                                    error_handler({
-                                        navigation: navigation,
-                                        error_mssg:
-                                            'An error occured while trying to sign in!',
-                                        svr_error_mssg:
-                                            'Please check your Internet Connection!',
-                                    });
-                                } else {
-                                    const user_data = {
-                                        user_password: password,
-                                    };
-                                    try {
-                                        await SInfo.setItem(
-                                            SECURE_STORAGE_USER_INFO,
-                                            JSON.stringify({ ...user_data }),
-                                            {
-                                                sharedPreferencesName:
-                                                    SECURE_STORAGE_NAME,
-                                                keychainService:
-                                                    SECURE_STORAGE_NAME,
-                                            },
-                                        )
-                                            .then(() => {
-                                                check_user_info();
-                                            })
-                                            .catch(error => {
-                                                if (error) {
+    const sign_in_with_google = async () => {
+        setShowSpinner(true);
+        try {
+            let checkError: boolean = false;
+            await GoogleSignin?.signIn()
+                ?.catch(err => {
+                    checkError = true;
+                    setShowSpinner(false);
+                    if (err) {
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while trying to sign in with Google.',
+                            svr_error_mssg: err?.code,
+                        });
+                    }
+                })
+                .then(async res => {
+                    if (!checkError) {
+                        if (res) {
+                            setShowSpinner(true);
+                            const googleCredential =
+                                auth.GoogleAuthProvider.credential(
+                                    res?.idToken as string,
+                                );
+                            try {
+                                let checkError2: boolean = false;
+                                await auth()
+                                    .signInWithCredential(googleCredential)
+                                    ?.catch(err => {
+                                        checkError2 = true;
+                                        setShowSpinner(false);
+                                        if (err) {
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    'An error occured while trying to sign in with Google.',
+                                                svr_error_mssg: err?.code,
+                                            });
+                                        }
+                                    })
+                                    .then(async userCredential => {
+                                        if (!checkError2) {
+                                            if (userCredential) {
+                                                const user_data = {
+                                                    google_auth: true,
+                                                };
+                                                try {
+                                                    await SInfo.setItem(
+                                                        SECURE_STORAGE_USER_INFO,
+                                                        JSON.stringify({
+                                                            ...user_data,
+                                                        }),
+                                                        {
+                                                            sharedPreferencesName:
+                                                                SECURE_STORAGE_NAME,
+                                                            keychainService:
+                                                                SECURE_STORAGE_NAME,
+                                                        },
+                                                    )
+                                                        .then(() => {
+                                                            setAnimState(
+                                                                'idle',
+                                                            );
+                                                            check_user_info();
+                                                        })
+                                                        .catch(error => {
+                                                            if (error) {
+                                                                setAnimState(
+                                                                    'idle',
+                                                                );
+                                                                check_user_info();
+                                                            }
+                                                        });
+                                                } catch (err) {
+                                                    setAnimState('idle');
                                                     check_user_info();
                                                 }
-                                            });
-                                    } catch (error) {
-                                        check_user_info();
+                                            } else {
+                                                setShowSpinner(false);
+                                                error_handler({
+                                                    navigation: navigation,
+                                                    error_mssg:
+                                                        'An error occured while trying to sign in with Google.',
+                                                });
+                                            }
+                                        } else {
+                                            setShowSpinner(false);
+                                        }
+                                    });
+                            } catch (error) {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to sign in with Google.',
+                                });
+                            }
+                        } else {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    'An error occured while trying to sign in with Google.',
+                            });
+                        }
+                    } else {
+                        setShowSpinner(false);
+                    }
+                });
+        } catch (error) {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    'An error occured while trying to sign in with Google.',
+            });
+        }
+    };
+
+    const manual_authenticate = () => {
+        if (
+            userInfo?.google_auth !== undefined &&
+            userInfo?.google_auth === false
+        ) {
+            if (password) {
+                if (auth()?.currentUser?.email) {
+                    setShowSpinner(true);
+                    setTimeout(async () => {
+                        let checkError: boolean = false;
+                        try {
+                            await auth()
+                                .signInWithEmailAndPassword(
+                                    auth()?.currentUser?.email as string,
+                                    password,
+                                )
+                                .catch(error => {
+                                    checkError = true;
+                                    setShowSpinner(false);
+                                    if (error) {
+                                        error_handler({
+                                            navigation: navigation,
+                                            error_mssg:
+                                                'Unable to Sign In User!',
+                                            svr_error_mssg:
+                                                error?.code as string,
+                                        });
                                     }
-                                }
-                            })
+                                })
+                                .then(async userCredential => {
+                                    if (!checkError) {
+                                        if (
+                                            userCredential === undefined ||
+                                            userCredential === null
+                                        ) {
+                                            setShowSpinner(false);
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    'An error occured while trying to sign in!',
+                                                svr_error_mssg:
+                                                    'Please check your Internet Connection!',
+                                            });
+                                        } else {
+                                            const user_data = {
+                                                user_password: password,
+                                            };
+                                            try {
+                                                await SInfo.setItem(
+                                                    SECURE_STORAGE_USER_INFO,
+                                                    JSON.stringify({
+                                                        ...user_data,
+                                                    }),
+                                                    {
+                                                        sharedPreferencesName:
+                                                            SECURE_STORAGE_NAME,
+                                                        keychainService:
+                                                            SECURE_STORAGE_NAME,
+                                                    },
+                                                )
+                                                    .then(() => {
+                                                        check_user_info();
+                                                    })
+                                                    .catch(error => {
+                                                        if (error) {
+                                                            check_user_info();
+                                                        }
+                                                    });
+                                            } catch (error) {
+                                                check_user_info();
+                                            }
+                                        }
+                                    } else {
+                                        setShowSpinner(false);
+                                    }
+                                });
+                        } catch (err) {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg: 'Unable to Sign In User!',
+                            });
+                        }
+                    }, 500);
+                } else {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg:
+                            'Unable to retrieve User Information, Please manually sign in into your Account.',
+                    });
+                }
+            } else {
+                setShowSpinner(false);
+                error_handler({
+                    navigation: navigation,
+                    error_mssg: 'Password field cannot be empty!',
+                });
+            }
+        } else {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    "Google Auth was used to Sign In. Please use the fingerprint to login or use the 'Sign in with Google' button below to proceed.",
+            });
+        }
+    };
+
+    const fingerprint_authenticate = async () => {
+        if (
+            userInfo?.google_auth !== undefined &&
+            userInfo?.google_auth === false
+        ) {
+            if (auth()?.currentUser?.email && userInfo?.user_password) {
+                setShowSpinner(true);
+                setTimeout(async () => {
+                    let checkError: boolean = false;
+                    try {
+                        auth()
+                            .signInWithEmailAndPassword(
+                                auth()?.currentUser?.email as string,
+                                userInfo?.user_password,
+                            )
                             .catch(error => {
+                                checkError = true;
+                                setAnimState('idle');
                                 setShowSpinner(false);
                                 if (error) {
                                     error_handler({
@@ -199,9 +410,34 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         svr_error_mssg: error?.code as string,
                                     });
                                 }
+                            })
+                            .then(userCredential => {
+                                if (!checkError) {
+                                    if (
+                                        userCredential === null ||
+                                        userCredential === undefined
+                                    ) {
+                                        setAnimState('idle');
+                                        setShowSpinner(false);
+                                        error_handler({
+                                            navigation: navigation,
+                                            error_mssg:
+                                                'An error occured while trying to sign in!',
+                                            svr_error_mssg:
+                                                'Please check your Internet Connection!',
+                                        });
+                                    } else {
+                                        setAnimState('idle');
+                                        check_user_info();
+                                    }
+                                } else {
+                                    setAnimState('idle');
+                                    setShowSpinner(false);
+                                }
                             });
                     } catch (err) {
                         setShowSpinner(false);
+                        setAnimState('idle');
                         error_handler({
                             navigation: navigation,
                             error_mssg: 'Unable to Sign In User!',
@@ -209,75 +445,20 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                 }, 500);
             } else {
+                setShowSpinner(false);
+                setAnimState('idle');
                 error_handler({
                     navigation: navigation,
-                    error_mssg:
-                        'Unable to retrieve User Information, Please manually sign in into your Account.',
+                    error_mssg: 'Unable to retrieve User Information.',
                 });
             }
         } else {
-            error_handler({
-                navigation: navigation,
-                error_mssg: 'Password field cannot be empty!',
-            });
-        }
-    };
-
-    const fingerprint_authenticate = async () => {
-        if (auth()?.currentUser?.email && userInfo?.user_password) {
-            setShowSpinner(true);
-            setTimeout(async () => {
-                try {
-                    auth()
-                        .signInWithEmailAndPassword(
-                            auth()?.currentUser?.email as string,
-                            userInfo?.user_password,
-                        )
-                        .catch(error => {
-                            setShowSpinner(false);
-                            if (error) {
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg: 'Unable to Sign In User!',
-                                    svr_error_mssg: error?.code as string,
-                                });
-                            }
-                        })
-                        .then(userCredential => {
-                            if (
-                                userCredential === null ||
-                                userCredential === undefined
-                            ) {
-                                setShowSpinner(false);
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg:
-                                        'An error occured while trying to sign in!',
-                                    svr_error_mssg:
-                                        'Please check your Internet Connection!',
-                                });
-                            } else {
-                                check_user_info();
-                            }
-                        });
-                } catch (err) {
-                    setShowSpinner(false);
-                    error_handler({
-                        navigation: navigation,
-                        error_mssg: 'Unable to Sign In User!',
-                    });
-                }
-            }, 500);
-        } else {
-            setShowSpinner(false);
-            error_handler({
-                navigation: navigation,
-                error_mssg: 'Unable to retrieve User Information.',
-            });
+            sign_in_with_google();
         }
     };
 
     const biometric_login = async () => {
+        setShowSpinner(false);
         const prompt_biometrics = async () => {
             await rnBiometrics
                 .simplePrompt({
@@ -289,11 +470,17 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                     if (res.error && res.error !== 'User cancellation') {
                         setAnimState('failed');
+                        setTimeout(() => {
+                            setAnimState('idle');
+                        }, 3000);
                     }
                 })
                 .catch(err => {
                     if (err) {
                         setAnimState('failed');
+                        setTimeout(() => {
+                            setAnimState('idle');
+                        }, 3000);
                     }
                 });
         };
@@ -372,33 +559,35 @@ const FingerprintLoginPage: FunctionComponent = () => {
         };
 
         const get_user_info = async () => {
+            let checkError: boolean = false;
             try {
                 await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
                     sharedPreferencesName: SECURE_STORAGE_NAME,
                     keychainService: SECURE_STORAGE_NAME,
                 })
-                    .then(async res => {
-                        if (res === null || res === undefined) {
-                            if (auth().currentUser?.email) {
-                                navigation.navigate('SignUpPage' as never);
-                            }
-                        } else {
-                            const json_res = JSON.parse(res);
-                            setUserInfo({ ...json_res });
+                    .catch(err => {
+                        checkError = true;
+                        if (err) {
                             get_user_name_from_svr();
                         }
                     })
-                    .catch(err => {
-                        if (err) {
-                            if (auth().currentUser?.email) {
-                                navigation.navigate('SignUpPage' as never);
+                    .then(async res => {
+                        if (!checkError) {
+                            if (res) {
+                                const json_res = JSON.parse(res);
+                                setUserInfo({ ...json_res });
+                                get_user_name_from_svr();
+                            } else {
+                                if (auth().currentUser?.email) {
+                                    get_user_name_from_svr();
+                                } else {
+                                    navigation.navigate('SignUpPage' as never);
+                                }
                             }
                         }
                     });
             } catch (error) {
-                if (auth().currentUser?.email) {
-                    navigation.navigate('SignUpPage' as never);
-                }
+                get_user_name_from_svr();
             }
         };
 
@@ -447,11 +636,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}
                             to sign in into your Dished account
                         </Text>
-
                         <TouchableOpacity
                             style={{
                                 width: 200,
+                                minWidth: 200,
+                                maxWidth: 200,
                                 height: 200,
+                                minHeight: 200,
+                                maxHeight: 200,
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 alignSelf: 'center',
@@ -505,7 +697,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         position: 'relative',
                                         alignSelf: 'center',
                                     }}
-                                    source={require('../../Animations/Fingerprint_Verified.json')}
+                                    source={require('../../Animations/Fingerprint_Success.json')}
                                     autoPlay
                                     loop={false}
                                     onAnimationFinish={() =>
@@ -515,7 +707,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 />
                             )}
                         </TouchableOpacity>
-
                         {!isFPA && (
                             <Text style={styles.f_m_fpc}>
                                 {Platform.OS === 'ios'
@@ -524,7 +715,11 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             </Text>
                         )}
                         {isFPA && animState === 'idle' && (
-                            <Text style={[styles.f_m_fpc, { color: 'green' }]}>
+                            <Text
+                                style={[
+                                    styles.f_m_fpc,
+                                    { color: Colors().InputText },
+                                ]}>
                                 Click the Icon above to prompt the
                                 {Platform.OS === 'ios'
                                     ? ' Touch ID'
@@ -537,33 +732,55 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 Please input your password instead!
                             </Text>
                         )}
-                        <Text style={styles.f_m_txt3}>
-                            Or just use password instead
-                        </Text>
-                        <SecureTextEntry
-                            placeHolderText={'Enter your password'}
-                            inputValue={password}
-                            setInputValue={setPassword}
-                        />
-                        <View style={styles.f_m_fp}>
-                            <TextButton
-                                buttonText="Forgot Password"
-                                marginLeft={3}
-                                textColor={Colors().InputText}
-                                isFontLight={true}
-                                execFunc={() =>
-                                    navigation.navigate(
-                                        'ForgotPasswordPage' as never,
-                                    )
-                                }
-                            />
+                        {isFPA && animState === 'success' && (
+                            <Text style={[styles.f_m_fpc, { color: 'green' }]}>
+                                Authenticating...
+                            </Text>
+                        )}
+                        {!userInfo?.google_auth && (
+                            <View>
+                                <Text style={styles.f_m_txt3}>
+                                    Or just use password instead
+                                </Text>
+                                <SecureTextEntry
+                                    placeHolderText={'Enter your password'}
+                                    inputValue={password}
+                                    setInputValue={setPassword}
+                                />
+                                <View style={styles.f_m_fp}>
+                                    <TextButton
+                                        buttonText="Forgot Password"
+                                        marginLeft={3}
+                                        textColor={Colors().InputText}
+                                        isFontLight={true}
+                                        execFunc={() =>
+                                            navigation.navigate(
+                                                'ForgotPasswordPage' as never,
+                                            )
+                                        }
+                                    />
+                                </View>
+                                <BasicButton
+                                    execFunc={() => manual_authenticate()}
+                                    buttonText="Login"
+                                    buttonHeight={55}
+                                    marginTop={10}
+                                    marginBottom={20}
+                                />
+                            </View>
+                        )}
+                        <View
+                            style={{
+                                marginTop: userInfo?.google_auth ? 60 : 0,
+                            }}>
+                            <TextDivider text={'or'} />
                         </View>
-                        <BasicButton
-                            execFunc={() => manual_authenticate()}
-                            buttonText="Login"
-                            buttonHeight={55}
-                            marginTop={10}
-                            marginBottom={10}
+                        <BasicLogoButton
+                            logoName="Google"
+                            inputText="Sign In with Google"
+                            marginTop={userInfo?.google_auth ? 25 : 10}
+                            marginBottom={5}
+                            execFunc={() => sign_in_with_google()}
                         />
                         <View style={styles.f_m_acc}>
                             <Text style={styles.f_m_acc_text}>
@@ -571,6 +788,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             </Text>
                             <TextButton
                                 buttonText="Sign In"
+                                marginTop={0}
                                 marginLeft={3}
                                 execFunc={() =>
                                     navigation.navigate<never>(
@@ -615,7 +833,7 @@ const styles = StyleSheet.create({
     f_m_txt3: {
         fontFamily: fonts.Poppins_400,
         fontSize: 16,
-        marginTop: 80,
+        marginTop: 50,
         marginBottom: 8,
         color: Colors().InputText,
     },
@@ -628,11 +846,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         width: 200,
         textAlign: 'center',
+        height: 50,
+        minHeight: 50,
+        maxHeight: 50,
     },
     f_m_acc: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 10,
     },
     f_m_acc_text: {
         fontFamily: fonts.Poppins_400,

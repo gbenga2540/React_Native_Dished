@@ -17,6 +17,7 @@ import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const SignUpPage: FunctionComponent = () => {
     const navigation = useNavigation<NavigationProp<any>>();
@@ -84,6 +85,7 @@ const SignUpPage: FunctionComponent = () => {
                                     } else {
                                         const user_data = {
                                             user_password: password,
+                                            google_auth: false,
                                         };
                                         try {
                                             await SInfo.setItem(
@@ -141,6 +143,134 @@ const SignUpPage: FunctionComponent = () => {
         }
     };
 
+    const sign_in_with_google = async () => {
+        setShowSpinner(true);
+        try {
+            let checkError: boolean = false;
+            await GoogleSignin?.signIn()
+                ?.catch(err => {
+                    checkError = true;
+                    setShowSpinner(false);
+                    if (err) {
+                        console.log(err.message);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'An error occured while trying to sign in with Google.',
+                            svr_error_mssg: err?.message,
+                        });
+                    }
+                })
+                .then(async res => {
+                    console.log('res', res);
+                    if (!checkError) {
+                        if (res) {
+                            setShowSpinner(true);
+                            const googleCredential =
+                                auth.GoogleAuthProvider.credential(
+                                    res?.idToken as string,
+                                );
+                            try {
+                                let checkError2: boolean = false;
+                                await auth()
+                                    .signInWithCredential(googleCredential)
+                                    ?.catch(err => {
+                                        checkError2 = true;
+                                        setShowSpinner(false);
+                                        if (err) {
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    'An error occured while trying to sign in with Google.',
+                                                svr_error_mssg: err?.code,
+                                            });
+                                        }
+                                    })
+                                    .then(async userCredential => {
+                                        if (!checkError2) {
+                                            if (userCredential) {
+                                                const user_data = {
+                                                    google_auth: true,
+                                                };
+                                                try {
+                                                    await SInfo.setItem(
+                                                        SECURE_STORAGE_USER_INFO,
+                                                        JSON.stringify({
+                                                            ...user_data,
+                                                        }),
+                                                        {
+                                                            sharedPreferencesName:
+                                                                SECURE_STORAGE_NAME,
+                                                            keychainService:
+                                                                SECURE_STORAGE_NAME,
+                                                        },
+                                                    )
+                                                        .then(() => {
+                                                            setShowSpinner(
+                                                                false,
+                                                            );
+                                                            navigation.navigate(
+                                                                'SelectProfilePage' as never,
+                                                            );
+                                                        })
+                                                        .catch(error => {
+                                                            if (error) {
+                                                                setShowSpinner(
+                                                                    false,
+                                                                );
+                                                            }
+                                                            navigation.navigate(
+                                                                'SelectProfilePage' as never,
+                                                            );
+                                                        });
+                                                } catch (err) {
+                                                    setShowSpinner(false);
+                                                    navigation.navigate(
+                                                        'SelectProfilePage' as never,
+                                                    );
+                                                }
+                                            } else {
+                                                setShowSpinner(false);
+                                                error_handler({
+                                                    navigation: navigation,
+                                                    error_mssg:
+                                                        'An error occured while trying to sign in with Google.',
+                                                });
+                                            }
+                                        } else {
+                                            setShowSpinner(false);
+                                        }
+                                    });
+                            } catch (error) {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to sign in with Google.',
+                                });
+                            }
+                        } else {
+                            setShowSpinner(false);
+                            error_handler({
+                                navigation: navigation,
+                                error_mssg:
+                                    'An error occured while trying to sign in with Google.',
+                            });
+                        }
+                    } else {
+                        setShowSpinner(false);
+                    }
+                });
+        } catch (error) {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    'An error occured while trying to sign in with Google.',
+            });
+        }
+    };
+
     return (
         <View style={styles.signup_main}>
             <OverlaySpinner
@@ -188,7 +318,7 @@ const SignUpPage: FunctionComponent = () => {
                         logoName="Google"
                         inputText="Sign Up with Google"
                         marginTop={16}
-                        execFunc={() => console.log('google')}
+                        execFunc={() => sign_in_with_google()}
                     />
                     <View style={styles.s_m_acc}>
                         <Text style={styles.s_m_acc_text}>

@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ParamListBase } from '@react-navigation/native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import BookingIcon from '../../Images/Icons/Booking_Icon.svg';
@@ -13,7 +12,13 @@ import CartPage from '../../Screens/Cart_Page/Cart_Page';
 import FavouritePage from '../../Screens/Favourite_Page/Favourite_Page';
 import BookingPage from '../../Screens/Booking_Page/Booking_Page';
 
-const Home_Stack = createBottomTabNavigator<ParamListBase>();
+type HomeStackParamList = {
+    HomePage: {};
+    BookingPage: {};
+    FavouritePage: {};
+    CartPage: {};
+};
+const Home_Stack = createBottomTabNavigator<HomeStackParamList>();
 
 const HomeStack: FunctionComponent = () => {
     return (

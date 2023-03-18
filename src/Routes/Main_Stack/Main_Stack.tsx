@@ -7,8 +7,7 @@ import OnboardingPage from '../../Screens/Onboarding_Page/Onboarding_Page';
 import HomeStack from '../Home_Stack/Home_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
 
-type RootStackParamList = {
-    Home: undefined;
+type MainStackParamList = {
     AuthStack: {};
     OnboardingPage: {};
     HomeStack: {};
@@ -18,7 +17,7 @@ type RootStackParamList = {
     };
 };
 
-const Main_Stack = createNativeStackNavigator<RootStackParamList>();
+const Main_Stack = createNativeStackNavigator<MainStackParamList>();
 
 const MainStack: FunctionComponent = () => {
     const [isInitializing, setIsInitializing] = useState<boolean>(true);

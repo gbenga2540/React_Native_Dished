@@ -15,7 +15,7 @@ import { Onboarding_Props } from '../../Interface/Onboarding_Props/Onboarding_Pr
 
 const OnboardingPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const phone_width = Dimensions?.get('screen')?.width;
+    const screen_width = Dimensions.get('screen').width;
     const [itemIndex, setItemIndex] = useState<number>(1);
 
     const skip_onboarding = async () => {
@@ -50,19 +50,28 @@ const OnboardingPage: FunctionComponent = () => {
 
     return (
         <View style={styles.op_main}>
-            <CustomStatusBar />
+            <CustomStatusBar backgroundColor={Colors().White} />
             <ScrollView style={{ flex: 1 }}>
-                <Carousel
+                <View
                     style={{
-                        alignSelf: 'center',
-                    }}
-                    itemWidth={phone_width || 360}
-                    sliderWidth={phone_width || 360}
-                    data={onboarding_data}
-                    renderItem={renderItem}
-                    layout="default"
-                    onSnapToItem={(index: number) => setItemIndex(index + 1)}
-                />
+                        flex: 1,
+                        alignItems: 'center',
+                    }}>
+                    <Carousel
+                        style={{
+                            alignSelf: 'center',
+                            zIndex: 10,
+                        }}
+                        itemWidth={screen_width - 20 || 340}
+                        sliderWidth={screen_width || 360}
+                        data={onboarding_data}
+                        renderItem={renderItem}
+                        layout="default"
+                        onSnapToItem={(index: number) =>
+                            setItemIndex(index + 1)
+                        }
+                    />
+                </View>
                 <SliderHandler sliderNumber={itemIndex} />
                 <BasicButton
                     buttonText="Skip"

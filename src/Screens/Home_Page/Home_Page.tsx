@@ -9,54 +9,14 @@ import {
 } from 'react-native';
 import Colors from '../../Colors/Colors';
 import DishCard from '../../Components/Dish_Card/Dish_Card';
-import { Dish_Props } from '../../Interface/Dish_Props/Dish_Props';
 import SearchBar from '../../Components/Search_Bar/Search_Bar';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import { fonts } from '../../Fonts/Fonts';
+import { dummy_data } from '../../../temp/HomeData';
 
 const HomePage: FunctionComponent = () => {
-    const dummy_data: Dish_Props[] = [
-        {
-            name: 'CheeseCake',
-            desc: 'The main, and thickest, layer consists of a mixture of a soft, fresh cheese eggs, and sugar.',
-            discount: true,
-            price: '4500',
-            discountedPrice: '3375',
-            image: require('../../../temp/Dish.png'),
-            raters: 2534,
-            ratings: 4.9,
-            chefPick: true,
-            discountedPercentage: 25,
-            dishType: 'Main Course',
-        },
-        {
-            name: 'BananaCake',
-            desc: 'The main, and thickest, layer consists of a mixture of a soft, fresh cheese eggs, and sugar.',
-            discount: true,
-            price: '4500',
-            discountedPrice: '3375',
-            image: require('../../../temp/Dish.png'),
-            raters: 2534,
-            ratings: 4.9,
-            chefPick: true,
-            discountedPercentage: 25,
-            dishType: 'Main Course',
-        },
-        {
-            name: 'CoconutCake',
-            desc: 'The main, and thickest, layer consists of a mixture of a soft, fresh cheese eggs, and sugar.',
-            discount: true,
-            price: '4500',
-            discountedPrice: '3375',
-            image: require('../../../temp/Dish.png'),
-            raters: 2534,
-            ratings: 4.9,
-            chefPick: true,
-            discountedPercentage: 25,
-            dishType: 'Main Course',
-        },
-    ];
     const [searchText, setSearchText] = useState<string>('');
+
     return (
         <View style={styles.home_page_main}>
             <CustomStatusBar />

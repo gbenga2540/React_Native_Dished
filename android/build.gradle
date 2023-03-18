@@ -6,6 +6,7 @@ buildscript {
         minSdkVersion = 26
         compileSdkVersion = 33
         targetSdkVersion = 33
+        googlePlayServicesAuthVersion = "19.2.0"
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"
@@ -24,6 +25,7 @@ buildscript {
 allprojects {
     repositories {
       mavenLocal()
+      google()
       jcenter()
       maven { url "$rootDir/../node_modules/react-native/android" }
 

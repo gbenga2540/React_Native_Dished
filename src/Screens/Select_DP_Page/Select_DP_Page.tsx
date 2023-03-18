@@ -30,6 +30,7 @@ const SelectDPPage: FunctionComponent = () => {
 
     const upload_image = async () => {
         if (displayPicture === 'none') {
+            setShowSpinner(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -44,9 +45,11 @@ const SelectDPPage: FunctionComponent = () => {
                 );
                 setShowSpinner(true);
                 try {
+                    let checkError: boolean = false;
                     dp_ref
                         .putString(displayPicture, 'data_url')
                         .catch(err => {
+                            checkError = true;
                             setShowSpinner(false);
                             if (err) {
                                 error_handler({
@@ -58,21 +61,25 @@ const SelectDPPage: FunctionComponent = () => {
                             }
                         })
                         .then(res => {
-                            setShowSpinner(false);
-                            if (res?.state === 'success') {
-                                navigation.push(
-                                    'HomeStack' as never,
-                                    {
-                                        screen: 'HomePage',
-                                    } as never,
-                                );
+                            if (!checkError) {
+                                if (res?.state === 'success') {
+                                    setShowSpinner(false);
+                                    navigation.push(
+                                        'HomeStack' as never,
+                                        {
+                                            screen: 'HomePage',
+                                        } as never,
+                                    );
+                                } else {
+                                    setShowSpinner(false);
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            "An error occured while trying to upload User's Display Picture.",
+                                    });
+                                }
                             } else {
                                 setShowSpinner(false);
-                                error_handler({
-                                    navigation: navigation,
-                                    error_mssg:
-                                        "An error occured while trying to upload User's Display Picture.",
-                                });
                             }
                         });
                 } catch (error) {
@@ -84,6 +91,7 @@ const SelectDPPage: FunctionComponent = () => {
                     });
                 }
             } else {
+                setShowSpinner(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg:
@@ -94,11 +102,13 @@ const SelectDPPage: FunctionComponent = () => {
     };
 
     const clear_image = () => {
+        setShowSpinner(false);
         setDisplayPicture('none');
         ImagePicker.clean();
     };
 
     const select_image_from_gallery = () => {
+        setShowSpinner(false);
         try {
             ImagePicker.openPicker({
                 width: 300,
@@ -130,6 +140,7 @@ const SelectDPPage: FunctionComponent = () => {
     };
 
     const select_image_from_camera = () => {
+        setShowSpinner(false);
         try {
             ImagePicker.openCamera({
                 width: 300,
@@ -161,6 +172,7 @@ const SelectDPPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
+        setShowSpinner(false);
         clear_image();
     }, []);
 

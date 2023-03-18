@@ -5,7 +5,7 @@ import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
@@ -13,7 +13,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const VerifyMailPage: FunctionComponent = () => {
-    const route = useRoute<RouteProp<any>>();
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
@@ -23,9 +22,6 @@ const VerifyMailPage: FunctionComponent = () => {
             try {
                 await auth()
                     .currentUser?.sendEmailVerification()
-                    .then(() => {
-                        setShowSpinner(false);
-                    })
                     .catch(error => {
                         setShowSpinner(false);
                         error_handler({
@@ -34,6 +30,9 @@ const VerifyMailPage: FunctionComponent = () => {
                             navigation: navigation,
                             svr_error_mssg: error?.code as string,
                         });
+                    })
+                    .then(() => {
+                        setShowSpinner(false);
                     });
             } catch (err) {
                 setShowSpinner(false);
@@ -106,17 +105,15 @@ const VerifyMailPage: FunctionComponent = () => {
                     'A verification link has been sent to your email. Please click the link to verify your Email Address.'
                 }
             </Text>
-            {(route.params?.show_retry || false) && (
-                <TextButton
-                    textColor={Colors().LightPink}
-                    isFontLight={true}
-                    marginTop={5}
-                    marginLeft={'auto'}
-                    marginRight={22}
-                    buttonText={'Resend Mail'}
-                    execFunc={() => resend_mail()}
-                />
-            )}
+            <TextButton
+                textColor={Colors().LightPink}
+                isFontLight={true}
+                marginTop={5}
+                marginLeft={'auto'}
+                marginRight={22}
+                buttonText={'Resend Mail'}
+                execFunc={() => resend_mail()}
+            />
             <View style={styles.s_m_input_cont}>
                 <BasicButton
                     buttonText="PROCEED"
