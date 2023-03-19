@@ -39,9 +39,9 @@ const SelectDPPage: FunctionComponent = () => {
         } else {
             if (auth().currentUser) {
                 const dp_ref = storage().ref(
-                    `Users_Display_Picture/${
+                    `Users_Info/${
                         auth().currentUser?.uid
-                    }/dp.${imageFormat}`,
+                    }/Display_Picture/dp.${imageFormat}`,
                 );
                 setShowSpinner(true);
                 try {
@@ -64,7 +64,7 @@ const SelectDPPage: FunctionComponent = () => {
                             if (!checkError) {
                                 if (res?.state === 'success') {
                                     setShowSpinner(false);
-                                    navigation.push(
+                                    navigation.navigate(
                                         'HomeStack' as never,
                                         {
                                             screen: 'HomePage',

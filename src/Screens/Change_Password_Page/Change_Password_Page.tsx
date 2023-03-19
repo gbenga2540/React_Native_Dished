@@ -2,16 +2,223 @@ import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import { useNavigation } from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import SInfo from 'react-native-sensitive-info';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 
 const ChangePasswordPage: FunctionComponent = () => {
+    const navigation = useNavigation();
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
     const [newCPassword, setCNewPassword] = useState<string>('');
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
+
+    const change_password = () => {
+        if (oldPassword && newPassword && newCPassword) {
+            if (newPassword?.length >= 6) {
+                if (newPassword === newCPassword) {
+                    if (auth()?.currentUser?.email) {
+                        setShowSpinner(true);
+                        setTimeout(async () => {
+                            try {
+                                let checkError: boolean = false;
+                                await auth()
+                                    .signInWithEmailAndPassword(
+                                        auth()?.currentUser?.email as string,
+                                        oldPassword,
+                                    )
+                                    .catch(error => {
+                                        checkError = true;
+                                        setShowSpinner(false);
+                                        if (error) {
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    'An error occured while trying to verify User!',
+                                                svr_error_mssg:
+                                                    error?.code as string,
+                                            });
+                                        }
+                                    })
+                                    .then(async userCredential => {
+                                        if (!checkError) {
+                                            if (
+                                                userCredential === undefined ||
+                                                userCredential === null
+                                            ) {
+                                                setShowSpinner(false);
+                                                error_handler({
+                                                    navigation: navigation,
+                                                    error_mssg:
+                                                        'An error occured while trying to verify User!',
+                                                    svr_error_mssg:
+                                                        'Please check your Internet Connection!',
+                                                });
+                                            } else {
+                                                try {
+                                                    let checkError2: boolean =
+                                                        false;
+                                                    await auth()
+                                                        ?.currentUser?.updatePassword(
+                                                            newPassword,
+                                                        )
+                                                        ?.catch(err => {
+                                                            checkError2 = true;
+                                                            setShowSpinner(
+                                                                false,
+                                                            );
+                                                            if (err) {
+                                                                error_handler({
+                                                                    navigation:
+                                                                        navigation,
+                                                                    error_mssg:
+                                                                        'An error occured while trying to change your Password!',
+                                                                    svr_error_mssg:
+                                                                        'Please check your Internet Connection!',
+                                                                });
+                                                            }
+                                                        })
+                                                        .then(async () => {
+                                                            if (!checkError2) {
+                                                                const user_data =
+                                                                    {
+                                                                        user_password:
+                                                                            newPassword,
+                                                                        google_auth:
+                                                                            false,
+                                                                    };
+                                                                try {
+                                                                    await SInfo.setItem(
+                                                                        SECURE_STORAGE_USER_INFO,
+                                                                        JSON.stringify(
+                                                                            {
+                                                                                ...user_data,
+                                                                            },
+                                                                        ),
+                                                                        {
+                                                                            sharedPreferencesName:
+                                                                                SECURE_STORAGE_NAME,
+                                                                            keychainService:
+                                                                                SECURE_STORAGE_NAME,
+                                                                        },
+                                                                    )
+                                                                        .catch(
+                                                                            error => {
+                                                                                setShowSpinner(
+                                                                                    false,
+                                                                                );
+                                                                                if (
+                                                                                    error
+                                                                                ) {
+                                                                                    error_handler(
+                                                                                        {
+                                                                                            navigation:
+                                                                                                navigation,
+                                                                                            error_mssg:
+                                                                                                'An error occured, Please retry!',
+                                                                                        },
+                                                                                    );
+                                                                                }
+                                                                            },
+                                                                        )
+                                                                        .then(
+                                                                            () => {
+                                                                                setShowSpinner(
+                                                                                    false,
+                                                                                );
+                                                                                info_handler(
+                                                                                    {
+                                                                                        navigation:
+                                                                                            navigation,
+                                                                                        success_mssg:
+                                                                                            'Password Changed Successfully!',
+                                                                                        proceed_type: 2,
+                                                                                    },
+                                                                                );
+                                                                            },
+                                                                        );
+                                                                } catch (error) {
+                                                                    setShowSpinner(
+                                                                        false,
+                                                                    );
+                                                                    error_handler(
+                                                                        {
+                                                                            navigation:
+                                                                                navigation,
+                                                                            error_mssg:
+                                                                                'An error occured, Please retry!',
+                                                                        },
+                                                                    );
+                                                                }
+                                                            } else {
+                                                                setShowSpinner(
+                                                                    false,
+                                                                );
+                                                            }
+                                                        });
+                                                } catch (error) {
+                                                    setShowSpinner(false);
+                                                    error_handler({
+                                                        navigation: navigation,
+                                                        error_mssg:
+                                                            'An error occured while trying to change your Password!',
+                                                        svr_error_mssg:
+                                                            'Please check your Internet Connection!',
+                                                    });
+                                                }
+                                            }
+                                        } else {
+                                            setShowSpinner(false);
+                                        }
+                                    });
+                            } catch (err) {
+                                setShowSpinner(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to verify User!',
+                                });
+                            }
+                        }, 500);
+                    } else {
+                        setShowSpinner(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                'No User is not logged in. Please proceed to the SignIn Page to login.',
+                        });
+                    }
+                } else {
+                    setShowSpinner(false);
+                    error_handler({
+                        navigation: navigation,
+                        error_mssg:
+                            'New Password and Confirm New Password Input do not match!',
+                    });
+                }
+            } else {
+                setShowSpinner(false);
+                error_handler({
+                    navigation: navigation,
+                    error_mssg: 'Password cannot be less than six (6).',
+                });
+            }
+        } else {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Some password fields are missing!',
+            });
+        }
+    };
 
     return (
         <View style={styles.cp_main}>
@@ -19,6 +226,11 @@ const ChangePasswordPage: FunctionComponent = () => {
                 backgroundColor={Colors().Primary}
                 backgroundDimColor={Colors().PrimaryDim}
                 barStyleLight={true}
+                showSpinner={showSpinner}
+            />
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
             />
             <ScrollView>
                 <View style={styles.top_cont}>
@@ -55,9 +267,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                     <BasicButton
                         buttonText="Set New Password"
                         buttonHeight={52}
-                        marginTop={23}
+                        marginTop={30}
                         marginBottom={16}
-                        execFunc={() => console.log('Set New Password')}
+                        execFunc={() => change_password()}
                     />
                 </View>
             </ScrollView>

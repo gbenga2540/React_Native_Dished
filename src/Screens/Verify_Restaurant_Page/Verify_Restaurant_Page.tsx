@@ -63,9 +63,9 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                             .then(async () => {
                                 if (auth()?.currentUser?.uid) {
                                     const dp_ref = storage().ref(
-                                        `Users_Display_Picture/${
+                                        `Users_Info/${
                                             auth().currentUser?.uid
-                                        }/dp.jpeg`,
+                                        }/Display_Picture/dp.jpeg`,
                                     );
                                     try {
                                         let checkError: boolean = false;
@@ -75,8 +75,10 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                 checkError = true;
                                                 if (
                                                     err &&
-                                                    err?.code ===
-                                                        'storage/object-not-found'
+                                                    (err?.code ===
+                                                        'storage/object-not-found' ||
+                                                        err?.code ===
+                                                            'storage/unknown')
                                                 ) {
                                                     setShowSpinner(false);
                                                     navigation.push(

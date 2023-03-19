@@ -54,7 +54,7 @@ const ErrorPage: FunctionComponent = () => {
                         Error!
                     </Text>
                     <Text style={styles.e_m_err_txt}>
-                        {route?.params?.error_mssg}
+                        {route?.params?.error_mssg || ''}
                     </Text>
                     <Text
                         style={[

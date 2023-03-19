@@ -129,16 +129,17 @@ const SignUpPage: FunctionComponent = () => {
                     });
                 }
             } else {
+                setShowSpinner(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Password must not be less than six!',
                 });
             }
         } else {
+            setShowSpinner(false);
             error_handler({
                 navigation: navigation,
-                error_mssg:
-                    'Please, input a valid Email Address or Mobile Number to proceed!',
+                error_mssg: 'Please, input a valid Email Address to proceed!',
             });
         }
     };
@@ -152,7 +153,6 @@ const SignUpPage: FunctionComponent = () => {
                     checkError = true;
                     setShowSpinner(false);
                     if (err) {
-                        console.log(err.message);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -162,7 +162,6 @@ const SignUpPage: FunctionComponent = () => {
                     }
                 })
                 .then(async res => {
-                    console.log('res', res);
                     if (!checkError) {
                         if (res) {
                             setShowSpinner(true);

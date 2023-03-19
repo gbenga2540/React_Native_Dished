@@ -60,9 +60,9 @@ const SignInPage: FunctionComponent = () => {
                             navigation.navigate('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
-                                `Users_Display_Picture/${
+                                `Users_Info/${
                                     auth().currentUser?.uid
-                                }/dp.jpeg`,
+                                }/Display_Picture/dp.jpeg`,
                             );
                             try {
                                 let checkError2: boolean = false;
@@ -71,8 +71,9 @@ const SignInPage: FunctionComponent = () => {
                                     .catch(err => {
                                         if (
                                             err &&
-                                            err?.code ===
-                                                'storage/object-not-found'
+                                            (err?.code ===
+                                                'storage/object-not-found' ||
+                                                err?.code === 'storage/unknown')
                                         ) {
                                             setShowSpinner(false);
                                         } else {
@@ -162,6 +163,7 @@ const SignInPage: FunctionComponent = () => {
                                         userCredential === undefined ||
                                         userCredential === null
                                     ) {
+                                        setShowSpinner(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:

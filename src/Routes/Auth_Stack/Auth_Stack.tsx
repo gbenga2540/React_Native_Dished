@@ -46,8 +46,6 @@ const AuthStack: FunctionComponent = () => {
         return subscriber;
     }, []);
 
-    console.log('Auth_Stack', user);
-
     if (initializing) {
         return null;
     } else {

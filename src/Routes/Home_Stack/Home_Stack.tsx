@@ -3,20 +3,19 @@ import { StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
-import BookingIcon from '../../Images/Icons/Booking_Icon.svg';
-import CartIcon from '../../Images/Icons/Cart_Icon.svg';
-import HomeIcon from '../../Images/Icons/Home_Icon.svg';
-import FavouriteIcon from '../../Images/Icons/Favourite_Icon.svg';
+import Feather from 'react-native-vector-icons/Feather';
 import HomePage from '../../Screens/Home_Page/Home_Page';
 import CartPage from '../../Screens/Cart_Page/Cart_Page';
 import FavouritePage from '../../Screens/Favourite_Page/Favourite_Page';
 import BookingPage from '../../Screens/Booking_Page/Booking_Page';
+import SettingsPage from '../../Screens/Settings_Page/Settings_Page';
 
 type HomeStackParamList = {
     HomePage: {};
     BookingPage: {};
     FavouritePage: {};
     CartPage: {};
+    SettingsPage: {};
 };
 const Home_Stack = createBottomTabNavigator<HomeStackParamList>();
 
@@ -38,7 +37,7 @@ const HomeStack: FunctionComponent = () => {
                 options={{
                     // eslint-disable-next-line react/no-unstable-nested-components
                     tabBarIcon: ({ color }) => (
-                        <HomeIcon color={color} width={25} height={25} />
+                        <Feather name="home" size={25} color={color} />
                     ),
                     tabBarLabel: 'Home',
                 }}
@@ -49,7 +48,7 @@ const HomeStack: FunctionComponent = () => {
                 options={{
                     // eslint-disable-next-line react/no-unstable-nested-components
                     tabBarIcon: ({ color }) => (
-                        <BookingIcon color={color} width={25} height={25} />
+                        <Feather name="calendar" size={25} color={color} />
                     ),
                     tabBarLabel: 'Booking',
                 }}
@@ -60,7 +59,7 @@ const HomeStack: FunctionComponent = () => {
                 options={{
                     // eslint-disable-next-line react/no-unstable-nested-components
                     tabBarIcon: ({ color }) => (
-                        <FavouriteIcon color={color} width={25} height={25} />
+                        <Feather name="heart" size={25} color={color} />
                     ),
                     tabBarLabel: 'Favourite',
                 }}
@@ -71,9 +70,20 @@ const HomeStack: FunctionComponent = () => {
                 options={{
                     // eslint-disable-next-line react/no-unstable-nested-components
                     tabBarIcon: ({ color }) => (
-                        <CartIcon color={color} width={25} height={25} />
+                        <Feather name="shopping-bag" size={25} color={color} />
                     ),
                     tabBarLabel: 'Cart',
+                }}
+            />
+            <Home_Stack.Screen
+                name="SettingsPage"
+                component={SettingsPage}
+                options={{
+                    // eslint-disable-next-line react/no-unstable-nested-components
+                    tabBarIcon: ({ color }) => (
+                        <Feather name="settings" size={25} color={color} />
+                    ),
+                    tabBarLabel: 'Settings',
                 }}
             />
         </Home_Stack.Navigator>

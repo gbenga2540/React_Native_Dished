@@ -33,6 +33,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>GIDClientID</key>
+	<string>843934770221-c8kbakbvu2dmh3gj9mh7p8058435avj2.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -49,9 +51,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs to access your camera to take a picture.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires FaceID access to allows you quick and secure access.</string>
+	<string>$(PRODUCT_NAME) requires FaceID access to allow you quick and secure Auth access.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>$(PRODUCT_NAME) requires Location to access Maps.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs to access your gallery to select a photo.</string>
 	<key>UIAppFonts</key>

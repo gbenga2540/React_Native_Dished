@@ -80,9 +80,9 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             navigation.navigate('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
-                                `Users_Display_Picture/${
+                                `Users_Info/${
                                     auth().currentUser?.uid
-                                }/dp.jpeg`,
+                                }/Display_Picture/dp.jpeg`,
                             );
                             let checkError2: boolean = false;
                             try {
@@ -91,8 +91,9 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     .catch(err => {
                                         if (
                                             err &&
-                                            err?.code ===
-                                                'storage/object-not-found'
+                                            (err?.code ===
+                                                'storage/object-not-found' ||
+                                                err?.code === 'storage/unknown')
                                         ) {
                                             setShowSpinner(false);
                                         } else {
@@ -276,10 +277,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
     };
 
     const manual_authenticate = () => {
-        if (
-            userInfo?.google_auth !== undefined &&
-            userInfo?.google_auth === false
-        ) {
+        if (userInfo?.google_auth === true) {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    "Google Auth was used to Sign In. Please use the fingerprint to login or use the 'Sign in with Google' button below to proceed.",
+            });
+        } else {
             if (password) {
                 if (auth()?.currentUser?.email) {
                     setShowSpinner(true);
@@ -374,13 +379,6 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     error_mssg: 'Password field cannot be empty!',
                 });
             }
-        } else {
-            setShowSpinner(false);
-            error_handler({
-                navigation: navigation,
-                error_mssg:
-                    "Google Auth was used to Sign In. Please use the fingerprint to login or use the 'Sign in with Google' button below to proceed.",
-            });
         }
     };
 

@@ -6,6 +6,7 @@ import AuthStack from '../Auth_Stack/Auth_Stack';
 import OnboardingPage from '../../Screens/Onboarding_Page/Onboarding_Page';
 import HomeStack from '../Home_Stack/Home_Stack';
 import ErrorPage from '../../Screens/Error_Page/Error_Page';
+import InfoPage from '../../Screens/Info_Page/Info_Page';
 
 type MainStackParamList = {
     AuthStack: {};
@@ -14,6 +15,10 @@ type MainStackParamList = {
     ErrorPage: {
         error_mssg: string;
         svr_error_mssg: string;
+    };
+    InfoPage: {
+        success_mssg: string;
+        svr_success_mssg: string;
     };
 };
 
@@ -77,6 +82,13 @@ const MainStack: FunctionComponent = () => {
                 <Main_Stack.Screen
                     name="ErrorPage"
                     component={ErrorPage}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Main_Stack.Screen
+                    name="InfoPage"
+                    component={InfoPage}
                     options={{
                         headerShown: false,
                     }}

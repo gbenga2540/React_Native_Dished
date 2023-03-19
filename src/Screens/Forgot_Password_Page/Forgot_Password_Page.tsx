@@ -7,10 +7,61 @@ import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import { useNavigation } from '@react-navigation/native';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import auth from '@react-native-firebase/auth';
+import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 
 const ForgotPasswordPage: FunctionComponent = () => {
-    const [email, setEmail] = useState<string>('');
     const navigation = useNavigation();
+    const [email, setEmail] = useState<string>('');
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
+
+    const send_password_reset = () => {
+        if (email_checker(email)) {
+            try {
+                setShowSpinner(true);
+                setTimeout(async () => {
+                    await auth()
+                        ?.sendPasswordResetEmail(email)
+                        .catch(err => {
+                            setShowSpinner(false);
+                            if (err) {
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        'An error occured while trying to send a Password Reset link to your Email.',
+                                    svr_error_mssg: err?.code,
+                                });
+                            }
+                        })
+                        .then(() => {
+                            setShowSpinner(false);
+                            info_handler({
+                                navigation: navigation,
+                                success_mssg:
+                                    'A Reset Password Mail has been sent to your Email Address. Please visit the link to reset your password.',
+                                proceed_type: 1,
+                            });
+                        });
+                }, 500);
+            } catch (err) {
+                setShowSpinner(false);
+                error_handler({
+                    navigation: navigation,
+                    error_mssg:
+                        'An error occured while trying to send a Password Reset link to your Email.',
+                });
+            }
+        } else {
+            setShowSpinner(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg: 'Please, input a valid Email Address to proceed!',
+            });
+        }
+    };
 
     return (
         <View style={styles.fp_main}>
@@ -18,6 +69,11 @@ const ForgotPasswordPage: FunctionComponent = () => {
                 barStyleLight={true}
                 backgroundColor={Colors().Primary}
                 backgroundDimColor={Colors().PrimaryDim}
+                showSpinner={showSpinner}
+            />
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
             />
             <ScrollView>
                 <View style={styles.top_cont}>
@@ -40,14 +96,11 @@ const ForgotPasswordPage: FunctionComponent = () => {
                         placeHolderText="johndoe@gmail.com"
                     />
                     <BasicButton
-                        buttonText="Send OTP"
+                        buttonText="Send Reset Link"
                         buttonHeight={52}
                         marginTop={40}
                         marginBottom={16}
-                        execFunc={() =>
-                            navigation.navigate('FingerprintLoginPage' as never)
-                        }
-                        // update with real code
+                        execFunc={() => send_password_reset()}
                     />
                 </View>
             </ScrollView>

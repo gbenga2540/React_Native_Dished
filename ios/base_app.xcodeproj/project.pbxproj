@@ -13,7 +13,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17C8587244D9427982046E1F /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 368692FEC6DF4B8B992CAD5A /* Poppins-Medium.ttf */; };
-		3DDD1D6E29B6B613001BE5C6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3DDD1D6D29B6B613001BE5C6 /* GoogleService-Info.plist */; };
+		3D0FE8F729C55DAF00F64B99 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D0FE8F629C55DAF00F64B99 /* GoogleService-Info.plist */; };
 		43CD953AE6F74EF98EC73A8C /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F29C3743E75F4D76B22A35E4 /* Lato-Black.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		858BBFED802042F48BE522D0 /* Fonts.ts in Resources */ = {isa = PBXBuildFile; fileRef = 04CC7C1DFD7D4E38BEA8DB4F /* Fonts.ts */; };
@@ -48,6 +48,7 @@
 		15A85825AE2B496686C1D2EE /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/Fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
 		368692FEC6DF4B8B992CAD5A /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../src/Fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-base_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-base_app.debug.xcconfig"; path = "Target Support Files/Pods-base_app/Pods-base_app.debug.xcconfig"; sourceTree = "<group>"; };
+		3D0FE8F629C55DAF00F64B99 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3D6CA7E929A9260B00CE2B6E /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		3D6CA7EA29A9260B00CE2B6E /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		3D6CA7EB29A9260B00CE2B6E /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
@@ -64,7 +65,6 @@
 		3D6CA7F629A9260B00CE2B6E /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		3D6CA7F729A9260B00CE2B6E /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		3D6CA7F829A9260B00CE2B6E /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		3DDD1D6D29B6B613001BE5C6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../docs/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3DFB822B29C0DCBB007B9B5C /* base_app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = base_app.entitlements; path = base_app/base_app.entitlements; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-base_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-base_app.release.xcconfig"; path = "Target Support Files/Pods-base_app/Pods-base_app.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-base_app-base_appTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-base_app-base_appTests.debug.xcconfig"; path = "Target Support Files/Pods-base_app-base_appTests/Pods-base_app-base_appTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -188,7 +188,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				3DDD1D6D29B6B613001BE5C6 /* GoogleService-Info.plist */,
+				3D0FE8F629C55DAF00F64B99 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* base_app */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* base_appTests */,
@@ -322,9 +322,9 @@
 				AABB538200F8409EBA8C4E8C /* Poppins-Bold.ttf in Resources */,
 				862BF8C4B3B24ABCA1689D9A /* Poppins-Regular.ttf in Resources */,
 				17C8587244D9427982046E1F /* Poppins-Medium.ttf in Resources */,
-				3DDD1D6E29B6B613001BE5C6 /* GoogleService-Info.plist in Resources */,
 				43CD953AE6F74EF98EC73A8C /* Lato-Black.ttf in Resources */,
 				E6EA331F90E6434882771EC8 /* Lato-Bold.ttf in Resources */,
+				3D0FE8F729C55DAF00F64B99 /* GoogleService-Info.plist in Resources */,
 				941CEB338178452AB0846D19 /* Lato-Regular.ttf in Resources */,
 				858BBFED802042F48BE522D0 /* Fonts.ts in Resources */,
 			);
