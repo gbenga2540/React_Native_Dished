@@ -111,7 +111,7 @@ const VerifyMailPage: FunctionComponent = () => {
             </View>
             <Text style={styles.v_o_m_info}>
                 {
-                    'A verification link has been sent to your email. Please click the link to verify your Email Address.'
+                    'A verification link has been sent to your email. Please click the link to verify your Email Address and return to this page to proceed.'
                 }
             </Text>
             <TextButton
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_400,
         color: Colors().Black,
         textAlign: 'center',
-        width: 290,
+        width: 300,
         alignSelf: 'center',
         marginBottom: 20,
         fontSize: 15,
