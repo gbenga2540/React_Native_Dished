@@ -1,7 +1,13 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Image, StyleSheet, View, ScrollView, Dimensions } from 'react-native';
+import {
+    Image,
+    StyleSheet,
+    View,
+    ScrollView,
+    Dimensions,
+    Platform,
+} from 'react-native';
 import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import SliderHandler from '../../Components/Slider_Handler/Slider_Handler';
 import { useNavigation } from '@react-navigation/native';
@@ -12,13 +18,16 @@ import Carousel from 'react-native-snap-carousel';
 import { onboarding_data } from '../../Data/Onboarding_Pages/Onboarding_Pages';
 import OnboardingItem from '../../Components/Onboarding_Item/Onboarding_Item';
 import { Onboarding_Props } from '../../Interface/Onboarding_Props/Onboarding_Props';
+import TextButton from '../../Components/Text_Button/Text_Button';
 
 const OnboardingPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const screen_width = Dimensions.get('screen').width;
     const [itemIndex, setItemIndex] = useState<number>(1);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const skip_onboarding = async () => {
+        setDisableButton(true);
         try {
             await AsyncStorage.setItem('show_onboarding', 'skip');
             navigation.navigate(
@@ -35,9 +44,10 @@ const OnboardingPage: FunctionComponent = () => {
                 } as never,
             );
         }
+        setDisableButton(false);
     };
 
-    // @ts-ignor
+    // @ts-ignore
     const renderItem = ({
         item,
         index,
@@ -51,6 +61,14 @@ const OnboardingPage: FunctionComponent = () => {
     return (
         <View style={styles.op_main}>
             <CustomStatusBar backgroundColor={Colors().White} />
+            <View style={styles.op_m_skip}>
+                <TextButton
+                    buttonText="Skip"
+                    execFunc={() => skip_onboarding()}
+                    textColor={Colors().Secondary}
+                    disabled={disableButton}
+                />
+            </View>
             <ScrollView style={{ flex: 1 }}>
                 <View
                     style={{
@@ -79,6 +97,7 @@ const OnboardingPage: FunctionComponent = () => {
                     marginHorizontal={19}
                     marginTop={50}
                     borderRaduis={20}
+                    disabled={disableButton}
                     execFunc={() => skip_onboarding()}
                 />
                 <Image
@@ -120,32 +139,7 @@ const styles = StyleSheet.create({
     op_m_skip: {
         position: 'absolute',
         right: 30,
-        top: 60,
-    },
-    op_m_main_txt: {
-        fontFamily: fonts.Poppins_700,
-        fontSize: 28,
-        color: Colors().Black,
-        textAlign: 'center',
-        marginTop: 160,
-        width: 290,
-        lineHeight: 32,
-        alignSelf: 'center',
-        marginBottom: 22,
-    },
-    op_m_main_img: {
-        width: 260,
-        height: 260,
-        alignSelf: 'center',
-    },
-    op_m_sub_txt: {
-        fontFamily: fonts.Poppins_400,
-        fontSize: 20,
-        width: 307,
-        alignSelf: 'center',
-        marginTop: 54,
-        marginBottom: 33,
-        textAlign: 'center',
-        color: Colors().InputTextGrey,
+        top: Platform?.OS === 'ios' ? 60 : 30,
+        zIndex: 100,
     },
 });

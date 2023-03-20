@@ -16,10 +16,13 @@ const VerifyOTPPage: FunctionComponent = () => {
 
     const [OTP, setOTP] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const verify_otp = () => {
+        setDisableButton(false);
         if (OTP?.length === 6) {
         } else {
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Incorrect One-Time-Password (OTP).',
@@ -64,6 +67,7 @@ const VerifyOTPPage: FunctionComponent = () => {
                     <BasicButton
                         buttonText="Verify"
                         buttonHeight={52}
+                        disabled={disableButton}
                         marginTop={23}
                         marginBottom={16}
                         execFunc={() => verify_otp()}

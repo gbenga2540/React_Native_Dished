@@ -27,6 +27,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
     const [location, setLocation] = useState<string>('');
     const [CACText, setCACText] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const on_verify_profile = async () => {
         if (
@@ -41,6 +42,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
             if (validate_phone_no({ phone_no: new_phone_no })) {
                 if (auth()?.currentUser?.uid) {
                     setShowSpinner(true);
+                    setDisableButton(true);
                     try {
                         firestore()
                             .collection(FIREBASE_USERS_COLLECTION)
@@ -53,6 +55,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                             })
                             .catch(err => {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -81,6 +84,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                             'storage/unknown')
                                                 ) {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     navigation.push(
                                                         'AuthStack' as never,
                                                         {
@@ -89,6 +93,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                     );
                                                 } else {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     error_handler({
                                                         navigation: navigation,
                                                         error_mssg:
@@ -105,6 +110,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                         res === undefined
                                                     ) {
                                                         setShowSpinner(false);
+                                                        setDisableButton(false);
                                                         navigation.push(
                                                             'AuthStack' as never,
                                                             {
@@ -113,6 +119,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                         );
                                                     } else {
                                                         setShowSpinner(false);
+                                                        setDisableButton(false);
                                                         navigation.push(
                                                             'HomeStack' as never,
                                                             {
@@ -122,10 +129,12 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                                     }
                                                 } else {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                 }
                                             });
                                     } catch (error) {
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:
@@ -134,11 +143,13 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                                     }
                                 } else {
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                     navigation.push('SignInPage' as never);
                                 }
                             });
                     } catch (error) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -146,15 +157,22 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         });
                     }
                 } else {
+                    setShowSpinner(false);
+                    setShowSpinner(false);
+                    setDisableButton(false);
                     navigation.push('SignInPage' as never);
                 }
             } else {
+                setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Invalid Phone Number!',
                 });
             }
         } else {
+            setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -164,6 +182,8 @@ const VerifyRestaurantPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
+        setShowSpinner(false);
+        setDisableButton(false);
         if (!auth()?.currentUser?.email) {
             navigation.push('SignInPage' as never);
         }
@@ -224,6 +244,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                     />
                     <BasicButton
                         buttonText="Verify"
+                        disabled={disableButton}
                         buttonHeight={52}
                         marginTop={23}
                         marginBottom={16}

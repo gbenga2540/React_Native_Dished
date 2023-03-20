@@ -12,6 +12,7 @@ interface TextButtonProps {
     marginBottom?: number | string;
     isFontLight?: boolean;
     execFunc: () => void;
+    disabled?: boolean;
 }
 
 const TextButton: FunctionComponent<TextButtonProps> = ({
@@ -23,9 +24,11 @@ const TextButton: FunctionComponent<TextButtonProps> = ({
     marginBottom,
     isFontLight,
     execFunc,
+    disabled,
 }) => {
     return (
         <TouchableOpacity
+            disabled={disabled || false}
             activeOpacity={0.65}
             onPress={() => execFunc()}
             style={[

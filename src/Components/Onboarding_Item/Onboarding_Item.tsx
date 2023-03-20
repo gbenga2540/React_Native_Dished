@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import { Onboarding_Props } from '../../Interface/Onboarding_Props/Onboarding_Props';
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         color: Colors().Black,
         textAlign: 'center',
-        marginTop: 160,
+        marginTop: Platform?.OS === 'ios' ? 150 : 120,
         width: 290,
         lineHeight: 32,
         alignSelf: 'center',

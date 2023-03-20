@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogoImage from '../../Images/Logo/Dished_Logo.svg';
 import Colors from '../../Colors/Colors';
@@ -7,9 +7,21 @@ import Colors from '../../Colors/Colors';
 const DishedLogo: FunctionComponent = () => {
     return (
         <View style={styles.dl_main}>
-            <Text style={[styles.dl_m_txt, { marginRight: -3 }]}>DIS</Text>
+            <Text
+                style={[
+                    styles.dl_m_txt,
+                    { marginRight: Platform?.OS === 'ios' ? -5 : 0 },
+                ]}>
+                DIS
+            </Text>
             <DishedLogoImage width={50} height={50} />
-            <Text style={[styles.dl_m_txt, { marginLeft: -2 }]}>HED</Text>
+            <Text
+                style={[
+                    styles.dl_m_txt,
+                    { marginLeft: Platform?.OS === 'ios' ? 0 : -5 },
+                ]}>
+                HED
+            </Text>
         </View>
     );
 };

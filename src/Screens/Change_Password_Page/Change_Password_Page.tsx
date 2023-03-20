@@ -13,20 +13,24 @@ import auth from '@react-native-firebase/auth';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ChangePasswordPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
     const [newCPassword, setCNewPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const change_password = () => {
+        setDisableButton(false);
         if (oldPassword && newPassword && newCPassword) {
             if (newPassword?.length >= 6) {
                 if (newPassword === newCPassword) {
                     if (auth()?.currentUser?.email) {
                         setShowSpinner(true);
+                        setDisableButton(true);
                         setTimeout(async () => {
                             try {
                                 let checkError: boolean = false;
@@ -38,6 +42,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                                     .catch(error => {
                                         checkError = true;
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         if (error) {
                                             error_handler({
                                                 navigation: navigation,
@@ -55,6 +60,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                 userCredential === null
                                             ) {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 error_handler({
                                                     navigation: navigation,
                                                     error_mssg:
@@ -73,6 +79,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                         ?.catch(err => {
                                                             checkError2 = true;
                                                             setShowSpinner(
+                                                                false,
+                                                            );
+                                                            setDisableButton(
                                                                 false,
                                                             );
                                                             if (err) {
@@ -115,6 +124,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                                                 setShowSpinner(
                                                                                     false,
                                                                                 );
+                                                                                setDisableButton(
+                                                                                    false,
+                                                                                );
                                                                                 if (
                                                                                     error
                                                                                 ) {
@@ -134,6 +146,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                                                 setShowSpinner(
                                                                                     false,
                                                                                 );
+                                                                                setDisableButton(
+                                                                                    false,
+                                                                                );
                                                                                 info_handler(
                                                                                     {
                                                                                         navigation:
@@ -149,6 +164,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                                     setShowSpinner(
                                                                         false,
                                                                     );
+                                                                    setDisableButton(
+                                                                        false,
+                                                                    );
                                                                     error_handler(
                                                                         {
                                                                             navigation:
@@ -162,10 +180,14 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                                 setShowSpinner(
                                                                     false,
                                                                 );
+                                                                setDisableButton(
+                                                                    false,
+                                                                );
                                                             }
                                                         });
                                                 } catch (error) {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     error_handler({
                                                         navigation: navigation,
                                                         error_mssg:
@@ -177,10 +199,12 @@ const ChangePasswordPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (err) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -190,6 +214,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                         }, 500);
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -198,6 +223,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                     }
                 } else {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     error_handler({
                         navigation: navigation,
                         error_mssg:
@@ -206,6 +232,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                 }
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Password cannot be less than six (6).',
@@ -213,6 +240,7 @@ const ChangePasswordPage: FunctionComponent = () => {
             }
         } else {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Some password fields are missing!',
@@ -270,6 +298,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                         marginTop={30}
                         marginBottom={16}
                         execFunc={() => change_password()}
+                        disabled={disableButton}
                     />
                 </View>
             </ScrollView>

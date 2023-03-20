@@ -10,6 +10,7 @@ interface TextWithButtonProps {
     setInputValue: Dispatch<React.SetStateAction<string>>;
     iconType?: string;
     execFunc: () => void;
+    disabled?: boolean;
 }
 
 const TextWithButton: FunctionComponent<TextWithButtonProps> = ({
@@ -18,6 +19,7 @@ const TextWithButton: FunctionComponent<TextWithButtonProps> = ({
     setInputValue,
     iconType,
     execFunc,
+    disabled,
 }) => {
     return (
         <View style={styles.b_t_e_main}>
@@ -30,6 +32,7 @@ const TextWithButton: FunctionComponent<TextWithButtonProps> = ({
                 editable={false}
             />
             <TouchableOpacity
+                disabled={disabled || false}
                 activeOpacity={0.65}
                 onPress={() => execFunc()}
                 style={{

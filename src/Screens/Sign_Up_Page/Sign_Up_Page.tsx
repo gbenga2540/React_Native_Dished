@@ -9,7 +9,7 @@ import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
 import TextButton from '../../Components/Text_Button/Text_Button';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
@@ -18,13 +18,16 @@ import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SignUpPage: FunctionComponent = () => {
-    const navigation = useNavigation<NavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [disableNavButton, setDisableNavButton] = useState<boolean>(false);
 
     const verify_mail_page = () => {
         navigation.navigate('VerifyMailPage' as never);
@@ -36,14 +39,17 @@ const SignUpPage: FunctionComponent = () => {
                 .currentUser?.sendEmailVerification()
                 .then(() => {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     verify_mail_page();
                 })
                 .catch(() => {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     verify_mail_page();
                 });
         } catch (err) {
             setShowSpinner(false);
+            setDisableButton(false);
             verify_mail_page();
         }
     };
@@ -54,6 +60,7 @@ const SignUpPage: FunctionComponent = () => {
                 try {
                     let checkError: boolean = false;
                     setShowSpinner(true);
+                    setDisableButton(true);
                     setTimeout(async () => {
                         await auth()
                             .createUserWithEmailAndPassword(
@@ -63,6 +70,7 @@ const SignUpPage: FunctionComponent = () => {
                             .catch(error => {
                                 checkError = true;
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -77,6 +85,7 @@ const SignUpPage: FunctionComponent = () => {
                                         userCredential === undefined
                                     ) {
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:
@@ -114,14 +123,17 @@ const SignUpPage: FunctionComponent = () => {
                                     }
                                 } else {
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                 }
                             })
                             .finally(() => {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                             });
                     }, 500);
                 } catch (err) {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     error_handler({
                         navigation: navigation,
                         error_mssg:
@@ -130,6 +142,7 @@ const SignUpPage: FunctionComponent = () => {
                 }
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Password must not be less than six!',
@@ -137,6 +150,7 @@ const SignUpPage: FunctionComponent = () => {
             }
         } else {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Please, input a valid Email Address to proceed!',
@@ -146,12 +160,14 @@ const SignUpPage: FunctionComponent = () => {
 
     const sign_in_with_google = async () => {
         setShowSpinner(true);
+        setDisableButton(true);
         try {
             let checkError: boolean = false;
             await GoogleSignin?.signIn()
                 ?.catch(err => {
                     checkError = true;
                     setShowSpinner(false);
+                    setDisableButton(false);
                     if (err) {
                         error_handler({
                             navigation: navigation,
@@ -164,7 +180,6 @@ const SignUpPage: FunctionComponent = () => {
                 .then(async res => {
                     if (!checkError) {
                         if (res) {
-                            setShowSpinner(true);
                             const googleCredential =
                                 auth.GoogleAuthProvider.credential(
                                     res?.idToken as string,
@@ -176,6 +191,7 @@ const SignUpPage: FunctionComponent = () => {
                                     ?.catch(err => {
                                         checkError2 = true;
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         if (err) {
                                             error_handler({
                                                 navigation: navigation,
@@ -208,11 +224,17 @@ const SignUpPage: FunctionComponent = () => {
                                                             setShowSpinner(
                                                                 false,
                                                             );
+                                                            setDisableButton(
+                                                                false,
+                                                            );
                                                             navigation.navigate(
                                                                 'SelectProfilePage' as never,
                                                             );
                                                         })
                                                         .catch(error => {
+                                                            setDisableButton(
+                                                                false,
+                                                            );
                                                             if (error) {
                                                                 setShowSpinner(
                                                                     false,
@@ -224,12 +246,14 @@ const SignUpPage: FunctionComponent = () => {
                                                         });
                                                 } catch (err) {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     navigation.navigate(
                                                         'SelectProfilePage' as never,
                                                     );
                                                 }
                                             } else {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 error_handler({
                                                     navigation: navigation,
                                                     error_mssg:
@@ -238,10 +262,12 @@ const SignUpPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (error) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -250,6 +276,7 @@ const SignUpPage: FunctionComponent = () => {
                             }
                         } else {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             error_handler({
                                 navigation: navigation,
                                 error_mssg:
@@ -258,10 +285,12 @@ const SignUpPage: FunctionComponent = () => {
                         }
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     }
                 });
         } catch (error) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -309,6 +338,7 @@ const SignUpPage: FunctionComponent = () => {
                         buttonText="Get Started"
                         buttonHeight={52}
                         marginTop={45}
+                        disabled={disableButton}
                         marginBottom={16}
                         execFunc={() => on_get_started()}
                     />
@@ -317,6 +347,7 @@ const SignUpPage: FunctionComponent = () => {
                         logoName="Google"
                         inputText="Sign Up with Google"
                         marginTop={16}
+                        disabled={disableButton}
                         execFunc={() => sign_in_with_google()}
                     />
                     <View style={styles.s_m_acc}>
@@ -326,11 +357,14 @@ const SignUpPage: FunctionComponent = () => {
                         <TextButton
                             buttonText="Sign In"
                             marginLeft={3}
-                            execFunc={() =>
+                            disabled={disableNavButton}
+                            execFunc={() => {
+                                setDisableNavButton(true);
                                 navigation.navigate<never>(
                                     'SignInPage' as never,
-                                )
-                            }
+                                );
+                                setDisableNavButton(false);
+                            }}
                         />
                     </View>
                 </View>

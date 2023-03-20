@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -7,15 +7,19 @@ import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const InfoPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<any>>();
+    const hide_back_btn: boolean = route?.params?.hide_back_btn;
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const proceed = () => {
+        setDisableButton(true);
         switch (route?.params?.proceed_type) {
             case 1:
-                navigation.navigate(
+                navigation.push(
                     'AuthStack' as never,
                     { screen: 'SignInPage' } as never,
                 );
@@ -27,12 +31,13 @@ const InfoPage: FunctionComponent = () => {
                 );
                 break;
             default:
-                navigation.navigate(
+                navigation.push(
                     'AuthStack' as never,
                     { screen: 'SignInPage' } as never,
                 );
                 break;
         }
+        setDisableButton(false);
     };
 
     return (
@@ -41,10 +46,17 @@ const InfoPage: FunctionComponent = () => {
             <View style={styles.info_main}>
                 <TouchableOpacity
                     style={styles.i_m_bb}
+                    disabled={hide_back_btn}
                     onPress={() =>
                         navigation.canGoBack() && navigation.goBack()
                     }>
-                    <Feather name="chevron-left" size={35} color={'black'} />
+                    {!hide_back_btn && (
+                        <Feather
+                            name="chevron-left"
+                            size={35}
+                            color={'black'}
+                        />
+                    )}
                 </TouchableOpacity>
                 <LottieView
                     style={{
@@ -91,6 +103,7 @@ const InfoPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={0}
                         marginBottom={0}
+                        disabled={disableButton}
                         execFunc={() => proceed()}
                     />
                 </View>
@@ -110,7 +123,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: 60,
+        minWidth: 60,
         height: 60,
+        minHeight: 60,
         marginTop: 30,
         marginLeft: 5,
         marginBottom: 20,

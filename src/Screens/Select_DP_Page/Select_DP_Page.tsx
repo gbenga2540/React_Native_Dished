@@ -21,16 +21,21 @@ import { get_image_format } from '../../Utils/Get_Image_Format/Get_Image_Format'
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import { useDispatch } from 'react-redux';
+import { set_user_dp } from '../../Redux/Actions/User_Info/User_Info_Actions';
 
 const SelectDPPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const dispatch = useDispatch();
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const [displayPicture, setDisplayPicture] = useState<string>('none');
     const [imageFormat, setImageFormat] = useState<string>('');
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const upload_image = async () => {
         if (displayPicture === 'none') {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -44,6 +49,7 @@ const SelectDPPage: FunctionComponent = () => {
                     }/Display_Picture/dp.${imageFormat}`,
                 );
                 setShowSpinner(true);
+                setDisableButton(true);
                 try {
                     let checkError: boolean = false;
                     dp_ref
@@ -51,6 +57,7 @@ const SelectDPPage: FunctionComponent = () => {
                         .catch(err => {
                             checkError = true;
                             setShowSpinner(false);
+                            setDisableButton(false);
                             if (err) {
                                 error_handler({
                                     navigation: navigation,
@@ -60,10 +67,22 @@ const SelectDPPage: FunctionComponent = () => {
                                 });
                             }
                         })
-                        .then(res => {
+                        .then(async res => {
                             if (!checkError) {
                                 if (res?.state === 'success') {
+                                    await dp_ref
+                                        ?.getDownloadURL()
+                                        .then(result => {
+                                            if (result) {
+                                                dispatch(
+                                                    set_user_dp({
+                                                        user_dp: result,
+                                                    }),
+                                                );
+                                            }
+                                        });
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                     navigation.navigate(
                                         'HomeStack' as never,
                                         {
@@ -72,6 +91,7 @@ const SelectDPPage: FunctionComponent = () => {
                                     );
                                 } else {
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                     error_handler({
                                         navigation: navigation,
                                         error_mssg:
@@ -80,10 +100,12 @@ const SelectDPPage: FunctionComponent = () => {
                                 }
                             } else {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                             }
                         });
                 } catch (error) {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     error_handler({
                         navigation: navigation,
                         error_mssg:
@@ -92,6 +114,7 @@ const SelectDPPage: FunctionComponent = () => {
                 }
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg:
@@ -103,12 +126,14 @@ const SelectDPPage: FunctionComponent = () => {
 
     const clear_image = () => {
         setShowSpinner(false);
+        setDisableButton(false);
         setDisplayPicture('none');
         ImagePicker.clean();
     };
 
     const select_image_from_gallery = () => {
         setShowSpinner(false);
+        setDisableButton(true);
         try {
             ImagePicker.openPicker({
                 width: 300,
@@ -120,11 +145,13 @@ const SelectDPPage: FunctionComponent = () => {
                 forceJpg: true,
             })
                 .catch(err => {
+                    setDisableButton(false);
                     if (err) {
                         clear_image();
                     }
                 })
                 .then(res => {
+                    setDisableButton(false);
                     if (res) {
                         // @ts-ignore
                         const processed_image = `data:${res?.mime};base64,${res?.data}`;
@@ -135,12 +162,14 @@ const SelectDPPage: FunctionComponent = () => {
                     }
                 });
         } catch (error) {
+            setDisableButton(false);
             clear_image();
         }
     };
 
     const select_image_from_camera = () => {
         setShowSpinner(false);
+        setDisableButton(true);
         try {
             ImagePicker.openCamera({
                 width: 300,
@@ -152,11 +181,13 @@ const SelectDPPage: FunctionComponent = () => {
                 forceJpg: true,
             })
                 .catch(err => {
+                    setDisableButton(false);
                     if (err) {
                         clear_image();
                     }
                 })
                 .then(res => {
+                    setDisableButton(false);
                     if (res) {
                         // @ts-ignore
                         const processed_image = `data:${res?.mime};base64,${res?.data}`;
@@ -167,12 +198,12 @@ const SelectDPPage: FunctionComponent = () => {
                     }
                 });
         } catch (error) {
+            setDisableButton(false);
             clear_image();
         }
     };
 
     useEffect(() => {
-        setShowSpinner(false);
         clear_image();
     }, []);
 
@@ -254,6 +285,7 @@ const SelectDPPage: FunctionComponent = () => {
                     <BasicButton
                         buttonText="Upload Picture"
                         buttonHeight={52}
+                        disabled={disableButton}
                         marginTop={23}
                         marginBottom={16}
                         execFunc={() => upload_image()}

@@ -84,7 +84,7 @@ const App: FunctionComponent = () => {
                 styles.app_main,
                 { backgroundColor: Colors()?.Background },
             ]}>
-            <CustomStatusBar backgroundColor={Colors()?.Background} />
+            <CustomStatusBar />
             <NavigationContainer>
                 <MainStack />
             </NavigationContainer>

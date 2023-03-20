@@ -12,21 +12,26 @@ import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ForgotPasswordPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [email, setEmail] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const send_password_reset = () => {
+        setDisableButton(false);
         if (email_checker(email)) {
             try {
                 setShowSpinner(true);
+                setDisableButton(true);
                 setTimeout(async () => {
                     await auth()
                         ?.sendPasswordResetEmail(email)
                         .catch(err => {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             if (err) {
                                 error_handler({
                                     navigation: navigation,
@@ -38,6 +43,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
                         })
                         .then(() => {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             info_handler({
                                 navigation: navigation,
                                 success_mssg:
@@ -48,6 +54,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
                 }, 500);
             } catch (err) {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg:
@@ -56,6 +63,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
             }
         } else {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Please, input a valid Email Address to proceed!',
@@ -100,6 +108,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={40}
                         marginBottom={16}
+                        disabled={disableButton}
                         execFunc={() => send_password_reset()}
                     />
                 </View>

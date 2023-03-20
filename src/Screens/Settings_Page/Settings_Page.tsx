@@ -20,45 +20,71 @@ import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 import { useNavigation } from '@react-navigation/native';
 import { clear_user_info } from '../../Redux/Actions/User_Info/User_Info_Actions';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SettingsPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const dispatch = useDispatch();
     const userInfo = useSelector((state: any) => state?.UserInfo);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
+
+    const change_password = () => {
+        setDisableButton(true);
+        navigation.push(
+            'AuthStack' as never,
+            { screen: 'ChangePasswordPage' } as never,
+        );
+        setDisableButton(false);
+    };
+
+    const change_display_picture = () => {
+        setDisableButton(true);
+        navigation.push(
+            'AuthStack' as never,
+            { screen: 'SelectDPPage' } as never,
+        );
+        setDisableButton(false);
+    };
 
     const sign_out = () => {
+        setDisableButton(true);
+        setShowSpinner(true);
         setTimeout(async () => {
             try {
-                setShowSpinner(true);
                 dispatch(clear_user_info());
-                auth().signOut();
                 await SInfo.deleteItem(SECURE_STORAGE_USER_INFO, {
                     sharedPreferencesName: SECURE_STORAGE_NAME,
                     keychainService: SECURE_STORAGE_NAME,
                 })
                     .catch(error => {
+                        setDisableButton(false);
                         setShowSpinner(false);
                         if (error) {
                             error_handler({
                                 navigation: navigation,
-                                error_mssg: 'An error occured, Please retry!',
+                                error_mssg:
+                                    'An error occured, Please try again!',
                             });
                         }
                     })
                     .then(() => {
+                        auth().signOut();
+                        setDisableButton(false);
                         setShowSpinner(false);
                         info_handler({
                             navigation: navigation,
-                            success_mssg: 'Password Changed Successfully!',
+                            success_mssg: 'Successfully Signed Out!',
                             proceed_type: 1,
+                            hide_back_btn: true,
                         });
                     });
             } catch (error) {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
-                    error_mssg: 'An error occured, Please retry!',
+                    error_mssg: 'An error occured, Please try again!',
                 });
             }
         }, 500);
@@ -95,28 +121,48 @@ const SettingsPage: FunctionComponent = () => {
                 <View style={styles.sm_cont}>
                     <Text style={styles.sm_c_n}>{userInfo?.userName}</Text>
                     <TouchableOpacity
+                        onPress={() => change_password()}
+                        disabled={disableButton}
                         style={{
                             margin: 20,
-                            marginVertical: 10,
+                            marginVertical: 7,
                             marginTop: 30,
                         }}
                         activeOpacity={0.65}>
-                        <Text style={{ color: 'black', fontSize: 20 }}>
+                        <Text
+                            style={{
+                                color: 'black',
+                                fontSize: 18,
+                                fontFamily: fonts.Poppins_400,
+                            }}>
                             Change Password
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ margin: 20, marginVertical: 10 }}
+                        onPress={() => change_display_picture()}
+                        disabled={disableButton}
+                        style={{ margin: 20, marginVertical: 7 }}
                         activeOpacity={0.65}>
-                        <Text style={{ color: 'black', fontSize: 20 }}>
+                        <Text
+                            style={{
+                                color: 'black',
+                                fontSize: 18,
+                                fontFamily: fonts.Poppins_400,
+                            }}>
                             Change Display Picture
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{ margin: 20, marginVertical: 10 }}
-                        activeOpacity={0.65}
-                        onPress={() => sign_out()}>
-                        <Text style={{ color: 'black', fontSize: 20 }}>
+                        onPress={() => sign_out()}
+                        disabled={disableButton}
+                        style={{ margin: 20, marginVertical: 7 }}
+                        activeOpacity={0.65}>
+                        <Text
+                            style={{
+                                color: 'black',
+                                fontSize: 18,
+                                fontFamily: fonts.Poppins_400,
+                            }}>
                             Sign Out!
                         </Text>
                     </TouchableOpacity>
@@ -139,7 +185,7 @@ const styles = StyleSheet.create({
         borderRadius: 170,
         padding: 3,
         marginBottom: 20,
-        borderColor: Colors().Primary,
+        borderColor: Colors().Secondary,
         marginTop: Platform?.OS === 'ios' ? 100 : 75,
         borderWidth: 2,
     },
@@ -156,6 +202,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: Colors()?.InputText,
         fontFamily: fonts?.Poppins_500,
-        fontSize: 16,
+        fontSize: 20,
+        marginBottom: 30,
     },
 });

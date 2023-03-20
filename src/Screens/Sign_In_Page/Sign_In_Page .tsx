@@ -29,6 +29,8 @@ const SignInPage: FunctionComponent = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [disableNavButton, setDisableNavButton] = useState<boolean>(false);
 
     const check_user_info = () => {
         let checkError: boolean = false;
@@ -41,6 +43,7 @@ const SignInPage: FunctionComponent = () => {
                     checkError = true;
                     if (err) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -57,6 +60,7 @@ const SignInPage: FunctionComponent = () => {
                             info_res?.exists === false
                         ) {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             navigation.navigate('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
@@ -76,9 +80,11 @@ const SignInPage: FunctionComponent = () => {
                                                 err?.code === 'storage/unknown')
                                         ) {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         } else {
                                             checkError2 = true;
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                             error_handler({
                                                 navigation: navigation,
                                                 error_mssg:
@@ -94,6 +100,7 @@ const SignInPage: FunctionComponent = () => {
                                                 res === undefined
                                             ) {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 navigation.push(
                                                     'AuthStack' as never,
                                                     {
@@ -102,6 +109,7 @@ const SignInPage: FunctionComponent = () => {
                                                 );
                                             } else {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 navigation.push(
                                                     'HomeStack' as never,
                                                     {
@@ -111,10 +119,12 @@ const SignInPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (error) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -124,10 +134,12 @@ const SignInPage: FunctionComponent = () => {
                         }
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     }
                 });
         } catch (error) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -140,6 +152,7 @@ const SignInPage: FunctionComponent = () => {
         if (email_checker(email)) {
             if (password) {
                 setShowSpinner(true);
+                setDisableButton(true);
                 setTimeout(async () => {
                     try {
                         let checkError: boolean = false;
@@ -148,6 +161,7 @@ const SignInPage: FunctionComponent = () => {
                             .catch(error => {
                                 checkError = true;
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 if (error) {
                                     error_handler({
                                         navigation: navigation,
@@ -164,6 +178,7 @@ const SignInPage: FunctionComponent = () => {
                                         userCredential === null
                                     ) {
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:
@@ -203,10 +218,12 @@ const SignInPage: FunctionComponent = () => {
                                     }
                                 } else {
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                 }
                             });
                     } catch (err) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -216,6 +233,7 @@ const SignInPage: FunctionComponent = () => {
                 }, 500);
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Password field cannot be empty!',
@@ -223,6 +241,7 @@ const SignInPage: FunctionComponent = () => {
             }
         } else {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg: 'Please, input a valid Email Address!',
@@ -232,12 +251,14 @@ const SignInPage: FunctionComponent = () => {
 
     const sign_in_with_google = async () => {
         setShowSpinner(true);
+        setDisableButton(true);
         try {
             let checkError: boolean = false;
             await GoogleSignin?.signIn()
                 ?.catch(err => {
                     checkError = true;
                     setShowSpinner(false);
+                    setDisableButton(false);
                     if (err) {
                         error_handler({
                             navigation: navigation,
@@ -250,7 +271,6 @@ const SignInPage: FunctionComponent = () => {
                 .then(async res => {
                     if (!checkError) {
                         if (res) {
-                            setShowSpinner(true);
                             const googleCredential =
                                 auth.GoogleAuthProvider.credential(
                                     res?.idToken as string,
@@ -262,6 +282,7 @@ const SignInPage: FunctionComponent = () => {
                                     ?.catch(err => {
                                         checkError2 = true;
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         if (err) {
                                             error_handler({
                                                 navigation: navigation,
@@ -303,6 +324,7 @@ const SignInPage: FunctionComponent = () => {
                                                 }
                                             } else {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 error_handler({
                                                     navigation: navigation,
                                                     error_mssg:
@@ -311,10 +333,12 @@ const SignInPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (error) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -323,6 +347,7 @@ const SignInPage: FunctionComponent = () => {
                             }
                         } else {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             error_handler({
                                 navigation: navigation,
                                 error_mssg:
@@ -331,10 +356,12 @@ const SignInPage: FunctionComponent = () => {
                         }
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     }
                 });
         } catch (error) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -382,6 +409,7 @@ const SignInPage: FunctionComponent = () => {
                         buttonText="Login"
                         buttonHeight={52}
                         marginTop={23}
+                        disabled={disableButton}
                         marginBottom={16}
                         execFunc={() => sign_in_user()}
                     />
@@ -391,11 +419,14 @@ const SignInPage: FunctionComponent = () => {
                             marginLeft={3}
                             textColor={Colors().InputText}
                             isFontLight={true}
-                            execFunc={() =>
+                            disabled={disableNavButton}
+                            execFunc={() => {
+                                setDisableNavButton(true);
                                 navigation.navigate(
                                     'ForgotPasswordPage' as never,
-                                )
-                            }
+                                );
+                                setDisableNavButton(false);
+                            }}
                         />
                     </View>
                     <TextDivider text={'or'} marginBottom={0} />
@@ -403,6 +434,7 @@ const SignInPage: FunctionComponent = () => {
                         logoName="Google"
                         inputText="Sign In with Google"
                         marginTop={15}
+                        disabled={disableButton}
                         execFunc={() => sign_in_with_google()}
                     />
                     <View style={styles.s_m_acc}>
@@ -410,11 +442,14 @@ const SignInPage: FunctionComponent = () => {
                         <TextButton
                             buttonText="Sign Up"
                             marginLeft={3}
-                            execFunc={() =>
+                            disabled={disableNavButton}
+                            execFunc={() => {
+                                setDisableNavButton(true);
                                 navigation.navigate<never>(
                                     'SignUpPage' as never,
-                                )
-                            }
+                                );
+                                setDisableNavButton(false);
+                            }}
                         />
                     </View>
                 </View>

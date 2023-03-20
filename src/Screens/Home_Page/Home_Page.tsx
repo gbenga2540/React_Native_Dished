@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import {
     ScrollView,
     StyleSheet,
@@ -6,7 +6,6 @@ import {
     Platform,
     FlatList,
     Text,
-    Image,
 } from 'react-native';
 import Colors from '../../Colors/Colors';
 import DishCard from '../../Components/Dish_Card/Dish_Card';
@@ -14,27 +13,9 @@ import SearchBar from '../../Components/Search_Bar/Search_Bar';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import { fonts } from '../../Fonts/Fonts';
 import { dummy_data } from '../../../temp/HomeData';
-import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
 
 const HomePage: FunctionComponent = () => {
     const [searchText, setSearchText] = useState<string>('');
-    const [displayPicture, setDisplayPicture] = useState<string>('none');
-
-    useEffect(() => {
-        if (auth().currentUser) {
-            const dp_ref = storage().ref(
-                `Users_Info/${auth().currentUser?.uid}/Display_Picture/dp.jpeg`,
-            );
-            try {
-                dp_ref.getDownloadURL()?.then(res => {
-                    if (res) {
-                        setDisplayPicture(res);
-                    }
-                });
-            } catch (error) {}
-        }
-    }, []);
 
     return (
         <View style={styles.home_page_main}>
@@ -42,26 +23,9 @@ const HomePage: FunctionComponent = () => {
             <ScrollView
                 style={{
                     flex: 1,
-                    paddingTop: Platform?.OS === 'ios' ? 60 : 20,
+                    paddingTop: Platform?.OS === 'ios' ? 70 : 25,
                 }}>
                 <View style={{ flex: 1 }}>
-                    <View style={styles.hp_w_i_c}>
-                        {displayPicture === 'none' ? (
-                            <Image
-                                style={styles.hp_w_i}
-                                source={require('../../Images/Logo/Default_User_Logo.jpg')}
-                            />
-                        ) : (
-                            <Image
-                                style={styles.hp_w_i}
-                                source={{
-                                    uri: displayPicture,
-                                    width: 120,
-                                    height: 120,
-                                }}
-                            />
-                        )}
-                    </View>
                     <SearchBar
                         searchText={searchText}
                         setSearchText={setSearchText}
@@ -162,17 +126,5 @@ const styles = StyleSheet.create({
     home_page_main: {
         flex: 1,
         backgroundColor: Colors().Background,
-    },
-    hp_w_i_c: {
-        alignItems: 'center',
-        alignSelf: 'flex-end',
-        marginRight: 20,
-        borderRadius: 50,
-        marginBottom: 20,
-    },
-    hp_w_i: {
-        borderRadius: 50,
-        width: 50,
-        height: 50,
     },
 });

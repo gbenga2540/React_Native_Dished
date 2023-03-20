@@ -29,6 +29,7 @@ const VerifyRidersPage: FunctionComponent = () => {
     const [ecText, setECText] = useState<string>('');
     const [rpText, setRPText] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const on_verify_profile = async () => {
         if (
@@ -43,6 +44,7 @@ const VerifyRidersPage: FunctionComponent = () => {
             if (validate_phone_no({ phone_no: new_phone_no })) {
                 if (auth()?.currentUser?.uid) {
                     setShowSpinner(true);
+                    setDisableButton(true);
                     try {
                         firestore()
                             .collection(FIREBASE_USERS_COLLECTION)
@@ -55,6 +57,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                             })
                             .catch(err => {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -83,6 +86,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                                                             'storage/unknown')
                                                 ) {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     navigation.push(
                                                         'AuthStack' as never,
                                                         {
@@ -91,6 +95,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                                                     );
                                                 } else {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                     error_handler({
                                                         navigation: navigation,
                                                         error_mssg:
@@ -107,6 +112,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                                                         res === undefined
                                                     ) {
                                                         setShowSpinner(false);
+                                                        setDisableButton(false);
                                                         navigation.push(
                                                             'AuthStack' as never,
                                                             {
@@ -115,6 +121,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                                                         );
                                                     } else {
                                                         setShowSpinner(false);
+                                                        setDisableButton(false);
                                                         navigation.push(
                                                             'HomeStack' as never,
                                                             {
@@ -124,10 +131,12 @@ const VerifyRidersPage: FunctionComponent = () => {
                                                     }
                                                 } else {
                                                     setShowSpinner(false);
+                                                    setDisableButton(false);
                                                 }
                                             });
                                     } catch (error) {
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:
@@ -136,11 +145,13 @@ const VerifyRidersPage: FunctionComponent = () => {
                                     }
                                 } else {
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                     navigation.push('SignInPage' as never);
                                 }
                             });
                     } catch (error) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -148,10 +159,13 @@ const VerifyRidersPage: FunctionComponent = () => {
                         });
                     }
                 } else {
+                    setShowSpinner(false);
+                    setDisableButton(false);
                     navigation.push('SignInPage' as never);
                 }
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Invalid Phone Number!',
@@ -159,6 +173,7 @@ const VerifyRidersPage: FunctionComponent = () => {
             }
         } else {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -168,6 +183,8 @@ const VerifyRidersPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
+        setShowSpinner(false);
+        setDisableButton(false);
         if (!auth()?.currentUser?.email) {
             navigation.push('SignInPage' as never);
         }
@@ -253,6 +270,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                         buttonHeight={52}
                         marginTop={23}
                         marginBottom={16}
+                        disabled={disableButton}
                         execFunc={() => on_verify_profile()}
                     />
                 </View>

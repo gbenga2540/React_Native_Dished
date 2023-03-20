@@ -12,9 +12,10 @@ import Feather from 'react-native-vector-icons/Feather';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ErrorPage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<any>>();
 
     return (

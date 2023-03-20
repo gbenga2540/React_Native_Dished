@@ -41,6 +41,9 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const [animState, setAnimState] = useState<string>('idle');
     const [render, setRender] = useState<boolean>(false);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [disableLoginButton, setDisableLoginButton] =
+        useState<boolean>(false);
     interface userInfoProps {
         user_password: string;
         google_auth: boolean | undefined;
@@ -61,6 +64,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     checkError = true;
                     if (err) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -77,6 +81,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             info_res?.exists === false
                         ) {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             navigation.navigate('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
@@ -87,7 +92,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             let checkError2: boolean = false;
                             try {
                                 await dp_ref
-                                    .getDownloadURL()
+                                    ?.getDownloadURL()
                                     .catch(err => {
                                         if (
                                             err &&
@@ -96,9 +101,11 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                                 err?.code === 'storage/unknown')
                                         ) {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         } else {
                                             checkError2 = true;
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                             error_handler({
                                                 navigation: navigation,
                                                 error_mssg:
@@ -114,6 +121,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                                 res === undefined
                                             ) {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 navigation.push(
                                                     'AuthStack' as never,
                                                     {
@@ -122,6 +130,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                                 );
                                             } else {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 navigation.push(
                                                     'HomeStack' as never,
                                                     {
@@ -131,10 +140,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (error) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -144,10 +155,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         }
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     }
                 });
         } catch (error) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -158,12 +171,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
 
     const sign_in_with_google = async () => {
         setShowSpinner(true);
+        setDisableButton(true);
         try {
             let checkError: boolean = false;
             await GoogleSignin?.signIn()
                 ?.catch(err => {
                     checkError = true;
                     setShowSpinner(false);
+                    setDisableButton(false);
                     if (err) {
                         error_handler({
                             navigation: navigation,
@@ -177,6 +192,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     if (!checkError) {
                         if (res) {
                             setShowSpinner(true);
+                            setDisableButton(false);
                             const googleCredential =
                                 auth.GoogleAuthProvider.credential(
                                     res?.idToken as string,
@@ -188,6 +204,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     ?.catch(err => {
                                         checkError2 = true;
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         if (err) {
                                             error_handler({
                                                 navigation: navigation,
@@ -236,6 +253,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                                 }
                                             } else {
                                                 setShowSpinner(false);
+                                                setDisableButton(false);
                                                 error_handler({
                                                     navigation: navigation,
                                                     error_mssg:
@@ -244,10 +262,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             }
                                         } else {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                         }
                                     });
                             } catch (error) {
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 error_handler({
                                     navigation: navigation,
                                     error_mssg:
@@ -256,6 +276,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             }
                         } else {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             error_handler({
                                 navigation: navigation,
                                 error_mssg:
@@ -264,10 +285,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         }
                     } else {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     }
                 });
         } catch (error) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -279,6 +302,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
     const manual_authenticate = () => {
         if (userInfo?.google_auth === true) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -288,6 +312,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
             if (password) {
                 if (auth()?.currentUser?.email) {
                     setShowSpinner(true);
+                    setDisableButton(true);
                     setTimeout(async () => {
                         let checkError: boolean = false;
                         try {
@@ -299,6 +324,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 .catch(error => {
                                     checkError = true;
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                     if (error) {
                                         error_handler({
                                             navigation: navigation,
@@ -316,6 +342,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             userCredential === null
                                         ) {
                                             setShowSpinner(false);
+                                            setDisableButton(false);
                                             error_handler({
                                                 navigation: navigation,
                                                 error_mssg:
@@ -354,10 +381,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         }
                                     } else {
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                     }
                                 });
                         } catch (err) {
                             setShowSpinner(false);
+                            setDisableButton(false);
                             error_handler({
                                 navigation: navigation,
                                 error_mssg: 'Unable to Sign In User!',
@@ -366,6 +395,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }, 500);
                 } else {
                     setShowSpinner(false);
+                    setDisableButton(false);
                     error_handler({
                         navigation: navigation,
                         error_mssg:
@@ -374,6 +404,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 }
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     navigation: navigation,
                     error_mssg: 'Password field cannot be empty!',
@@ -389,6 +420,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
         ) {
             if (auth()?.currentUser?.email && userInfo?.user_password) {
                 setShowSpinner(true);
+                setDisableButton(true);
                 setTimeout(async () => {
                     let checkError: boolean = false;
                     try {
@@ -401,6 +433,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 checkError = true;
                                 setAnimState('idle');
                                 setShowSpinner(false);
+                                setDisableButton(false);
                                 if (error) {
                                     error_handler({
                                         navigation: navigation,
@@ -417,6 +450,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     ) {
                                         setAnimState('idle');
                                         setShowSpinner(false);
+                                        setDisableButton(false);
                                         error_handler({
                                             navigation: navigation,
                                             error_mssg:
@@ -431,10 +465,12 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 } else {
                                     setAnimState('idle');
                                     setShowSpinner(false);
+                                    setDisableButton(false);
                                 }
                             });
                     } catch (err) {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         setAnimState('idle');
                         error_handler({
                             navigation: navigation,
@@ -444,6 +480,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 }, 500);
             } else {
                 setShowSpinner(false);
+                setDisableButton(false);
                 setAnimState('idle');
                 error_handler({
                     navigation: navigation,
@@ -457,6 +494,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
 
     const biometric_login = async () => {
         setShowSpinner(false);
+        setDisableButton(false);
         const prompt_biometrics = async () => {
             await rnBiometrics
                 .simplePrompt({
@@ -507,6 +545,8 @@ const FingerprintLoginPage: FunctionComponent = () => {
     useEffect(() => {
         setAnimState('idle');
         setShowSpinner(false);
+        setDisableButton(false);
+        setDisableLoginButton(false);
         setRender(false);
 
         const get_user_name_from_svr = () => {
@@ -751,6 +791,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         marginLeft={3}
                                         textColor={Colors().InputText}
                                         isFontLight={true}
+                                        disabled={disableButton}
                                         execFunc={() =>
                                             navigation.navigate(
                                                 'ForgotPasswordPage' as never,
@@ -763,6 +804,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     buttonText="Login"
                                     buttonHeight={55}
                                     marginTop={10}
+                                    disabled={disableButton}
                                     marginBottom={20}
                                 />
                             </View>
@@ -778,6 +820,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                             inputText="Sign In with Google"
                             marginTop={userInfo?.google_auth ? 25 : 10}
                             marginBottom={5}
+                            disabled={disableButton}
                             execFunc={() => sign_in_with_google()}
                         />
                         <View style={styles.f_m_acc}>
@@ -788,11 +831,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 buttonText="Sign In"
                                 marginTop={0}
                                 marginLeft={3}
-                                execFunc={() =>
+                                disabled={disableLoginButton}
+                                execFunc={() => {
+                                    setDisableLoginButton(true);
                                     navigation.navigate<never>(
                                         'SignInPage' as never,
-                                    )
-                                }
+                                    );
+                                    setDisableLoginButton(false);
+                                }}
                             />
                         </View>
                     </View>
@@ -817,7 +863,7 @@ const styles = StyleSheet.create({
     f_m_txt1: {
         fontFamily: fonts.Poppins_700,
         fontSize: 32,
-        marginTop: Platform.OS === 'ios' ? 100 : 80,
+        marginTop: Platform.OS === 'ios' ? 100 : 50,
         marginBottom: 5,
         color: Colors().Black,
     },
@@ -852,6 +898,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 10,
+        marginBottom: 30,
     },
     f_m_acc_text: {
         fontFamily: fonts.Poppins_400,

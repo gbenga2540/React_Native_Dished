@@ -11,6 +11,7 @@ interface BasicLogoButtonProps {
     marginTop?: number;
     marginBottom?: number;
     execFunc: () => void;
+    disabled?: boolean;
 }
 
 const BasicLogoButton: FunctionComponent<BasicLogoButtonProps> = ({
@@ -19,9 +20,11 @@ const BasicLogoButton: FunctionComponent<BasicLogoButtonProps> = ({
     marginTop,
     marginBottom,
     execFunc,
+    disabled,
 }) => {
     return (
         <TouchableOpacity
+            disabled={disabled || false}
             onPress={() => execFunc()}
             activeOpacity={0.65}
             style={[

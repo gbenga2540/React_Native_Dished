@@ -8,15 +8,18 @@ import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import RNDropDown from '../../Components/RN_Drop_Down/RN_Drop_Down';
 import { useNavigation } from '@react-navigation/native';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SelectProfilePage: FunctionComponent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const [identityValue, setIdentityValue] = useState<string>(
         Sign_Up_Identity_Data[0]?.value,
     );
 
     const on_get_started = async () => {
+        setDisableButton(true);
         switch (identityValue) {
             case Sign_Up_Identity_Data[0]?.value:
                 navigation.navigate<never>('VerifyConsumerPage' as never);
@@ -30,6 +33,7 @@ const SelectProfilePage: FunctionComponent = () => {
             default:
                 break;
         }
+        setDisableButton(false);
     };
 
     return (
@@ -61,6 +65,7 @@ const SelectProfilePage: FunctionComponent = () => {
                         marginTop={35}
                         marginBottom={16}
                         execFunc={() => on_get_started()}
+                        disabled={disableButton}
                     />
                 </View>
             </ScrollView>

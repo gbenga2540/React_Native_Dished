@@ -15,15 +15,18 @@ import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Ba
 const VerifyMailPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
 
     const resend_mail = () => {
         setShowSpinner(true);
+        setDisableButton(true);
         setTimeout(async () => {
             try {
                 await auth()
                     .currentUser?.sendEmailVerification()
                     .catch(error => {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             error_mssg:
                                 'An error occured while trying to re-send the verification link to yout Email Address.',
@@ -33,9 +36,11 @@ const VerifyMailPage: FunctionComponent = () => {
                     })
                     .then(() => {
                         setShowSpinner(false);
+                        setDisableButton(false);
                     });
             } catch (err) {
                 setShowSpinner(false);
+                setDisableButton(false);
                 error_handler({
                     error_mssg:
                         'An error occured while trying to re-send the verification link to yout Email Address.',
@@ -47,12 +52,14 @@ const VerifyMailPage: FunctionComponent = () => {
 
     const verify_mail = () => {
         setShowSpinner(true);
+        setDisableButton(true);
         try {
             setTimeout(() => {
                 auth()
                     .currentUser?.reload()
                     .catch(() => {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         error_handler({
                             navigation: navigation,
                             error_mssg:
@@ -61,6 +68,7 @@ const VerifyMailPage: FunctionComponent = () => {
                     })
                     .then(() => {
                         setShowSpinner(false);
+                        setDisableButton(false);
                         if (auth().currentUser?.emailVerified) {
                             navigation.navigate('SelectProfilePage' as never);
                         } else {
@@ -74,6 +82,7 @@ const VerifyMailPage: FunctionComponent = () => {
             }, 500);
         } catch (err) {
             setShowSpinner(false);
+            setDisableButton(false);
             error_handler({
                 navigation: navigation,
                 error_mssg:
@@ -113,9 +122,11 @@ const VerifyMailPage: FunctionComponent = () => {
                 marginRight={22}
                 buttonText={'Resend Mail'}
                 execFunc={() => resend_mail()}
+                disabled={disableButton}
             />
             <View style={styles.s_m_input_cont}>
                 <BasicButton
+                    disabled={disableButton}
                     buttonText="PROCEED"
                     buttonHeight={52}
                     marginTop={20}

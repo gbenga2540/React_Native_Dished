@@ -11,6 +11,7 @@ interface BasicButtonProps {
     borderRaduis?: number;
     marginHorizontal?: number;
     execFunc: () => void;
+    disabled?: boolean;
 }
 
 const BasicButton: FunctionComponent<BasicButtonProps> = ({
@@ -21,9 +22,11 @@ const BasicButton: FunctionComponent<BasicButtonProps> = ({
     borderRaduis,
     marginHorizontal,
     execFunc,
+    disabled,
 }) => {
     return (
         <TouchableOpacity
+            disabled={disabled || false}
             onPress={() => execFunc()}
             style={[
                 styles.b_b_main,
