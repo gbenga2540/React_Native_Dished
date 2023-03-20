@@ -17,9 +17,12 @@ import storage from '@react-native-firebase/storage';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import { phone_no_converter } from '../../Utils/Phone_No_Converter/Phone_No_Converter';
 import { validate_phone_no } from '../../Utils/Validate_Phone_No/Validate_Phone_No';
+import { useDispatch } from 'react-redux';
+import { set_user_name } from '../../Redux/Actions/User_Info/User_Info_Actions';
 
 const VerifyConsumerPage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const dispatch = useDispatch();
 
     const [fullName, setFullName] = useState<string>('');
     const [phoneNo, setPhoneNo] = useState<string>('');
@@ -62,6 +65,11 @@ const VerifyConsumerPage: FunctionComponent = () => {
                                 });
                             })
                             .then(async () => {
+                                dispatch(
+                                    set_user_name({
+                                        user_name: fullName,
+                                    }),
+                                );
                                 if (auth()?.currentUser?.uid) {
                                     const dp_ref = storage().ref(
                                         `Users_Info/${

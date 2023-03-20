@@ -22,6 +22,7 @@ import {
     set_user_dp,
     set_user_name,
 } from '../Redux/Actions/User_Info/User_Info_Actions';
+import { Sign_Up_Identity_Data } from '../Data/Sign_Up_Identity/Sign_Up_Identity';
 
 const App: FunctionComponent = () => {
     const dispatch = useDispatch();
@@ -65,11 +66,37 @@ const App: FunctionComponent = () => {
                         .get()
                         .then(async info_res => {
                             if (info_res?.data() && info_res?.exists === true) {
-                                dispatch(
-                                    set_user_name({
-                                        user_name: info_res?.data()?.fullName,
-                                    }),
-                                );
+                                if (
+                                    info_res?.data()?.accountType ===
+                                    Sign_Up_Identity_Data[0]?.value
+                                ) {
+                                    dispatch(
+                                        set_user_name({
+                                            user_name:
+                                                info_res?.data()?.fullName,
+                                        }),
+                                    );
+                                } else if (
+                                    info_res?.data()?.accountType ===
+                                    Sign_Up_Identity_Data[1]?.value
+                                ) {
+                                    dispatch(
+                                        set_user_name({
+                                            user_name:
+                                                info_res?.data()?.fullName,
+                                        }),
+                                    );
+                                } else if (
+                                    info_res?.data()?.accountType ===
+                                    Sign_Up_Identity_Data[2]?.value
+                                ) {
+                                    dispatch(
+                                        set_user_name({
+                                            user_name:
+                                                info_res?.data()?.businessName,
+                                        }),
+                                    );
+                                }
                             }
                         });
                 };
