@@ -7,11 +7,13 @@ import { fonts } from '../../Fonts/Fonts';
 interface SearchBarProps {
     searchText: string;
     setSearchText: Dispatch<SetStateAction<string>>;
+    onSubmit: () => void;
 }
 
 const SearchBar: FunctionComponent<SearchBarProps> = ({
     searchText,
     setSearchText,
+    onSubmit,
 }) => {
     return (
         <View style={styles.sb_main}>
@@ -31,6 +33,9 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
                 value={searchText}
                 autoCapitalize={'none'}
                 autoCorrect={false}
+                keyboardType="web-search"
+                onSubmitEditing={() => onSubmit()}
+                inputMode="search"
             />
         </View>
     );

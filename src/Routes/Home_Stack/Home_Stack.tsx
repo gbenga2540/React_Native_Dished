@@ -8,7 +8,7 @@ import HomePage from '../../Screens/Home_Page/Home_Page';
 import CartPage from '../../Screens/Cart_Page/Cart_Page';
 import FavouritePage from '../../Screens/Favourite_Page/Favourite_Page';
 import BookingPage from '../../Screens/Booking_Page/Booking_Page';
-import SettingsPage from '../../Screens/Settings_Page/Settings_Page';
+import ProfilePage from '../../Screens/Profile_Page/Profile_Page';
 import { useSelector } from 'react-redux';
 
 type HomeStackParamList = {
@@ -16,7 +16,7 @@ type HomeStackParamList = {
     BookingPage: {};
     FavouritePage: {};
     CartPage: {};
-    SettingsPage: {};
+    ProfilePage: {};
 };
 const Home_Stack = createBottomTabNavigator<HomeStackParamList>();
 
@@ -80,14 +80,13 @@ const HomeStack: FunctionComponent = () => {
                 }}
             />
             <Home_Stack.Screen
-                name="SettingsPage"
-                component={SettingsPage}
+                name="ProfilePage"
+                component={ProfilePage}
                 options={{
                     // eslint-disable-next-line react/no-unstable-nested-components
                     tabBarIcon: (
                         { color }, // eslint-disable-line @typescript-eslint/no-unused-vars
                     ) => (
-                        // <Feather name="settings" size={30} color={color} />
                         <View style={styles.tb_i_c}>
                             {userInfo?.userDP ? (
                                 <Image
@@ -106,7 +105,7 @@ const HomeStack: FunctionComponent = () => {
                             )}
                         </View>
                     ),
-                    tabBarLabel: 'User',
+                    tabBarLabel: 'Profile',
                 }}
             />
         </Home_Stack.Navigator>

@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:843934770221:android:81efff2086410f399404a4",
+        "mobilesdk_app_id": "1:843934770221:android:58b568a7a0ed2bbb9404a4",
         "android_client_info": {
-          "package_name": "com.base_app"
+          "package_name": "com.dished"
         }
       },
       "oauth_client": [
         {
-          "client_id": "843934770221-ni880pqcgeiu6c69uculq016aa9cf5ep.apps.googleusercontent.com",
+          "client_id": "843934770221-fl0cgjato2t535gqhdpuddr4hpken10c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.base_app",
+            "package_name": "com.dished",
             "certificate_hash": "04f7524f7febbadaace14f65d0b651541423734e"
           }
         },

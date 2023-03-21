@@ -22,7 +22,7 @@ import { clear_user_info } from '../../Redux/Actions/User_Info/User_Info_Actions
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const SettingsPage: FunctionComponent = () => {
+const ProfilePage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const dispatch = useDispatch();
     const userInfo = useSelector((state: any) => state?.UserInfo);
@@ -91,7 +91,7 @@ const SettingsPage: FunctionComponent = () => {
     };
 
     return (
-        <View style={styles.settings_main}>
+        <View style={styles.profile_main}>
             <CustomStatusBar
                 backgroundColor={Colors()?.Background}
                 showSpinner={showSpinner}
@@ -101,10 +101,10 @@ const SettingsPage: FunctionComponent = () => {
                 setShowSpinner={setShowSpinner}
             />
             <ScrollView style={{ flex: 1 }}>
-                <View style={styles.sm_w_i_c}>
+                <View style={styles.pp_w_i_c}>
                     {userInfo?.userDP ? (
                         <Image
-                            style={styles.sm_w_i}
+                            style={styles.pp_w_i}
                             source={{
                                 uri: userInfo?.userDP,
                                 width: 170,
@@ -113,13 +113,13 @@ const SettingsPage: FunctionComponent = () => {
                         />
                     ) : (
                         <Image
-                            style={styles.sm_w_i}
+                            style={styles.pp_w_i}
                             source={require('../../Images/Logo/Default_User_Logo.jpg')}
                         />
                     )}
                 </View>
-                <View style={styles.sm_cont}>
-                    <Text style={styles.sm_c_n}>{userInfo?.userName}</Text>
+                <View style={styles.pp_cont}>
+                    <Text style={styles.pp_c_n}>{userInfo?.userName}</Text>
                     <TouchableOpacity
                         onPress={() => change_password()}
                         disabled={disableButton}
@@ -172,14 +172,14 @@ const SettingsPage: FunctionComponent = () => {
     );
 };
 
-export default SettingsPage;
+export default ProfilePage;
 
 const styles = StyleSheet.create({
-    settings_main: {
+    profile_main: {
         flex: 1,
         backgroundColor: Colors().Background,
     },
-    sm_w_i_c: {
+    pp_w_i_c: {
         alignItems: 'center',
         alignSelf: 'center',
         borderRadius: 170,
@@ -189,16 +189,16 @@ const styles = StyleSheet.create({
         marginTop: Platform?.OS === 'ios' ? 100 : 75,
         borderWidth: 2,
     },
-    sm_w_i: {
+    pp_w_i: {
         borderRadius: 170,
         width: 170,
         height: 170,
     },
-    sm_cont: {
+    pp_cont: {
         flex: 1,
         justifyContent: 'center',
     },
-    sm_c_n: {
+    pp_c_n: {
         textAlign: 'center',
         color: Colors()?.InputText,
         fontFamily: fonts?.Poppins_500,

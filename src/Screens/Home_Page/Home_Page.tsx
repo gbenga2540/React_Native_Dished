@@ -29,6 +29,9 @@ const HomePage: FunctionComponent = () => {
                     <SearchBar
                         searchText={searchText}
                         setSearchText={setSearchText}
+                        onSubmit={() =>
+                            console.log('Searching for ' + searchText)
+                        }
                     />
                     <View style={{ marginTop: 20, marginBottom: 0 }}>
                         <Text
@@ -68,7 +71,7 @@ const HomePage: FunctionComponent = () => {
                             Latest Dishes
                         </Text>
                         <FlatList
-                            data={dummy_data}
+                            data={[...dummy_data]?.reverse()}
                             renderItem={({ item, index }) => {
                                 return (
                                     <View

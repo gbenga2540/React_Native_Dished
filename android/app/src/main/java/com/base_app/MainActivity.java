@@ -1,4 +1,4 @@
-package com.base_app;
+package com.dished;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
