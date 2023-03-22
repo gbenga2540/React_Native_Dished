@@ -67,4 +67,5 @@ yarn-error.log
 /docs
 /temp
 /android/app/release
+/android/app/debug
 /android/app/build/outputs
