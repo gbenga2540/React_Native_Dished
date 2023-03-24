@@ -30,14 +30,14 @@ const OnboardingPage: FunctionComponent = () => {
         setDisableButton(true);
         try {
             await AsyncStorage.setItem('show_onboarding', 'skip');
-            navigation.navigate(
+            navigation.push(
                 'AuthStack' as never,
                 {
                     screen: 'SignUpPage',
                 } as never,
             );
         } catch (err) {
-            navigation.navigate(
+            navigation.push(
                 'AuthStack' as never,
                 {
                     screen: 'SignUpPage',
@@ -67,6 +67,7 @@ const OnboardingPage: FunctionComponent = () => {
                     execFunc={() => skip_onboarding()}
                     textColor={Colors().Secondary}
                     disabled={disableButton}
+                    isFontLight
                 />
             </View>
             <ScrollView style={{ flex: 1 }}>

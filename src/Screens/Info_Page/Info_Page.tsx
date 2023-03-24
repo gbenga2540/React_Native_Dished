@@ -8,12 +8,23 @@ import Colors from '../../Colors/Colors';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useDispatch } from 'react-redux';
+import { clear_user_info } from '../../Redux/Actions/User_Info/User_Info_Actions';
+import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import SInfo from 'react-native-sensitive-info';
+import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
+import auth from '@react-native-firebase/auth';
+import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
+import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 
 const InfoPage: FunctionComponent = () => {
+    const dispatch = useDispatch();
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<any>>();
     const hide_back_btn: boolean = route?.params?.hide_back_btn;
+    const hide_header: boolean = route?.params?.hide_header;
     const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
     const proceed = () => {
         setDisableButton(true);
@@ -30,6 +41,46 @@ const InfoPage: FunctionComponent = () => {
                     { screen: 'HomePage' } as never,
                 );
                 break;
+            case 3:
+                setTimeout(async () => {
+                    try {
+                        dispatch(clear_user_info());
+                        await SInfo.deleteItem(SECURE_STORAGE_USER_INFO, {
+                            sharedPreferencesName: SECURE_STORAGE_NAME,
+                            keychainService: SECURE_STORAGE_NAME,
+                        })
+                            .catch(error => {
+                                setDisableButton(false);
+                                setShowSpinner(false);
+                                if (error) {
+                                    error_handler({
+                                        navigation: navigation,
+                                        error_mssg:
+                                            'An error occured, Please try again!',
+                                    });
+                                }
+                            })
+                            .then(() => {
+                                auth().signOut();
+                                setDisableButton(false);
+                                setShowSpinner(false);
+                                info_handler({
+                                    navigation: navigation,
+                                    success_mssg: 'Successfully Signed Out!',
+                                    proceed_type: 1,
+                                    hide_back_btn: true,
+                                });
+                            });
+                    } catch (error) {
+                        setShowSpinner(false);
+                        setDisableButton(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg: 'An error occured, Please try again!',
+                        });
+                    }
+                }, 500);
+                break;
             default:
                 navigation.push(
                     'AuthStack' as never,
@@ -43,6 +94,10 @@ const InfoPage: FunctionComponent = () => {
     return (
         <View style={{ flex: 1 }}>
             <CustomStatusBar />
+            <OverlaySpinner
+                showSpinner={showSpinner}
+                setShowSpinner={setShowSpinner}
+            />
             <View style={styles.info_main}>
                 <TouchableOpacity
                     style={styles.i_m_bb}
@@ -74,9 +129,11 @@ const InfoPage: FunctionComponent = () => {
                     resizeMode="cover"
                     speed={1.7}
                 />
-                <Text style={[styles.i_m_err_txt, styles.i_m_err_txt_h]}>
-                    Successful!
-                </Text>
+                {!hide_header && (
+                    <Text style={[styles.i_m_err_txt, styles.i_m_err_txt_h]}>
+                        Successful!
+                    </Text>
+                )}
                 <Text style={styles.i_m_err_txt}>
                     {route?.params?.success_mssg || ''}
                 </Text>

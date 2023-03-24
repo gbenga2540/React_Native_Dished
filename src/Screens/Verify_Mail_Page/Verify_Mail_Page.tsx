@@ -70,7 +70,7 @@ const VerifyMailPage: FunctionComponent = () => {
                         setShowSpinner(false);
                         setDisableButton(false);
                         if (auth().currentUser?.emailVerified) {
-                            navigation.navigate('SelectProfilePage' as never);
+                            navigation.push('SelectProfilePage' as never);
                         } else {
                             error_handler({
                                 navigation: navigation,

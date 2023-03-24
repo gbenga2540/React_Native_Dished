@@ -1,5 +1,13 @@
-import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Keyboard,
+    Platform,
+    KeyboardAvoidingView,
+} from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -24,8 +32,11 @@ import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Ba
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const SignInPage: FunctionComponent = () => {
+    type ScrollViewRef = ScrollView & {
+        flashScrollIndicators: () => void;
+    };
+    const scrollViewRef = useRef<ScrollViewRef | null>(null);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
@@ -61,7 +72,7 @@ const SignInPage: FunctionComponent = () => {
                         ) {
                             setShowSpinner(false);
                             setDisableButton(false);
-                            navigation.navigate('SelectProfilePage' as never);
+                            navigation.push('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
                                 `Users_Info/${
@@ -370,8 +381,38 @@ const SignInPage: FunctionComponent = () => {
         }
     };
 
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: Platform.OS === 'ios' ? 150 : 170,
+                    animated: true,
+                });
+            },
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                });
+            },
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
     return (
-        <View style={styles.signin_main}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.signin_main}>
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
@@ -382,7 +423,9 @@ const SignInPage: FunctionComponent = () => {
                 backgroundDimColor={Colors().PrimaryDim}
                 barStyleLight={true}
             />
-            <ScrollView>
+            <ScrollView
+                style={{ flex: 1 }}
+                ref={ref => (scrollViewRef.current = ref)}>
                 <View style={styles.top_cont}>
                     <Text style={styles.top_cont_txt}>Sign In</Text>
                 </View>
@@ -422,9 +465,7 @@ const SignInPage: FunctionComponent = () => {
                             disabled={disableNavButton}
                             execFunc={() => {
                                 setDisableNavButton(true);
-                                navigation.navigate(
-                                    'ForgotPasswordPage' as never,
-                                );
+                                navigation.push('ForgotPasswordPage' as never);
                                 setDisableNavButton(false);
                             }}
                         />
@@ -445,16 +486,14 @@ const SignInPage: FunctionComponent = () => {
                             disabled={disableNavButton}
                             execFunc={() => {
                                 setDisableNavButton(true);
-                                navigation.navigate<never>(
-                                    'SignUpPage' as never,
-                                );
+                                navigation.navigate('SignUpPage' as never);
                                 setDisableNavButton(false);
                             }}
                         />
                     </View>
                 </View>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

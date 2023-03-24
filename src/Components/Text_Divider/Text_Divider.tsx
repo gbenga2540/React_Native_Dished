@@ -47,5 +47,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 32,
         color: Colors().Black,
+        height: 32,
+        minHeight: 32,
+        maxHeight: 32,
     },
 });

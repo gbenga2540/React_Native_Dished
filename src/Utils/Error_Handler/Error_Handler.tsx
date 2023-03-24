@@ -1,7 +1,7 @@
-import { NavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface ErrorHandlerProps {
-    navigation: NavigationProp<any>;
+    navigation: NativeStackNavigationProp<any>;
     error_mssg: string;
     svr_error_mssg?: string;
 }
@@ -11,7 +11,7 @@ export const error_handler = ({
     error_mssg,
     svr_error_mssg,
 }: ErrorHandlerProps) => {
-    navigation.navigate(
+    navigation.push(
         'ErrorPage' as never,
         {
             error_mssg: error_mssg,

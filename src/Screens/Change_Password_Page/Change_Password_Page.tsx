@@ -1,5 +1,13 @@
-import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Keyboard,
+    Platform,
+    KeyboardAvoidingView,
+} from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -16,6 +24,10 @@ import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ChangePasswordPage: FunctionComponent = () => {
+    type ScrollViewRef = ScrollView & {
+        flashScrollIndicators: () => void;
+    };
+    const scrollViewRef = useRef<ScrollViewRef | null>(null);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
@@ -248,8 +260,38 @@ const ChangePasswordPage: FunctionComponent = () => {
         }
     };
 
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: Platform.OS === 'ios' ? 150 : 170,
+                    animated: true,
+                });
+            },
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                });
+            },
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
     return (
-        <View style={styles.cp_main}>
+        <KeyboardAvoidingView
+            style={styles.cp_main}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <CustomStatusBar
                 backgroundColor={Colors().Primary}
                 backgroundDimColor={Colors().PrimaryDim}
@@ -260,7 +302,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
             />
-            <ScrollView>
+            <ScrollView
+                ref={ref => (scrollViewRef.current = ref)}
+                style={{ flex: 1 }}>
                 <View style={styles.top_cont}>
                     <Text style={styles.top_cont_txt}>Change Password</Text>
                 </View>
@@ -302,7 +346,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                     />
                 </View>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

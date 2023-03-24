@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import {
     StyleSheet,
     Text,
@@ -6,6 +12,8 @@ import {
     Platform,
     TouchableOpacity,
     ScrollView,
+    KeyboardAvoidingView,
+    Keyboard,
 } from 'react-native';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
@@ -32,6 +40,10 @@ import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const FingerprintLoginPage: FunctionComponent = () => {
+    type ScrollViewRef = ScrollView & {
+        flashScrollIndicators: () => void;
+    };
+    const scrollViewRef = useRef<ScrollViewRef | null>(null);
     const rnBiometrics = useMemo(() => new ReactNativeBiometrics(), []);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -82,7 +94,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                         ) {
                             setShowSpinner(false);
                             setDisableButton(false);
-                            navigation.navigate('SelectProfilePage' as never);
+                            navigation.push('SelectProfilePage' as never);
                         } else {
                             const dp_ref = storage().ref(
                                 `Users_Info/${
@@ -543,6 +555,34 @@ const FingerprintLoginPage: FunctionComponent = () => {
     };
 
     useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: Platform.OS === 'ios' ? 150 : 170,
+                    animated: true,
+                });
+            },
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                });
+            },
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+    useEffect(() => {
         setAnimState('idle');
         setShowSpinner(false);
         setDisableButton(false);
@@ -660,190 +700,207 @@ const FingerprintLoginPage: FunctionComponent = () => {
 
     if (render) {
         return (
-            <View style={styles.flp_main}>
+            <KeyboardAvoidingView
+                style={styles.flp_main}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <CustomStatusBar showSpinner={showSpinner} />
                 <OverlaySpinner
                     showSpinner={showSpinner}
                     setShowSpinner={setShowSpinner}
                 />
-                <CustomStatusBar showSpinner={showSpinner} />
-                <ScrollView style={{ flex: 1 }}>
-                    <View style={styles.flp_main_cont}>
-                        <Text style={styles.f_m_txt1}>{welcomeText}</Text>
-                        <Text style={styles.f_m_txt2}>
-                            Use{' '}
-                            {Platform.OS === 'ios' ? 'Touch ID' : 'Fingerprint'}{' '}
-                            to sign in into your Dished account
-                        </Text>
-                        <TouchableOpacity
-                            style={{
-                                width: 200,
-                                minWidth: 200,
-                                maxWidth: 200,
-                                height: 200,
-                                minHeight: 200,
-                                maxHeight: 200,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                alignSelf: 'center',
-                            }}
-                            disabled={!isFPA}
-                            activeOpacity={0.65}
-                            onPress={() => biometric_login()}>
-                            {animState === 'idle' && (
-                                <LottieView
-                                    style={{
-                                        transform: [{ scale: 0.93 }],
-                                        minWidth: 200,
-                                        minHeight: 200,
-                                        maxWidth: 200,
-                                        maxHeight: 200,
-                                        position: 'relative',
-                                        alignSelf: 'center',
-                                    }}
-                                    source={require('../../Animations/Fingerprint_Idle.json')}
-                                    autoPlay
-                                    loop={isFPA}
-                                    resizeMode="cover"
-                                />
-                            )}
-                            {animState === 'failed' && (
-                                <LottieView
-                                    style={{
-                                        transform: [{ scale: 1 }],
-                                        minWidth: 200,
-                                        minHeight: 200,
-                                        maxWidth: 200,
-                                        maxHeight: 200,
-                                        position: 'relative',
-                                        alignSelf: 'center',
-                                    }}
-                                    source={require('../../Animations/Fingerprint_Failed.json')}
-                                    autoPlay
-                                    loop={false}
-                                    resizeMode="cover"
-                                    speed={1.7}
-                                />
-                            )}
-                            {animState === 'success' && (
-                                <LottieView
-                                    style={{
-                                        transform: [{ scale: 0.87 }],
-                                        minWidth: 200,
-                                        minHeight: 200,
-                                        maxWidth: 200,
-                                        maxHeight: 200,
-                                        position: 'relative',
-                                        alignSelf: 'center',
-                                    }}
-                                    source={require('../../Animations/Fingerprint_Success.json')}
-                                    autoPlay
-                                    loop={false}
-                                    onAnimationFinish={() =>
-                                        fingerprint_authenticate()
-                                    }
-                                    resizeMode="cover"
-                                />
-                            )}
-                        </TouchableOpacity>
-                        {!isFPA && (
-                            <Text style={styles.f_m_fpc}>
+                <ScrollView
+                    style={styles.flp_main}
+                    ref={ref => (scrollViewRef.current = ref)}>
+                    <View style={{ flex: 1 }}>
+                        <View style={styles.flp_main_cont}>
+                            <Text style={styles.f_m_txt1}>{welcomeText}</Text>
+                            <Text style={styles.f_m_txt2}>
+                                Use{' '}
                                 {Platform.OS === 'ios'
-                                    ? 'Touch ID is not available!'
-                                    : 'Fingerprint is not available!'}
+                                    ? 'Touch ID'
+                                    : 'Fingerprint'}{' '}
+                                to sign in into your Dished account
                             </Text>
-                        )}
-                        {isFPA && animState === 'idle' && (
-                            <Text
-                                style={[
-                                    styles.f_m_fpc,
-                                    { color: Colors().InputText },
-                                ]}>
-                                Click the Icon above to prompt the
-                                {Platform.OS === 'ios'
-                                    ? ' Touch ID'
-                                    : ' Fingerprint'}{' '}
-                                sensor.
-                            </Text>
-                        )}
-                        {isFPA && animState === 'failed' && (
-                            <Text style={styles.f_m_fpc}>
-                                Please input your password instead!
-                            </Text>
-                        )}
-                        {isFPA && animState === 'success' && (
-                            <Text style={[styles.f_m_fpc, { color: 'green' }]}>
-                                Authenticating...
-                            </Text>
-                        )}
-                        {!userInfo?.google_auth && (
-                            <View>
-                                <Text style={styles.f_m_txt3}>
-                                    Or just use password instead
-                                </Text>
-                                <SecureTextEntry
-                                    placeHolderText={'Enter your password'}
-                                    inputValue={password}
-                                    setInputValue={setPassword}
-                                />
-                                <View style={styles.f_m_fp}>
-                                    <TextButton
-                                        buttonText="Forgot Password"
-                                        marginLeft={3}
-                                        textColor={Colors().InputText}
-                                        isFontLight={true}
-                                        disabled={disableButton}
-                                        execFunc={() =>
-                                            navigation.navigate(
-                                                'ForgotPasswordPage' as never,
-                                            )
+                            <TouchableOpacity
+                                style={{
+                                    width: 200,
+                                    minWidth: 200,
+                                    maxWidth: 200,
+                                    height: 200,
+                                    minHeight: 200,
+                                    maxHeight: 200,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    alignSelf: 'center',
+                                }}
+                                disabled={!isFPA}
+                                activeOpacity={0.65}
+                                onPress={() => biometric_login()}>
+                                {animState === 'idle' && (
+                                    <LottieView
+                                        style={{
+                                            transform: [{ scale: 0.93 }],
+                                            minWidth: 200,
+                                            minHeight: 200,
+                                            maxWidth: 200,
+                                            maxHeight: 200,
+                                            position: 'relative',
+                                            alignSelf: 'center',
+                                        }}
+                                        source={require('../../Animations/Fingerprint_Idle.json')}
+                                        autoPlay
+                                        loop={isFPA}
+                                        resizeMode="cover"
+                                    />
+                                )}
+                                {animState === 'failed' && (
+                                    <LottieView
+                                        style={{
+                                            transform: [{ scale: 1 }],
+                                            minWidth: 200,
+                                            minHeight: 200,
+                                            maxWidth: 200,
+                                            maxHeight: 200,
+                                            position: 'relative',
+                                            alignSelf: 'center',
+                                        }}
+                                        source={require('../../Animations/Fingerprint_Failed.json')}
+                                        autoPlay
+                                        loop={false}
+                                        resizeMode="cover"
+                                        speed={1.7}
+                                    />
+                                )}
+                                {animState === 'success' && (
+                                    <LottieView
+                                        style={{
+                                            transform: [{ scale: 0.87 }],
+                                            minWidth: 200,
+                                            minHeight: 200,
+                                            maxWidth: 200,
+                                            maxHeight: 200,
+                                            position: 'relative',
+                                            alignSelf: 'center',
+                                        }}
+                                        source={require('../../Animations/Fingerprint_Success.json')}
+                                        autoPlay
+                                        loop={false}
+                                        onAnimationFinish={() =>
+                                            fingerprint_authenticate()
                                         }
+                                        resizeMode="cover"
+                                    />
+                                )}
+                            </TouchableOpacity>
+                            {!isFPA && (
+                                <Text style={styles.f_m_fpc}>
+                                    {Platform.OS === 'ios'
+                                        ? 'Touch ID is not available!'
+                                        : 'Fingerprint is not available!'}
+                                </Text>
+                            )}
+                            {isFPA && animState === 'idle' && (
+                                <Text
+                                    style={[
+                                        styles.f_m_fpc,
+                                        { color: Colors().InputText },
+                                    ]}>
+                                    Click the Icon above to prompt the
+                                    {Platform.OS === 'ios'
+                                        ? ' Touch ID'
+                                        : ' Fingerprint'}{' '}
+                                    sensor.
+                                </Text>
+                            )}
+                            {isFPA && animState === 'failed' && (
+                                <Text style={styles.f_m_fpc}>
+                                    Please input your password instead!
+                                </Text>
+                            )}
+                            {isFPA && animState === 'success' && (
+                                <Text
+                                    style={[
+                                        styles.f_m_fpc,
+                                        { color: 'green' },
+                                    ]}>
+                                    Authenticating...
+                                </Text>
+                            )}
+                            {!userInfo?.google_auth && (
+                                <View
+                                    style={{
+                                        height: 275,
+                                        minHeight: 275,
+                                        maxHeight: 275,
+                                    }}>
+                                    <Text style={styles.f_m_txt3}>
+                                        Or just use password instead
+                                    </Text>
+                                    <SecureTextEntry
+                                        placeHolderText={'Enter your password'}
+                                        inputValue={password}
+                                        setInputValue={setPassword}
+                                    />
+                                    <View style={styles.f_m_fp}>
+                                        <TextButton
+                                            buttonText="Forgot Password"
+                                            marginLeft={3}
+                                            textColor={Colors().InputText}
+                                            isFontLight={true}
+                                            disabled={disableButton}
+                                            execFunc={() =>
+                                                navigation.push(
+                                                    'ForgotPasswordPage' as never,
+                                                )
+                                            }
+                                        />
+                                    </View>
+                                    <BasicButton
+                                        execFunc={() => manual_authenticate()}
+                                        buttonText="Login"
+                                        buttonHeight={55}
+                                        marginTop={10}
+                                        disabled={disableButton}
+                                        marginBottom={10}
                                     />
                                 </View>
-                                <BasicButton
-                                    execFunc={() => manual_authenticate()}
-                                    buttonText="Login"
-                                    buttonHeight={55}
-                                    marginTop={10}
-                                    disabled={disableButton}
-                                    marginBottom={20}
+                            )}
+                            <View
+                                style={{
+                                    flex: 1,
+                                    marginBottom: 10,
+                                    marginTop: userInfo?.google_auth ? 60 : 0,
+                                }}>
+                                <TextDivider text={'or'} marginBottom={0} />
+                            </View>
+                            <BasicLogoButton
+                                logoName="Google"
+                                inputText="Sign In with Google"
+                                marginTop={userInfo?.google_auth ? 1 : 0}
+                                marginBottom={5}
+                                disabled={disableButton}
+                                execFunc={() => sign_in_with_google()}
+                            />
+                            <View style={styles.f_m_acc}>
+                                <Text style={styles.f_m_acc_text}>
+                                    Login with another Account?
+                                </Text>
+                                <TextButton
+                                    buttonText="Sign In"
+                                    marginTop={0}
+                                    marginLeft={3}
+                                    disabled={disableLoginButton}
+                                    execFunc={() => {
+                                        setDisableLoginButton(true);
+                                        navigation.push('SignInPage' as never);
+                                        setDisableLoginButton(false);
+                                    }}
                                 />
                             </View>
-                        )}
-                        <View
-                            style={{
-                                marginTop: userInfo?.google_auth ? 60 : 0,
-                            }}>
-                            <TextDivider text={'or'} />
-                        </View>
-                        <BasicLogoButton
-                            logoName="Google"
-                            inputText="Sign In with Google"
-                            marginTop={userInfo?.google_auth ? 25 : 10}
-                            marginBottom={5}
-                            disabled={disableButton}
-                            execFunc={() => sign_in_with_google()}
-                        />
-                        <View style={styles.f_m_acc}>
-                            <Text style={styles.f_m_acc_text}>
-                                Login with another Account?
-                            </Text>
-                            <TextButton
-                                buttonText="Sign In"
-                                marginTop={0}
-                                marginLeft={3}
-                                disabled={disableLoginButton}
-                                execFunc={() => {
-                                    setDisableLoginButton(true);
-                                    navigation.navigate<never>(
-                                        'SignInPage' as never,
-                                    );
-                                    setDisableLoginButton(false);
-                                }}
-                            />
                         </View>
                     </View>
                 </ScrollView>
-            </View>
+            </KeyboardAvoidingView>
         );
     } else {
         return null;

@@ -1,5 +1,13 @@
-import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Keyboard,
+    Platform,
+    KeyboardAvoidingView,
+} from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -14,15 +22,24 @@ import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import SInfo from 'react-native-sensitive-info';
-import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
+import {
+    FIREBASE_USERS_COLLECTION,
+    SECURE_STORAGE_NAME,
+    SECURE_STORAGE_USER_INFO,
+} from '@env';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SignUpPage: FunctionComponent = () => {
+    type ScrollViewRef = ScrollView & {
+        flashScrollIndicators: () => void;
+    };
+    const scrollViewRef = useRef<ScrollViewRef | null>(null);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
@@ -30,7 +47,7 @@ const SignUpPage: FunctionComponent = () => {
     const [disableNavButton, setDisableNavButton] = useState<boolean>(false);
 
     const verify_mail_page = () => {
-        navigation.navigate('VerifyMailPage' as never);
+        navigation.push('VerifyMailPage' as never);
     };
 
     const send_email_ver = async () => {
@@ -158,6 +175,122 @@ const SignUpPage: FunctionComponent = () => {
         }
     };
 
+    const check_user_info = () => {
+        let checkError: boolean = false;
+        try {
+            firestore()
+                .collection(FIREBASE_USERS_COLLECTION)
+                .doc(auth()?.currentUser?.uid as string)
+                .get()
+                .catch(err => {
+                    checkError = true;
+                    if (err) {
+                        setShowSpinner(false);
+                        setDisableButton(false);
+                        error_handler({
+                            navigation: navigation,
+                            error_mssg:
+                                "An Error occured while trying to verify User's Information on the Server.",
+                            svr_error_mssg: err?.code as string,
+                        });
+                    }
+                })
+                .then(async info_res => {
+                    if (!checkError) {
+                        if (
+                            info_res?.data() === undefined ||
+                            info_res?.data() === null ||
+                            info_res?.exists === false
+                        ) {
+                            setShowSpinner(false);
+                            setDisableButton(false);
+                            navigation.push('SelectProfilePage' as never);
+                        } else {
+                            const dp_ref = storage().ref(
+                                `Users_Info/${
+                                    auth().currentUser?.uid
+                                }/Display_Picture/dp.jpeg`,
+                            );
+                            try {
+                                let checkError2: boolean = false;
+                                await dp_ref
+                                    .getDownloadURL()
+                                    .catch(err => {
+                                        if (
+                                            err &&
+                                            (err?.code ===
+                                                'storage/object-not-found' ||
+                                                err?.code === 'storage/unknown')
+                                        ) {
+                                            setShowSpinner(false);
+                                            setDisableButton(false);
+                                        } else {
+                                            checkError2 = true;
+                                            setShowSpinner(false);
+                                            setDisableButton(false);
+                                            error_handler({
+                                                navigation: navigation,
+                                                error_mssg:
+                                                    "An Error occured while trying to verify User's Information on the Server.",
+                                                svr_error_mssg: err?.code,
+                                            });
+                                        }
+                                    })
+                                    .then(res => {
+                                        if (!checkError2) {
+                                            if (
+                                                res === null ||
+                                                res === undefined
+                                            ) {
+                                                setShowSpinner(false);
+                                                setDisableButton(false);
+                                                navigation.push(
+                                                    'AuthStack' as never,
+                                                    {
+                                                        screen: 'SelectDPPage',
+                                                    } as never,
+                                                );
+                                            } else {
+                                                setShowSpinner(false);
+                                                setDisableButton(false);
+                                                navigation.push(
+                                                    'HomeStack' as never,
+                                                    {
+                                                        screen: 'HomePage',
+                                                    } as never,
+                                                );
+                                            }
+                                        } else {
+                                            setShowSpinner(false);
+                                            setDisableButton(false);
+                                        }
+                                    });
+                            } catch (error) {
+                                setShowSpinner(false);
+                                setDisableButton(false);
+                                error_handler({
+                                    navigation: navigation,
+                                    error_mssg:
+                                        "An Error occured while trying to verify User's Information on the Server.",
+                                });
+                            }
+                        }
+                    } else {
+                        setShowSpinner(false);
+                        setDisableButton(false);
+                    }
+                });
+        } catch (error) {
+            setShowSpinner(false);
+            setDisableButton(false);
+            error_handler({
+                navigation: navigation,
+                error_mssg:
+                    "An Error occured while trying to verify User's Information on the Server.",
+            });
+        }
+    };
+
     const sign_in_with_google = async () => {
         setShowSpinner(true);
         setDisableButton(true);
@@ -221,35 +354,15 @@ const SignUpPage: FunctionComponent = () => {
                                                         },
                                                     )
                                                         .then(() => {
-                                                            setShowSpinner(
-                                                                false,
-                                                            );
-                                                            setDisableButton(
-                                                                false,
-                                                            );
-                                                            navigation.navigate(
-                                                                'SelectProfilePage' as never,
-                                                            );
+                                                            check_user_info();
                                                         })
                                                         .catch(error => {
-                                                            setDisableButton(
-                                                                false,
-                                                            );
                                                             if (error) {
-                                                                setShowSpinner(
-                                                                    false,
-                                                                );
+                                                                check_user_info();
                                                             }
-                                                            navigation.navigate(
-                                                                'SelectProfilePage' as never,
-                                                            );
                                                         });
                                                 } catch (err) {
-                                                    setShowSpinner(false);
-                                                    setDisableButton(false);
-                                                    navigation.navigate(
-                                                        'SelectProfilePage' as never,
-                                                    );
+                                                    check_user_info();
                                                 }
                                             } else {
                                                 setShowSpinner(false);
@@ -299,8 +412,38 @@ const SignUpPage: FunctionComponent = () => {
         }
     };
 
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: Platform.OS === 'ios' ? 150 : 170,
+                    animated: true,
+                });
+            },
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                });
+            },
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
     return (
-        <View style={styles.signup_main}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.signup_main}>
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
@@ -311,7 +454,9 @@ const SignUpPage: FunctionComponent = () => {
                 backgroundDimColor={Colors().PrimaryDim}
                 barStyleLight={true}
             />
-            <ScrollView>
+            <ScrollView
+                style={{ flex: 1 }}
+                ref={ref => (scrollViewRef.current = ref)}>
                 <View style={styles.top_cont}>
                     <Text style={styles.top_cont_txt}>Sign up</Text>
                 </View>
@@ -360,16 +505,14 @@ const SignUpPage: FunctionComponent = () => {
                             disabled={disableNavButton}
                             execFunc={() => {
                                 setDisableNavButton(true);
-                                navigation.navigate<never>(
-                                    'SignInPage' as never,
-                                );
+                                navigation.navigate('SignInPage' as never);
                                 setDisableNavButton(false);
                             }}
                         />
                     </View>
                 </View>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

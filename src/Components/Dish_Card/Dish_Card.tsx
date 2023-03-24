@@ -14,9 +14,16 @@ interface DishCard_Props {
 const DishCard: FunctionComponent<DishCard_Props> = ({ dish }) => {
     const [liked, setLiked] = useState<boolean | null>(false);
 
+    const nav_to_dish_dets = () => {
+        console.log(dish?.name);
+    };
+
     return (
         <View style={styles.dc_main}>
-            <View style={styles.dc_img_fav}>
+            <TouchableOpacity
+                onPress={() => nav_to_dish_dets()}
+                activeOpacity={1}
+                style={styles.dc_img_fav}>
                 <TouchableOpacity
                     activeOpacity={0.65}
                     style={styles.dc_fav}
@@ -39,23 +46,32 @@ const DishCard: FunctionComponent<DishCard_Props> = ({ dish }) => {
                     style={styles.dc_img}
                     source={require('../../../temp/Dish.png')}
                 />
-            </View>
-            <View style={styles.dc_info}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => nav_to_dish_dets()}
+                style={styles.dc_info}>
                 <Text style={styles.dc_name}>
                     {shorten_text({ text: dish?.name, limit: 20 })}
                 </Text>
-                <View style={styles.dc_price_cont}>
-                    {dish?.discount && (
+                {dish?.discount ? (
+                    <View style={styles.dc_price_cont}>
                         <Text style={styles.dc_dprice}>
-                            {dish?.discountedPrice}
+                            {`₦${dish?.discountedPrice}`}
                         </Text>
-                    )}
-                    <Text style={styles.dc_price}>{dish?.price}</Text>
-                    <Text
-                        style={
-                            styles.dc_dpercent
-                        }>{`${dish?.discountedPercentage}% OFF`}</Text>
-                </View>
+                        <Text style={styles.dc_price}>{`₦${dish?.price}`}</Text>
+                        <Text
+                            style={
+                                styles.dc_dpercent
+                            }>{`${dish?.discountedPercentage}% OFF`}</Text>
+                    </View>
+                ) : (
+                    <View style={styles.dc_price_cont}>
+                        <Text style={styles.dc_dprice}>
+                            {`₦${dish?.price}`}
+                        </Text>
+                    </View>
+                )}
                 <Text style={styles.dc_desc}>
                     {shorten_text({ text: dish?.desc, limit: 85 })}
                 </Text>
@@ -75,7 +91,7 @@ const DishCard: FunctionComponent<DishCard_Props> = ({ dish }) => {
                         <Text style={styles.dc_chefp}>CHEF PICK</Text>
                     )}
                 </View>
-            </View>
+            </TouchableOpacity>
         </View>
     );
 };

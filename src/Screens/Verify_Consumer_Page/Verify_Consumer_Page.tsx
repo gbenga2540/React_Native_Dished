@@ -1,5 +1,13 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    Keyboard,
+    Platform,
+    KeyboardAvoidingView,
+} from 'react-native';
 import Colors from '../../Colors/Colors';
 import { fonts } from '../../Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
@@ -21,6 +29,10 @@ import { useDispatch } from 'react-redux';
 import { set_user_name } from '../../Redux/Actions/User_Info/User_Info_Actions';
 
 const VerifyConsumerPage: FunctionComponent = () => {
+    type ScrollViewRef = ScrollView & {
+        flashScrollIndicators: () => void;
+    };
+    const scrollViewRef = useRef<ScrollViewRef | null>(null);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const dispatch = useDispatch();
 
@@ -150,7 +162,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                                 } else {
                                     setShowSpinner(false);
                                     setDisableButton(false);
-                                    navigation.push('SignInPage' as never);
+                                    navigation.navigate('SignInPage' as never);
                                 }
                             });
                     } catch (error) {
@@ -165,7 +177,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                 } else {
                     setShowSpinner(false);
                     setDisableButton(false);
-                    navigation.push('SignInPage' as never);
+                    navigation.navigate('SignInPage' as never);
                 }
             } else {
                 setShowSpinner(false);
@@ -190,12 +202,42 @@ const VerifyConsumerPage: FunctionComponent = () => {
         setShowSpinner(false);
         setDisableButton(false);
         if (!auth()?.currentUser?.email) {
-            navigation.push('SignInPage' as never);
+            navigation.navigate('SignInPage' as never);
         }
     }, [navigation]);
 
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: Platform.OS === 'ios' ? 150 : 170,
+                    animated: true,
+                });
+            },
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                scrollViewRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                });
+            },
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
     return (
-        <View style={styles.vr_main}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.vr_main}>
             <OverlaySpinner
                 showSpinner={showSpinner}
                 setShowSpinner={setShowSpinner}
@@ -206,7 +248,9 @@ const VerifyConsumerPage: FunctionComponent = () => {
                 backgroundDimColor={Colors().PrimaryDim}
                 barStyleLight={true}
             />
-            <ScrollView>
+            <ScrollView
+                style={{ flex: 1 }}
+                ref={ref => (scrollViewRef.current = ref)}>
                 <View style={styles.top_cont}>
                     <Text style={styles.top_cont_txt}>Complete Profile</Text>
                 </View>
@@ -248,7 +292,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                     />
                 </View>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

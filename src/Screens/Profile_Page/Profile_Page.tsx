@@ -10,21 +10,15 @@ import {
 } from 'react-native';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import Colors from '../../Colors/Colors';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { fonts } from '../../Fonts/Fonts';
-import auth from '@react-native-firebase/auth';
-import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
-import SInfo from 'react-native-sensitive-info';
-import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 import { useNavigation } from '@react-navigation/native';
-import { clear_user_info } from '../../Redux/Actions/User_Info/User_Info_Actions';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ProfilePage: FunctionComponent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const dispatch = useDispatch();
     const userInfo = useSelector((state: any) => state?.UserInfo);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
@@ -49,45 +43,14 @@ const ProfilePage: FunctionComponent = () => {
 
     const sign_out = () => {
         setDisableButton(true);
-        setShowSpinner(true);
-        setTimeout(async () => {
-            try {
-                dispatch(clear_user_info());
-                await SInfo.deleteItem(SECURE_STORAGE_USER_INFO, {
-                    sharedPreferencesName: SECURE_STORAGE_NAME,
-                    keychainService: SECURE_STORAGE_NAME,
-                })
-                    .catch(error => {
-                        setDisableButton(false);
-                        setShowSpinner(false);
-                        if (error) {
-                            error_handler({
-                                navigation: navigation,
-                                error_mssg:
-                                    'An error occured, Please try again!',
-                            });
-                        }
-                    })
-                    .then(() => {
-                        auth().signOut();
-                        setDisableButton(false);
-                        setShowSpinner(false);
-                        info_handler({
-                            navigation: navigation,
-                            success_mssg: 'Successfully Signed Out!',
-                            proceed_type: 1,
-                            hide_back_btn: true,
-                        });
-                    });
-            } catch (error) {
-                setShowSpinner(false);
-                setDisableButton(false);
-                error_handler({
-                    navigation: navigation,
-                    error_mssg: 'An error occured, Please try again!',
-                });
-            }
-        }, 500);
+        info_handler({
+            navigation: navigation,
+            hide_back_btn: false,
+            success_mssg: 'Are you sure you want to Sign Out?',
+            proceed_type: 3,
+            hide_header: true,
+        });
+        setDisableButton(false);
     };
 
     return (

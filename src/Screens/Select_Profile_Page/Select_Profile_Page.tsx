@@ -22,13 +22,13 @@ const SelectProfilePage: FunctionComponent = () => {
         setDisableButton(true);
         switch (identityValue) {
             case Sign_Up_Identity_Data[0]?.value:
-                navigation.navigate<never>('VerifyConsumerPage' as never);
+                navigation.push('VerifyConsumerPage' as never);
                 break;
             case Sign_Up_Identity_Data[1]?.value:
-                navigation.navigate<never>('VerifyRidersPage' as never);
+                navigation.push('VerifyRidersPage' as never);
                 break;
             case Sign_Up_Identity_Data[2]?.value:
-                navigation.navigate<never>('VerifyRestaurantPage' as never);
+                navigation.push('VerifyRestaurantPage' as never);
                 break;
             default:
                 break;

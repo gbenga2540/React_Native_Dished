@@ -13,12 +13,14 @@ interface SecureTextEntryProps {
     inputValue: string;
     placeHolderText?: string;
     setInputValue: Dispatch<React.SetStateAction<string>>;
+    onFocus?: () => void;
 }
 
 const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
     inputValue,
     placeHolderText,
     setInputValue,
+    onFocus,
 }) => {
     const [hidePswd, setHidePswd] = useState<boolean>(true);
 
@@ -31,6 +33,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
                 onChangeText={(text: string) => setInputValue(text?.trim())}
                 value={inputValue}
                 secureTextEntry={hidePswd}
+                onFocus={() => onFocus !== undefined && (onFocus() as unknown)}
             />
             {hidePswd ? (
                 <TouchableOpacity
