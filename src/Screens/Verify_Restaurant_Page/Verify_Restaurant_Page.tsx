@@ -268,6 +268,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         placeHolderText="Chicken Republic"
                         inputValue={businessName}
                         setInputValue={setBusinessName}
+                        keyboardType="default"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Phone Number
@@ -276,6 +277,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         placeHolderText="08101234567"
                         inputValue={phoneNo}
                         setInputValue={setPhoneNo}
+                        keyboardType="numbers-and-punctuation"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Location
@@ -284,6 +286,7 @@ const VerifyRestaurantPage: FunctionComponent = () => {
                         placeHolderText="No 1, Alagbaka, Akure, Ondo State."
                         inputValue={location}
                         setInputValue={setLocation}
+                        keyboardType="default"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Certification

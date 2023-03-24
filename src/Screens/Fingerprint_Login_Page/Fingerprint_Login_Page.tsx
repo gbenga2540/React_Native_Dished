@@ -840,6 +840,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         placeHolderText={'Enter your password'}
                                         inputValue={password}
                                         setInputValue={setPassword}
+                                        keyboardType="default"
                                     />
                                     <View style={styles.f_m_fp}>
                                         <TextButton

@@ -319,6 +319,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                         placeHolderText="Enter your Old Password"
                         inputValue={oldPassword}
                         setInputValue={setOldPassword}
+                        keyboardType="default"
                     />
                     <Text style={[styles.c_p_input_text, { marginTop: 26 }]}>
                         New Password
@@ -327,6 +328,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                         placeHolderText="Enter a New Password"
                         inputValue={newPassword}
                         setInputValue={setNewPassword}
+                        keyboardType="default"
                     />
                     <Text style={[styles.c_p_input_text, { marginTop: 26 }]}>
                         Confirm New Password
@@ -335,6 +337,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                         placeHolderText="Confirm Password"
                         inputValue={newCPassword}
                         setInputValue={setCNewPassword}
+                        keyboardType="default"
                     />
                     <BasicButton
                         buttonText="Set New Password"

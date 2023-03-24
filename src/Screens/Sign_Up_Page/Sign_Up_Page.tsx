@@ -471,6 +471,7 @@ const SignUpPage: FunctionComponent = () => {
                         inputValue={email}
                         setInputValue={setEmail}
                         placeHolderText="johndoe@gmail.com"
+                        keyboardType="email-address"
                     />
                     <Text style={[styles.s_m_input_text, { marginTop: 20 }]}>
                         Password
@@ -478,6 +479,7 @@ const SignUpPage: FunctionComponent = () => {
                     <SecureTextEntry
                         inputValue={password}
                         setInputValue={setPassword}
+                        keyboardType="default"
                     />
                     <BasicButton
                         buttonText="Get Started"

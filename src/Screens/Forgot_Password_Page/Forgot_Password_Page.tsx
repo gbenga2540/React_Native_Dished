@@ -102,6 +102,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
                         inputValue={email}
                         setInputValue={setEmail}
                         placeHolderText="johndoe@gmail.com"
+                        keyboardType="email-address"
                     />
                     <BasicButton
                         buttonText="Send Reset Link"

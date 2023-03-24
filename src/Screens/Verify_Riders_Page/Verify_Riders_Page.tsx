@@ -269,6 +269,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                         placeHolderText="John Doe"
                         inputValue={fullName}
                         setInputValue={setFullName}
+                        keyboardType="default"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Phone Number
@@ -277,6 +278,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                         placeHolderText="08012345678"
                         inputValue={phoneNo}
                         setInputValue={setPhoneNo}
+                        keyboardType="numbers-and-punctuation"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         Guarantor
@@ -285,6 +287,7 @@ const VerifyRidersPage: FunctionComponent = () => {
                         placeHolderText="No 1, Alagbaka, Akure, Ondo State."
                         inputValue={guarantor}
                         setInputValue={setGuarantor}
+                        keyboardType="default"
                     />
                     <Text style={[styles.v_r_input_text, { marginTop: 26 }]}>
                         ID

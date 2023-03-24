@@ -265,6 +265,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                         placeHolderText="John Doe"
                         inputValue={fullName}
                         setInputValue={setFullName}
+                        keyboardType="default"
                     />
                     <Text style={[styles.v_c_input_text, { marginTop: 26 }]}>
                         Phone Number
@@ -273,6 +274,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                         placeHolderText="08101234567"
                         inputValue={phoneNo}
                         setInputValue={setPhoneNo}
+                        keyboardType="numbers-and-punctuation"
                     />
                     <Text style={[styles.v_c_input_text, { marginTop: 26 }]}>
                         Address
@@ -281,6 +283,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                         placeHolderText="No 1, Alagbaka, Akure, Ondo State."
                         inputValue={address}
                         setInputValue={setAddress}
+                        keyboardType="default"
                     />
                     <BasicButton
                         buttonText="Verify"

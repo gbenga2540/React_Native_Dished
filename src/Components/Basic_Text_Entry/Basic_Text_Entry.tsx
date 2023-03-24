@@ -1,18 +1,27 @@
 import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    KeyboardTypeOptions,
+    StyleSheet,
+    TextInput,
+} from 'react-native';
 import { fonts } from '../../Fonts/Fonts';
 import Colors from '../../Colors/Colors';
 
 interface BasicTextEntryProps {
     inputValue: string;
     placeHolderText?: string;
+    keyboardType?: KeyboardTypeOptions;
     setInputValue: Dispatch<SetStateAction<string>>;
+    onFocus?: () => void;
 }
 
 const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
     inputValue,
     placeHolderText,
+    keyboardType,
     setInputValue,
+    onFocus,
 }) => {
     return (
         <KeyboardAvoidingView style={styles.b_t_e_main}>
@@ -24,6 +33,8 @@ const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
                 value={inputValue}
                 autoCapitalize={'none'}
                 autoCorrect={false}
+                keyboardType={keyboardType ? keyboardType : 'default'}
+                onFocus={() => onFocus !== undefined && (onFocus() as unknown)}
             />
         </KeyboardAvoidingView>
     );

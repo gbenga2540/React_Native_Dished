@@ -440,6 +440,7 @@ const SignInPage: FunctionComponent = () => {
                         inputValue={email}
                         setInputValue={setEmail}
                         placeHolderText="johndoe@gmail.com"
+                        keyboardType="email-address"
                     />
                     <Text style={[styles.s_m_input_text, { marginTop: 26 }]}>
                         Password
@@ -447,6 +448,7 @@ const SignInPage: FunctionComponent = () => {
                     <SecureTextEntry
                         inputValue={password}
                         setInputValue={setPassword}
+                        keyboardType="default"
                     />
                     <BasicButton
                         buttonText="Login"

@@ -1,6 +1,7 @@
 import React, { Dispatch, FunctionComponent, useState } from 'react';
 import {
     KeyboardAvoidingView,
+    KeyboardTypeOptions,
     StyleSheet,
     TextInput,
     TouchableOpacity,
@@ -12,6 +13,7 @@ import Feather from 'react-native-vector-icons/Feather';
 interface SecureTextEntryProps {
     inputValue: string;
     placeHolderText?: string;
+    keyboardType?: KeyboardTypeOptions;
     setInputValue: Dispatch<React.SetStateAction<string>>;
     onFocus?: () => void;
 }
@@ -19,6 +21,7 @@ interface SecureTextEntryProps {
 const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
     inputValue,
     placeHolderText,
+    keyboardType,
     setInputValue,
     onFocus,
 }) => {
@@ -33,6 +36,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
                 onChangeText={(text: string) => setInputValue(text?.trim())}
                 value={inputValue}
                 secureTextEntry={hidePswd}
+                keyboardType={keyboardType ? keyboardType : 'default'}
                 onFocus={() => onFocus !== undefined && (onFocus() as unknown)}
             />
             {hidePswd ? (
