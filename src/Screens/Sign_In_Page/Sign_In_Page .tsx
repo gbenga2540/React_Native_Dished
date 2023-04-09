@@ -44,14 +44,14 @@ const SignInPage: FunctionComponent = () => {
     const [disableNavButton, setDisableNavButton] = useState<boolean>(false);
 
     const check_user_info = () => {
-        let checkError: boolean = false;
+        let errorPresent: boolean = false;
         try {
             firestore()
                 .collection(FIREBASE_USERS_COLLECTION)
                 .doc(auth()?.currentUser?.uid as string)
                 .get()
                 .catch(err => {
-                    checkError = true;
+                    errorPresent = true;
                     if (err) {
                         setShowSpinner(false);
                         setDisableButton(false);
@@ -64,7 +64,7 @@ const SignInPage: FunctionComponent = () => {
                     }
                 })
                 .then(async info_res => {
-                    if (!checkError) {
+                    if (!errorPresent) {
                         if (
                             info_res?.data() === undefined ||
                             info_res?.data() === null ||
@@ -80,7 +80,7 @@ const SignInPage: FunctionComponent = () => {
                                 }/Display_Picture/dp.jpeg`,
                             );
                             try {
-                                let checkError2: boolean = false;
+                                let errorPresent2: boolean = false;
                                 await dp_ref
                                     .getDownloadURL()
                                     .catch(err => {
@@ -93,7 +93,7 @@ const SignInPage: FunctionComponent = () => {
                                             setShowSpinner(false);
                                             setDisableButton(false);
                                         } else {
-                                            checkError2 = true;
+                                            errorPresent2 = true;
                                             setShowSpinner(false);
                                             setDisableButton(false);
                                             error_handler({
@@ -105,7 +105,7 @@ const SignInPage: FunctionComponent = () => {
                                         }
                                     })
                                     .then(res => {
-                                        if (!checkError2) {
+                                        if (!errorPresent2) {
                                             if (
                                                 res === null ||
                                                 res === undefined
@@ -166,11 +166,11 @@ const SignInPage: FunctionComponent = () => {
                 setDisableButton(true);
                 setTimeout(async () => {
                     try {
-                        let checkError: boolean = false;
+                        let errorPresent: boolean = false;
                         await auth()
                             .signInWithEmailAndPassword(email?.trim(), password)
                             .catch(error => {
-                                checkError = true;
+                                errorPresent = true;
                                 setShowSpinner(false);
                                 setDisableButton(false);
                                 if (error) {
@@ -183,7 +183,7 @@ const SignInPage: FunctionComponent = () => {
                                 }
                             })
                             .then(async userCredential => {
-                                if (!checkError) {
+                                if (!errorPresent) {
                                     if (
                                         userCredential === undefined ||
                                         userCredential === null
@@ -264,10 +264,10 @@ const SignInPage: FunctionComponent = () => {
         setShowSpinner(true);
         setDisableButton(true);
         try {
-            let checkError: boolean = false;
+            let errorPresent: boolean = false;
             await GoogleSignin?.signIn()
                 ?.catch(err => {
-                    checkError = true;
+                    errorPresent = true;
                     setShowSpinner(false);
                     setDisableButton(false);
                     if (err) {
@@ -280,18 +280,18 @@ const SignInPage: FunctionComponent = () => {
                     }
                 })
                 .then(async res => {
-                    if (!checkError) {
+                    if (!errorPresent) {
                         if (res) {
                             const googleCredential =
                                 auth.GoogleAuthProvider.credential(
                                     res?.idToken as string,
                                 );
                             try {
-                                let checkError2: boolean = false;
+                                let errorPresent2: boolean = false;
                                 await auth()
                                     .signInWithCredential(googleCredential)
                                     ?.catch(err => {
-                                        checkError2 = true;
+                                        errorPresent2 = true;
                                         setShowSpinner(false);
                                         setDisableButton(false);
                                         if (err) {
@@ -304,7 +304,7 @@ const SignInPage: FunctionComponent = () => {
                                         }
                                     })
                                     .then(async userCredential => {
-                                        if (!checkError2) {
+                                        if (!errorPresent2) {
                                             if (userCredential) {
                                                 const user_data = {
                                                     google_auth: true,

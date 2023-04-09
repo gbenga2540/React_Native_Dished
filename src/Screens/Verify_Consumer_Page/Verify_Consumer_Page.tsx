@@ -89,11 +89,11 @@ const VerifyConsumerPage: FunctionComponent = () => {
                                         }/Display_Picture/dp.jpeg`,
                                     );
                                     try {
-                                        let checkError: boolean = false;
+                                        let errorPresent: boolean = false;
                                         await dp_ref
                                             .getDownloadURL()
                                             .catch(err => {
-                                                checkError = true;
+                                                errorPresent = true;
                                                 if (
                                                     err &&
                                                     (err?.code ===
@@ -122,7 +122,7 @@ const VerifyConsumerPage: FunctionComponent = () => {
                                                 }
                                             })
                                             .then(res => {
-                                                if (!checkError) {
+                                                if (!errorPresent) {
                                                     if (
                                                         res === null ||
                                                         res === undefined

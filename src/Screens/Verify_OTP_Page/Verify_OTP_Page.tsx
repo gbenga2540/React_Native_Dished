@@ -66,7 +66,7 @@ const VerifyOTPPage: FunctionComponent = () => {
                 <View style={styles.s_m_input_cont}>
                     <BasicButton
                         buttonText="Verify"
-                        buttonHeight={52}
+                        buttonHeight={56}
                         disabled={disableButton}
                         marginTop={23}
                         marginBottom={16}

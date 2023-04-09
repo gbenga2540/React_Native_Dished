@@ -66,14 +66,14 @@ const FingerprintLoginPage: FunctionComponent = () => {
     });
 
     const check_user_info = () => {
-        let checkError: boolean = false;
+        let errorPresent: boolean = false;
         try {
             firestore()
                 .collection(FIREBASE_USERS_COLLECTION)
                 .doc(auth()?.currentUser?.uid as string)
                 .get()
                 .catch(err => {
-                    checkError = true;
+                    errorPresent = true;
                     if (err) {
                         setShowSpinner(false);
                         setDisableButton(false);
@@ -86,7 +86,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                 })
                 .then(async info_res => {
-                    if (!checkError) {
+                    if (!errorPresent) {
                         if (
                             info_res?.data() === undefined ||
                             info_res?.data() === null ||
@@ -101,7 +101,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     auth().currentUser?.uid
                                 }/Display_Picture/dp.jpeg`,
                             );
-                            let checkError2: boolean = false;
+                            let errorPresent2: boolean = false;
                             try {
                                 await dp_ref
                                     ?.getDownloadURL()
@@ -115,7 +115,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                             setShowSpinner(false);
                                             setDisableButton(false);
                                         } else {
-                                            checkError2 = true;
+                                            errorPresent2 = true;
                                             setShowSpinner(false);
                                             setDisableButton(false);
                                             error_handler({
@@ -127,7 +127,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         }
                                     })
                                     .then(res => {
-                                        if (!checkError2) {
+                                        if (!errorPresent2) {
                                             if (
                                                 res === null ||
                                                 res === undefined
@@ -185,10 +185,10 @@ const FingerprintLoginPage: FunctionComponent = () => {
         setShowSpinner(true);
         setDisableButton(true);
         try {
-            let checkError: boolean = false;
+            let errorPresent: boolean = false;
             await GoogleSignin?.signIn()
                 ?.catch(err => {
-                    checkError = true;
+                    errorPresent = true;
                     setShowSpinner(false);
                     setDisableButton(false);
                     if (err) {
@@ -201,7 +201,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     }
                 })
                 .then(async res => {
-                    if (!checkError) {
+                    if (!errorPresent) {
                         if (res) {
                             setShowSpinner(true);
                             setDisableButton(false);
@@ -210,11 +210,11 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     res?.idToken as string,
                                 );
                             try {
-                                let checkError2: boolean = false;
+                                let errorPresent2: boolean = false;
                                 await auth()
                                     .signInWithCredential(googleCredential)
                                     ?.catch(err => {
-                                        checkError2 = true;
+                                        errorPresent2 = true;
                                         setShowSpinner(false);
                                         setDisableButton(false);
                                         if (err) {
@@ -227,7 +227,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         }
                                     })
                                     .then(async userCredential => {
-                                        if (!checkError2) {
+                                        if (!errorPresent2) {
                                             if (userCredential) {
                                                 const user_data = {
                                                     google_auth: true,
@@ -326,7 +326,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                     setShowSpinner(true);
                     setDisableButton(true);
                     setTimeout(async () => {
-                        let checkError: boolean = false;
+                        let errorPresent: boolean = false;
                         try {
                             await auth()
                                 .signInWithEmailAndPassword(
@@ -334,7 +334,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     password,
                                 )
                                 .catch(error => {
-                                    checkError = true;
+                                    errorPresent = true;
                                     setShowSpinner(false);
                                     setDisableButton(false);
                                     if (error) {
@@ -348,7 +348,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                     }
                                 })
                                 .then(async userCredential => {
-                                    if (!checkError) {
+                                    if (!errorPresent) {
                                         if (
                                             userCredential === undefined ||
                                             userCredential === null
@@ -434,7 +434,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                 setShowSpinner(true);
                 setDisableButton(true);
                 setTimeout(async () => {
-                    let checkError: boolean = false;
+                    let errorPresent: boolean = false;
                     try {
                         auth()
                             .signInWithEmailAndPassword(
@@ -442,7 +442,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 userInfo?.user_password,
                             )
                             .catch(error => {
-                                checkError = true;
+                                errorPresent = true;
                                 setAnimState('idle');
                                 setShowSpinner(false);
                                 setDisableButton(false);
@@ -455,7 +455,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 }
                             })
                             .then(userCredential => {
-                                if (!checkError) {
+                                if (!errorPresent) {
                                     if (
                                         userCredential === null ||
                                         userCredential === undefined
@@ -637,20 +637,20 @@ const FingerprintLoginPage: FunctionComponent = () => {
         };
 
         const get_user_info = async () => {
-            let checkError: boolean = false;
+            let errorPresent: boolean = false;
             try {
                 await SInfo.getItem(SECURE_STORAGE_USER_INFO, {
                     sharedPreferencesName: SECURE_STORAGE_NAME,
                     keychainService: SECURE_STORAGE_NAME,
                 })
                     .catch(err => {
-                        checkError = true;
+                        errorPresent = true;
                         if (err) {
                             get_user_name_from_svr();
                         }
                     })
                     .then(async res => {
-                        if (!checkError) {
+                        if (!errorPresent) {
                             if (res) {
                                 const json_res = JSON.parse(res);
                                 setUserInfo({ ...json_res });

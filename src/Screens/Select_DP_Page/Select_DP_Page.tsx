@@ -51,11 +51,11 @@ const SelectDPPage: FunctionComponent = () => {
                 setShowSpinner(true);
                 setDisableButton(true);
                 try {
-                    let checkError: boolean = false;
+                    let errorPresent: boolean = false;
                     dp_ref
                         .putString(displayPicture, 'data_url')
                         .catch(err => {
-                            checkError = true;
+                            errorPresent = true;
                             setShowSpinner(false);
                             setDisableButton(false);
                             if (err) {
@@ -68,7 +68,7 @@ const SelectDPPage: FunctionComponent = () => {
                             }
                         })
                         .then(async res => {
-                            if (!checkError) {
+                            if (!errorPresent) {
                                 if (res?.state === 'success') {
                                     await dp_ref
                                         ?.getDownloadURL()

@@ -45,14 +45,14 @@ const ChangePasswordPage: FunctionComponent = () => {
                         setDisableButton(true);
                         setTimeout(async () => {
                             try {
-                                let checkError: boolean = false;
+                                let errorPresent: boolean = false;
                                 await auth()
                                     .signInWithEmailAndPassword(
                                         auth()?.currentUser?.email as string,
                                         oldPassword,
                                     )
                                     .catch(error => {
-                                        checkError = true;
+                                        errorPresent = true;
                                         setShowSpinner(false);
                                         setDisableButton(false);
                                         if (error) {
@@ -66,7 +66,7 @@ const ChangePasswordPage: FunctionComponent = () => {
                                         }
                                     })
                                     .then(async userCredential => {
-                                        if (!checkError) {
+                                        if (!errorPresent) {
                                             if (
                                                 userCredential === undefined ||
                                                 userCredential === null
@@ -82,14 +82,15 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                 });
                                             } else {
                                                 try {
-                                                    let checkError2: boolean =
+                                                    let errorPresent2: boolean =
                                                         false;
                                                     await auth()
                                                         ?.currentUser?.updatePassword(
                                                             newPassword,
                                                         )
                                                         ?.catch(err => {
-                                                            checkError2 = true;
+                                                            errorPresent2 =
+                                                                true;
                                                             setShowSpinner(
                                                                 false,
                                                             );
@@ -108,7 +109,9 @@ const ChangePasswordPage: FunctionComponent = () => {
                                                             }
                                                         })
                                                         .then(async () => {
-                                                            if (!checkError2) {
+                                                            if (
+                                                                !errorPresent2
+                                                            ) {
                                                                 const user_data =
                                                                     {
                                                                         user_password:
