@@ -119,6 +119,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'DishedOfficial2023'
+            keyAlias 'DishedOfficial'
+            keyPassword 'DishedOfficial2023'
+        }
     }
     buildTypes {
         debug {
@@ -127,7 +133,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             debuggable false
             shrinkResources true
