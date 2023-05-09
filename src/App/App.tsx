@@ -7,7 +7,7 @@
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
-import Colors from '../Colors/Colors';
+import Colors from '../Configs/Colors/Colors';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import CustomStatusBar from '../Components/Custom_Status_Bar/Custom_Status_Bar';

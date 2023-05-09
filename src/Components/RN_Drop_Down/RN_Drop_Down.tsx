@@ -7,8 +7,8 @@ import React, {
 import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 // import AntDesign from 'react-native-vector-icons/AntDesign';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 
 interface DropDownProps {
     borderColor?: string;

@@ -9,8 +9,8 @@ import {
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { fonts } from '../../Fonts/Fonts';
-import Colors from '../../Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 

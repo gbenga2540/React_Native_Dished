@@ -1,8 +1,8 @@
 import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import SearchIcon from '../../Images/Icons/Search_Icon.svg';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 
 interface SearchBarProps {
     searchText: string;

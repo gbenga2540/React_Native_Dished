@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 
 const CartPage: FunctionComponent = () => {

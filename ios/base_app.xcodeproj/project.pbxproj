@@ -16,7 +16,6 @@
 		3D0FE8F729C55DAF00F64B99 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D0FE8F629C55DAF00F64B99 /* GoogleService-Info.plist */; };
 		43CD953AE6F74EF98EC73A8C /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F29C3743E75F4D76B22A35E4 /* Lato-Black.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		858BBFED802042F48BE522D0 /* Fonts.ts in Resources */ = {isa = PBXBuildFile; fileRef = 04CC7C1DFD7D4E38BEA8DB4F /* Fonts.ts */; };
 		862BF8C4B3B24ABCA1689D9A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64C0ECF9BBE44EDC82106660 /* Poppins-Regular.ttf */; };
 		941CEB338178452AB0846D19 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E7D5D1123BA340DC985726E0 /* Lato-Regular.ttf */; };
 		AABB538200F8409EBA8C4E8C /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8617A63025204E599149237F /* Poppins-Bold.ttf */; };
@@ -38,7 +37,6 @@
 		00E356EE1AD99517003FC87E /* base_appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = base_appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* base_appTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = base_appTests.m; sourceTree = "<group>"; };
-		04CC7C1DFD7D4E38BEA8DB4F /* Fonts.ts */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fonts.ts; path = ../src/Fonts/Fonts.ts; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* base_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = base_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = base_app/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = base_app/AppDelegate.mm; sourceTree = "<group>"; };
@@ -180,7 +178,6 @@
 				F29C3743E75F4D76B22A35E4 /* Lato-Black.ttf */,
 				15A85825AE2B496686C1D2EE /* Lato-Bold.ttf */,
 				E7D5D1123BA340DC985726E0 /* Lato-Regular.ttf */,
-				04CC7C1DFD7D4E38BEA8DB4F /* Fonts.ts */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -326,7 +323,6 @@
 				E6EA331F90E6434882771EC8 /* Lato-Bold.ttf in Resources */,
 				3D0FE8F729C55DAF00F64B99 /* GoogleService-Info.plist in Resources */,
 				941CEB338178452AB0846D19 /* Lato-Regular.ttf in Resources */,
-				858BBFED802042F48BE522D0 /* Fonts.ts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

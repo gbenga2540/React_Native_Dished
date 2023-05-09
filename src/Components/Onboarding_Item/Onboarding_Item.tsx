@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import { Onboarding_Props } from '../../Interface/Onboarding_Props/Onboarding_Props';
 
 interface OnboardingItemProps {

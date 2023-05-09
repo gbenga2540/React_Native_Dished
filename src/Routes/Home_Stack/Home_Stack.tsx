@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Platform, Image, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import Feather from 'react-native-vector-icons/Feather';
 import HomePage from '../../Screens/Home_Page/Home_Page';
 import CartPage from '../../Screens/Cart_Page/Cart_Page';

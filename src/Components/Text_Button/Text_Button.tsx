@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { fonts } from '../../Fonts/Fonts';
-import Colors from '../../Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
 
 interface TextButtonProps {
     buttonText: string;

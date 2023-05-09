@@ -7,11 +7,11 @@ import {
     FlatList,
     Text,
 } from 'react-native';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 import DishCard from '../../Components/Dish_Card/Dish_Card';
 import SearchBar from '../../Components/Search_Bar/Search_Bar';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
-import { fonts } from '../../Fonts/Fonts';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import { dummy_data } from '../../../temp/HomeData';
 
 const HomePage: FunctionComponent = () => {

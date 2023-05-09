@@ -6,8 +6,8 @@ import {
     TextInput,
     TouchableOpacity,
 } from 'react-native';
-import { fonts } from '../../Fonts/Fonts';
-import Colors from '../../Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
 import Feather from 'react-native-vector-icons/Feather';
 
 interface SecureTextEntryProps {

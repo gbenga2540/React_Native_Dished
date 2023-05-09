@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import { Sign_Up_Identity_Data } from '../../Data/Sign_Up_Identity/Sign_Up_Identity';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';

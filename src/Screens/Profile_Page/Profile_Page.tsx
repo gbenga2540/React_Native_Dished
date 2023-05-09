@@ -9,9 +9,9 @@ import {
     View,
 } from 'react-native';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 import { useSelector } from 'react-redux';
-import { fonts } from '../../Fonts/Fonts';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
 import { useNavigation } from '@react-navigation/native';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';

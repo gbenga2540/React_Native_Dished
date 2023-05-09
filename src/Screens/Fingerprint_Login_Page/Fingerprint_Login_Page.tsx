@@ -17,8 +17,8 @@ import {
 } from 'react-native';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
-import { fonts } from '../../Fonts/Fonts';
-import Colors from '../../Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';

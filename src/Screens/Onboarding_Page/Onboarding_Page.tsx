@@ -7,7 +7,7 @@ import {
     Dimensions,
     Platform,
 } from 'react-native';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import SliderHandler from '../../Components/Slider_Handler/Slider_Handler';
 import { useNavigation } from '@react-navigation/native';

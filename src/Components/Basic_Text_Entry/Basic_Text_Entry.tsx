@@ -5,8 +5,8 @@ import {
     StyleSheet,
     TextInput,
 } from 'react-native';
-import { fonts } from '../../Fonts/Fonts';
-import Colors from '../../Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
 
 interface BasicTextEntryProps {
     inputValue: string;

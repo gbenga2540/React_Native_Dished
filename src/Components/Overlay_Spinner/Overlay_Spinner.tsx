@@ -2,7 +2,7 @@ import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Spinner, { SpinnerType } from 'react-native-spinkit';
 import { spinkit_types } from '../../Data/Spinkit_Types/SpinKit_Types';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 import Feather from 'react-native-vector-icons/Feather';
 
 interface ShowSpinnerProps {

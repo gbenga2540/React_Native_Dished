@@ -8,8 +8,8 @@ import {
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';
 import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import SecureTextEntry from '../../Components/Secure_Text_Entry/Secure_Text_Entry';

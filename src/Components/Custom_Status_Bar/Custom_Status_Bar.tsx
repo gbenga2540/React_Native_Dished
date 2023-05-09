@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { StatusBar } from 'react-native';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 
 interface CustomStatusBarProps {
     showSpinner?: boolean;

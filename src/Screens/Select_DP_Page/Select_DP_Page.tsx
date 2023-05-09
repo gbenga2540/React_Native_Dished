@@ -7,8 +7,8 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import Colors from '../../Colors/Colors';
-import { fonts } from '../../Fonts/Fonts';
+import Colors from '../../Configs/Colors/Colors';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import ImagePicker from 'react-native-image-crop-picker';
 import BasicButton from '../../Components/Basic_Button/Basic_Button';
 import DishedLogo from '../../Components/Dished_Logo/Dished_Logo';

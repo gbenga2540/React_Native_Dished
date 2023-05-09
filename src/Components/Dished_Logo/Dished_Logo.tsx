@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
-import { fonts } from '../../Fonts/Fonts';
+import { fonts } from '../../Configs/Fonts/Fonts';
 import DishedLogoImage from '../../Images/Logo/Dished_Logo.svg';
-import Colors from '../../Colors/Colors';
+import Colors from '../../Configs/Colors/Colors';
 
 const DishedLogo: FunctionComponent = () => {
     return (
