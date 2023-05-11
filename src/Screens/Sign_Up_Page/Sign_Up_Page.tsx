@@ -18,7 +18,7 @@ import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import { useNavigation } from '@react-navigation/native';
-import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import { regex_email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import SInfo from 'react-native-sensitive-info';
@@ -72,7 +72,7 @@ const SignUpPage: FunctionComponent = () => {
     };
 
     const on_get_started = async () => {
-        if (email_checker(email)) {
+        if (regex_email_checker({ email: email })) {
             if (password?.length >= 6) {
                 try {
                     let errorPresent: boolean = false;

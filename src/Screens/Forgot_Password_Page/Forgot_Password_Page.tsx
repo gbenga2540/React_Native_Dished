@@ -8,7 +8,7 @@ import BasicTextEntry from '../../Components/Basic_Text_Entry/Basic_Text_Entry';
 import { useNavigation } from '@react-navigation/native';
 import CustomStatusBar from '../../Components/Custom_Status_Bar/Custom_Status_Bar';
 import auth from '@react-native-firebase/auth';
-import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import { regex_email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import OverlaySpinner from '../../Components/Overlay_Spinner/Overlay_Spinner';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import { info_handler } from '../../Utils/Info_Handler/Info_Handler';
@@ -22,7 +22,7 @@ const ForgotPasswordPage: FunctionComponent = () => {
 
     const send_password_reset = () => {
         setDisableButton(false);
-        if (email_checker(email)) {
+        if (regex_email_checker({ email: email })) {
             try {
                 setShowSpinner(true);
                 setDisableButton(true);

@@ -18,7 +18,7 @@ import TextDivider from '../../Components/Text_Divider/Text_Divider';
 import BasicLogoButton from '../../Components/Basic_Logo_Button/Basic_Logo_Button';
 import TextButton from '../../Components/Text_Button/Text_Button';
 import { useNavigation } from '@react-navigation/native';
-import { email_checker } from '../../Utils/Email_Checker/Email_Checker';
+import { regex_email_checker } from '../../Utils/Email_Checker/Email_Checker';
 import { error_handler } from '../../Utils/Error_Handler/Error_Handler';
 import SInfo from 'react-native-sensitive-info';
 import { SECURE_STORAGE_NAME, SECURE_STORAGE_USER_INFO } from '@env';
@@ -160,7 +160,7 @@ const SignInPage: FunctionComponent = () => {
     };
 
     const sign_in_user = () => {
-        if (email_checker(email)) {
+        if (regex_email_checker({ email: email })) {
             if (password) {
                 setShowSpinner(true);
                 setDisableButton(true);
