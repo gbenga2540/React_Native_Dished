@@ -21,8 +21,7 @@ const ErrorPage: FunctionComponent = () => {
     return (
         <View style={{ flex: 1 }}>
             <CustomStatusBar />
-            <ScrollView
-                style={{ flex: 1, backgroundColor: Colors().Background }}>
+            <ScrollView style={{ flex: 1, backgroundColor: Colors.Background }}>
                 <View style={styles.error_main}>
                     <TouchableOpacity
                         style={styles.e_m_bb}
@@ -62,7 +61,7 @@ const ErrorPage: FunctionComponent = () => {
                             styles.e_m_err_txt,
                             {
                                 fontSize: 14,
-                                color: Colors().LightPink,
+                                color: Colors.LightPink,
                                 marginTop: 50,
                             },
                         ]}>
@@ -79,7 +78,7 @@ export default ErrorPage;
 const styles = StyleSheet.create({
     error_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
     e_m_bb: {
         justifyContent: 'center',
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontFamily: fonts.Poppins_400,
         fontSize: 16,
-        color: Colors().Black,
+        color: Colors.Black,
     },
     e_m_err_txt_h: {
         fontFamily: fonts.Poppins_700,

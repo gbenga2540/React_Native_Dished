@@ -99,8 +99,8 @@ const VerifyMailPage: FunctionComponent = () => {
             />
             <CustomStatusBar
                 showSpinner={showSpinner}
-                backgroundColor={Colors().Primary}
-                backgroundDimColor={Colors().PrimaryDim}
+                backgroundColor={Colors.Primary}
+                backgroundDimColor={Colors.PrimaryDim}
                 barStyleLight={true}
             />
             <View style={styles.top_cont}>
@@ -115,7 +115,7 @@ const VerifyMailPage: FunctionComponent = () => {
                 }
             </Text>
             <TextButton
-                textColor={Colors().LightPink}
+                textColor={Colors.LightPink}
                 isFontLight={true}
                 marginTop={5}
                 marginLeft={'auto'}
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 1000,
         top: -890,
-        backgroundColor: Colors()?.Primary,
+        backgroundColor: Colors.Primary,
         alignItems: 'center',
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     top_cont_txt: {
         marginTop: 'auto',
         marginBottom: 13,
-        color: Colors().White,
+        color: Colors.White,
         fontFamily: fonts.Poppins_700,
         fontSize: 24,
         lineHeight: 32,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     },
     v_o_m_info: {
         fontFamily: fonts.Poppins_400,
-        color: Colors().Black,
+        color: Colors.Black,
         textAlign: 'center',
         width: 300,
         alignSelf: 'center',

@@ -43,9 +43,9 @@ const RNDropDown: FunctionComponent<DropDownProps> = ({
                         styles.label,
                         {
                             backgroundColor:
-                                backgroundColor || Colors().Background,
+                                backgroundColor || Colors.Background,
                         },
-                        isFocus && { color: borderColor || Colors().Primary },
+                        isFocus && { color: borderColor || Colors.Primary },
                     ]}>
                     {labelTitle || 'Select'}
                 </Text>
@@ -58,13 +58,13 @@ const RNDropDown: FunctionComponent<DropDownProps> = ({
         <View
             style={[
                 styles.container,
-                { backgroundColor: backgroundColor || Colors().Background },
+                { backgroundColor: backgroundColor || Colors.Background },
             ]}>
             {(showLabel || false) && renderLabel()}
             <Dropdown
                 style={[
                     styles.dropdown,
-                    isFocus && { borderColor: borderColor || Colors().Primary },
+                    isFocus && { borderColor: borderColor || Colors.Primary },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -93,7 +93,7 @@ const RNDropDown: FunctionComponent<DropDownProps> = ({
                 //     <AntDesign
                 //         style={styles.icon}
                 //         color={
-                //             isFocus ? borderColor || Colors().Primary : 'black'
+                //             isFocus ? borderColor || Colors.Primary : 'black'
                 //         }
                 //         name="Safety"
                 //         size={20}
@@ -135,12 +135,12 @@ const styles = StyleSheet.create({
     placeholderStyle: {
         fontSize: 16,
         fontFamily: fonts.Poppins_400,
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
     selectedTextStyle: {
         fontSize: 16,
         fontFamily: fonts.Poppins_400,
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
     iconStyle: {
         width: 20,
@@ -152,6 +152,6 @@ const styles = StyleSheet.create({
     },
     itemTextStyle: {
         fontFamily: fonts.Poppins_400,
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
 });

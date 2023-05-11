@@ -28,7 +28,7 @@ const BasicTextEntry: FunctionComponent<BasicTextEntryProps> = ({
             <TextInput
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'johndoe@gmail.com'}
-                placeholderTextColor={Colors().InputTextPH}
+                placeholderTextColor={Colors.InputTextPH}
                 onChangeText={(text: string) => setInputValue(text)}
                 value={inputValue}
                 autoCapitalize={'none'}
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 50,
         borderRadius: 10,
-        borderColor: Colors().BorderLineGrey,
+        borderColor: Colors.BorderLineGrey,
         borderWidth: 1,
     },
     b_t_e_m_ti: {
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         textAlignVertical: 'center',
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
 });

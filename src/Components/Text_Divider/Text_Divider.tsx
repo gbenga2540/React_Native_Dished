@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     t_d_lines: {
-        borderColor: Colors().BorderLineGrey,
+        borderColor: Colors.BorderLineGrey,
         flex: 1,
         borderBottomWidth: 1,
     },
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_700,
         fontSize: 16,
         lineHeight: 32,
-        color: Colors().Black,
+        color: Colors.Black,
         height: 32,
         minHeight: 32,
         maxHeight: 32,

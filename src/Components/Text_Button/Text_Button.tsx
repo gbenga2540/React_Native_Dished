@@ -44,7 +44,7 @@ const TextButton: FunctionComponent<TextButtonProps> = ({
                 style={[
                     styles.t_b_m_txt,
                     {
-                        color: textColor || Colors().Blue,
+                        color: textColor || Colors.Blue,
                         fontFamily: isFontLight
                             ? fonts.Poppins_400
                             : fonts.Poppins_700,

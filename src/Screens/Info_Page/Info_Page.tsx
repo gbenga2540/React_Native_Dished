@@ -142,7 +142,7 @@ const InfoPage: FunctionComponent = () => {
                         styles.i_m_err_txt,
                         {
                             fontSize: 14,
-                            color: Colors().Primary,
+                            color: Colors.Primary,
                             marginTop: 50,
                         },
                     ]}>
@@ -174,7 +174,7 @@ export default InfoPage;
 const styles = StyleSheet.create({
     info_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
     i_m_bb: {
         justifyContent: 'center',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontFamily: fonts.Poppins_400,
         fontSize: 16,
-        color: Colors().Black,
+        color: Colors.Black,
     },
     i_m_err_txt_h: {
         fontFamily: fonts.Poppins_700,

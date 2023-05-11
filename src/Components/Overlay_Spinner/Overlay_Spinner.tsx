@@ -28,14 +28,14 @@ const OverlaySpinner: FunctionComponent<ShowSpinnerProps> = ({
                     <Feather
                         name="chevron-left"
                         size={35}
-                        color={Colors().White}
+                        color={Colors.White}
                     />
                 </TouchableOpacity>
                 <Spinner
                     isVisible={true}
                     size={80}
                     type={spinkit_types[6] as SpinnerType}
-                    color={Colors().Secondary}
+                    color={Colors.Secondary}
                 />
             </View>
         );

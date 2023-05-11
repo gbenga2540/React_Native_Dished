@@ -60,12 +60,12 @@ const OnboardingPage: FunctionComponent = () => {
 
     return (
         <View style={styles.op_main}>
-            <CustomStatusBar backgroundColor={Colors().White} />
+            <CustomStatusBar backgroundColor={Colors.White} />
             <View style={styles.op_m_skip}>
                 <TextButton
                     buttonText="Skip"
                     execFunc={() => skip_onboarding()}
-                    textColor={Colors().Secondary}
+                    textColor={Colors.Secondary}
                     disabled={disableButton}
                     isFontLight
                 />
@@ -119,7 +119,7 @@ export default OnboardingPage;
 const styles = StyleSheet.create({
     op_main: {
         flex: 1,
-        backgroundColor: Colors().White,
+        backgroundColor: Colors.White,
     },
     op_m_wca: {
         position: 'absolute',

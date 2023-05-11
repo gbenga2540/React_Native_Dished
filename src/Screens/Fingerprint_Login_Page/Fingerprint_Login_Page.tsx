@@ -803,7 +803,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                 <Text
                                     style={[
                                         styles.f_m_fpc,
-                                        { color: Colors().InputText },
+                                        { color: Colors.InputText },
                                     ]}>
                                     Click the Icon above to prompt the
                                     {Platform.OS === 'ios'
@@ -846,7 +846,7 @@ const FingerprintLoginPage: FunctionComponent = () => {
                                         <TextButton
                                             buttonText="Forgot Password"
                                             marginLeft={3}
-                                            textColor={Colors().InputText}
+                                            textColor={Colors.InputText}
                                             isFontLight={true}
                                             disabled={disableButton}
                                             execFunc={() =>
@@ -913,7 +913,7 @@ export default FingerprintLoginPage;
 const styles = StyleSheet.create({
     flp_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
     flp_main_cont: {
         marginHorizontal: 21,
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
         fontSize: 32,
         marginTop: Platform.OS === 'ios' ? 100 : 50,
         marginBottom: 5,
-        color: Colors().Black,
+        color: Colors.Black,
     },
     f_m_txt2: {
         fontFamily: fonts.Poppins_400,
@@ -937,7 +937,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 50,
         marginBottom: 8,
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
     f_m_fpc: {
         alignSelf: 'center',
@@ -960,7 +960,7 @@ const styles = StyleSheet.create({
     },
     f_m_acc_text: {
         fontFamily: fonts.Poppins_400,
-        color: Colors().InputTextGrey,
+        color: Colors.InputTextGrey,
     },
     f_m_fp: {
         marginTop: 20,

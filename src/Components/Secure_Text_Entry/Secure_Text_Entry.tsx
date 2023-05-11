@@ -32,7 +32,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
             <TextInput
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'password'}
-                placeholderTextColor={Colors().InputTextPH}
+                placeholderTextColor={Colors.InputTextPH}
                 onChangeText={(text: string) => setInputValue(text?.trim())}
                 value={inputValue}
                 secureTextEntry={hidePswd}
@@ -44,11 +44,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
                     activeOpacity={0.65}
                     onPress={() => setHidePswd(!hidePswd)}
                     style={{ marginRight: 10 }}>
-                    <Feather
-                        name="eye"
-                        size={25}
-                        color={Colors().InputTextPH}
-                    />
+                    <Feather name="eye" size={25} color={Colors.InputTextPH} />
                 </TouchableOpacity>
             ) : (
                 <TouchableOpacity
@@ -58,7 +54,7 @@ const SecureTextEntry: FunctionComponent<SecureTextEntryProps> = ({
                     <Feather
                         name="eye-off"
                         size={25}
-                        color={Colors().InputTextPH}
+                        color={Colors.InputTextPH}
                     />
                 </TouchableOpacity>
             )}
@@ -73,7 +69,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 50,
         borderRadius: 10,
-        borderColor: Colors().BorderLineGrey,
+        borderColor: Colors.BorderLineGrey,
         borderWidth: 1,
         flexDirection: 'row',
         alignItems: 'center',
@@ -87,7 +83,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         textAlignVertical: 'center',
-        color: Colors().InputText,
+        color: Colors.InputText,
         letterSpacing: 0.2,
     },
 });

@@ -18,7 +18,7 @@ const CustomStatusBar: FunctionComponent<CustomStatusBarProps> = ({
     const p_showSpinner: boolean = showSpinner ? showSpinner : false;
     const p_backgroundColor: string = backgroundColor
         ? backgroundColor
-        : Colors().Background;
+        : Colors.Background;
     const p_backgroundDimColor: string = backgroundDimColor
         ? backgroundDimColor
         : 'rgba(0, 0, 0, 0.8)';

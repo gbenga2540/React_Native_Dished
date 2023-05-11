@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
     b_b_main: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: Colors().Secondary,
+        backgroundColor: Colors.Secondary,
         alignItems: 'center',
         justifyContent: 'center',
     },
     b_b_m_txt: {
-        color: Colors().White,
+        color: Colors.White,
         fontFamily: fonts.Poppins_400,
         fontSize: 16,
     },

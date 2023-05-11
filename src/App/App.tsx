@@ -106,11 +106,7 @@ const App: FunctionComponent = () => {
     }, [userUID, dispatch]);
 
     return (
-        <View
-            style={[
-                styles.app_main,
-                { backgroundColor: Colors()?.Background },
-            ]}>
+        <View style={[styles.app_main, { backgroundColor: Colors.Background }]}>
             <CustomStatusBar />
             <NavigationContainer>
                 <MainStack />

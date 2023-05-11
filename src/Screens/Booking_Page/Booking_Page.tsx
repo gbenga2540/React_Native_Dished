@@ -21,7 +21,7 @@ export default BookingPage;
 const styles = StyleSheet.create({
     booking_page_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
         justifyContent: 'center',
         alignItems: 'center',
     },

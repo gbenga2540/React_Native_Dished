@@ -43,6 +43,6 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_500,
         fontSize: 40,
         letterSpacing: 10,
-        color: Colors().Black,
+        color: Colors.Black,
     },
 });

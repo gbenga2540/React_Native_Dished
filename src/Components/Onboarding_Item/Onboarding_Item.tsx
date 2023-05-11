@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     op_m_main_txt: {
         fontFamily: fonts.Poppins_700,
         fontSize: 28,
-        color: Colors().Black,
+        color: Colors.Black,
         textAlign: 'center',
         marginTop: Platform?.OS === 'ios' ? 150 : 120,
         width: 290,
@@ -44,6 +44,6 @@ const styles = StyleSheet.create({
         marginTop: 54,
         marginBottom: 33,
         textAlign: 'center',
-        color: Colors().InputTextGrey,
+        color: Colors.InputTextGrey,
     },
 });

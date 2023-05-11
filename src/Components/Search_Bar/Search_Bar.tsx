@@ -28,7 +28,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
             <TextInput
                 style={styles.sb_ti}
                 placeholder={'Search for a dish...'}
-                placeholderTextColor={Colors().InputTextPH}
+                placeholderTextColor={Colors.InputTextPH}
                 onChangeText={(text: string) => setSearchText(text)}
                 value={searchText}
                 autoCapitalize={'none'}

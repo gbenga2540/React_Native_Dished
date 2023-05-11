@@ -38,7 +38,7 @@ const HomePage: FunctionComponent = () => {
                             style={{
                                 fontSize: 25,
                                 fontFamily: fonts.Poppins_700,
-                                color: Colors()?.Black,
+                                color: Colors.Black,
                                 marginLeft: 20,
                             }}>
                             Top Dishes
@@ -65,7 +65,7 @@ const HomePage: FunctionComponent = () => {
                             style={{
                                 fontSize: 25,
                                 fontFamily: fonts.Poppins_700,
-                                color: Colors()?.Black,
+                                color: Colors.Black,
                                 marginLeft: 20,
                             }}>
                             Latest Dishes
@@ -92,7 +92,7 @@ const HomePage: FunctionComponent = () => {
                             style={{
                                 fontSize: 25,
                                 fontFamily: fonts.Poppins_700,
-                                color: Colors()?.Black,
+                                color: Colors.Black,
                                 marginLeft: 20,
                             }}>
                             Favourites
@@ -128,6 +128,6 @@ export default HomePage;
 const styles = StyleSheet.create({
     home_page_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
 });

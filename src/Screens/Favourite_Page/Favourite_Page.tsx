@@ -24,7 +24,7 @@ export default FavouritePage;
 const styles = StyleSheet.create({
     fav_page_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
         justifyContent: 'center',
         alignItems: 'center',
     },

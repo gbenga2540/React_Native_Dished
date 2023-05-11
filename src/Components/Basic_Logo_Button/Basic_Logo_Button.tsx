@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 50,
         borderRadius: 10,
-        borderColor: Colors().BorderLineGrey,
+        borderColor: Colors.BorderLineGrey,
         borderWidth: 1,
         flexDirection: 'row',
         alignItems: 'center',
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 11,
         textAlignVertical: 'center',
-        color: Colors().InputTextGrey,
+        color: Colors.InputTextGrey,
     },
 });

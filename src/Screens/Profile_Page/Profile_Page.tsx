@@ -56,7 +56,7 @@ const ProfilePage: FunctionComponent = () => {
     return (
         <View style={styles.profile_main}>
             <CustomStatusBar
-                backgroundColor={Colors()?.Background}
+                backgroundColor={Colors.Background}
                 showSpinner={showSpinner}
             />
             <OverlaySpinner
@@ -140,7 +140,7 @@ export default ProfilePage;
 const styles = StyleSheet.create({
     profile_main: {
         flex: 1,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
     pp_w_i_c: {
         alignItems: 'center',
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         borderRadius: 170,
         padding: 3,
         marginBottom: 20,
-        borderColor: Colors().Secondary,
+        borderColor: Colors.Secondary,
         marginTop: Platform?.OS === 'ios' ? 100 : 75,
         borderWidth: 2,
     },
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     },
     pp_c_n: {
         textAlign: 'center',
-        color: Colors()?.InputText,
+        color: Colors.InputText,
         fontFamily: fonts?.Poppins_500,
         fontSize: 20,
         marginBottom: 30,

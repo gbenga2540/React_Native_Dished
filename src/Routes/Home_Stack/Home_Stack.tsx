@@ -28,8 +28,8 @@ const HomeStack: FunctionComponent = () => {
             initialRouteName="HomePage"
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: Colors().Secondary,
-                tabBarInactiveTintColor: Colors().InputTextGrey,
+                tabBarActiveTintColor: Colors.Secondary,
+                tabBarInactiveTintColor: Colors.InputTextGrey,
                 tabBarStyle: styles.tabBar_main,
                 tabBarLabelStyle: styles.tabBar_label,
                 tabBarIconStyle: styles.tabBar_icon,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     tabBar_main: {
         height: Platform.OS === 'ios' ? 92 : 75,
         paddingBottom: Platform.OS === 'ios' ? 30 : 13,
-        backgroundColor: Colors().Background,
+        backgroundColor: Colors.Background,
     },
     tabBar_label: {
         fontFamily: fonts.Poppins_400,

@@ -296,8 +296,8 @@ const ChangePasswordPage: FunctionComponent = () => {
             style={styles.cp_main}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <CustomStatusBar
-                backgroundColor={Colors().Primary}
-                backgroundDimColor={Colors().PrimaryDim}
+                backgroundColor={Colors.Primary}
+                backgroundDimColor={Colors.PrimaryDim}
                 barStyleLight={true}
                 showSpinner={showSpinner}
             />
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 1000,
         top: -890,
-        backgroundColor: Colors()?.Primary,
+        backgroundColor: Colors.Primary,
         alignItems: 'center',
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     top_cont_txt: {
         marginTop: 'auto',
         marginBottom: 13,
-        color: Colors().White,
+        color: Colors.White,
         fontFamily: fonts.Poppins_700,
         fontSize: 24,
         lineHeight: 32,
@@ -389,6 +389,6 @@ const styles = StyleSheet.create({
         fontFamily: fonts.Poppins_700,
         fontSize: 16,
         lineHeight: 32,
-        color: Colors().Black,
+        color: Colors.Black,
     },
 });

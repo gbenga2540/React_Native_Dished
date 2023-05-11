@@ -26,7 +26,7 @@ const TextWithButton: FunctionComponent<TextWithButtonProps> = ({
             <TextInput
                 style={styles.b_t_e_m_ti}
                 placeholder={placeHolderText || 'johndoe@gmail.com'}
-                placeholderTextColor={Colors().InputTextPH}
+                placeholderTextColor={Colors.InputTextPH}
                 onChangeText={(text: string) => setInputValue(text?.trim())}
                 value={inputValue}
                 editable={false}
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 50,
         borderRadius: 10,
-        borderColor: Colors().BorderLineGrey,
+        borderColor: Colors.BorderLineGrey,
         borderWidth: 1,
         flexDirection: 'row',
     },
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         textAlignVertical: 'center',
-        color: Colors().InputText,
+        color: Colors.InputText,
     },
 });

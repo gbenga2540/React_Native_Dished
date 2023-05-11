@@ -32,14 +32,10 @@ const DishCard: FunctionComponent<DishCard_Props> = ({ dish }) => {
                         <Entypo
                             name="heart"
                             size={20}
-                            color={Colors().Secondary}
+                            color={Colors.Secondary}
                         />
                     ) : (
-                        <Feather
-                            name="heart"
-                            size={17}
-                            color={Colors().Black}
-                        />
+                        <Feather name="heart" size={17} color={Colors.Black} />
                     )}
                 </TouchableOpacity>
                 <Image
@@ -144,7 +140,7 @@ const styles = StyleSheet.create({
     },
     dc_name: {
         fontFamily: fonts.Lato_400,
-        color: Colors().DarkGrey,
+        color: Colors.DarkGrey,
         fontSize: 20,
         lineHeight: 24,
     },
@@ -154,22 +150,22 @@ const styles = StyleSheet.create({
     },
     dc_dprice: {
         fontFamily: fonts.Lato_800,
-        color: Colors().DarkGrey,
+        color: Colors.DarkGrey,
         fontSize: 16,
         lineHeight: 20,
         marginRight: 8,
     },
     dc_price: {
         fontFamily: fonts.Lato_800,
-        color: Colors().LightGrey,
+        color: Colors.LightGrey,
         fontSize: 16,
         lineHeight: 20,
         marginRight: 'auto',
         textDecorationLine: 'line-through',
     },
     dc_dpercent: {
-        color: Colors().Green,
-        backgroundColor: Colors().LightGreen,
+        color: Colors.Green,
+        backgroundColor: Colors.LightGreen,
         paddingVertical: 4,
         paddingHorizontal: 8,
         fontFamily: fonts.Lato_800,
@@ -177,7 +173,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     dc_desc: {
-        color: Colors().MeduimGrey,
+        color: Colors.MeduimGrey,
         fontSize: 13,
         fontFamily: fonts.Lato_400,
         lineHeight: 16,
@@ -190,24 +186,24 @@ const styles = StyleSheet.create({
     dc_ratings: {
         fontFamily: fonts.Lato_700,
         fontSize: 12,
-        color: Colors().DarkGrey,
+        color: Colors.DarkGrey,
     },
     dc_raters: {
         fontFamily: fonts.Lato_400,
         fontSize: 12,
-        color: Colors().DarkGrey,
+        color: Colors.DarkGrey,
         marginLeft: 1,
         marginRight: 8,
     },
     dc_dt: {
         fontFamily: fonts.Lato_700,
         fontSize: 12,
-        color: Colors().DarkGrey,
+        color: Colors.DarkGrey,
         marginRight: 'auto',
     },
     dc_chefp: {
-        color: Colors().MeduimBlue,
-        backgroundColor: Colors().LightBlue,
+        color: Colors.MeduimBlue,
+        backgroundColor: Colors.LightBlue,
         paddingVertical: 4,
         paddingHorizontal: 8,
         fontFamily: fonts.Lato_800,
