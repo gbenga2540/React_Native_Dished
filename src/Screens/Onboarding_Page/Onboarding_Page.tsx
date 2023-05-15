@@ -97,7 +97,7 @@ const OnboardingPage: FunctionComponent = () => {
                     buttonHeight={43}
                     marginHorizontal={19}
                     marginTop={50}
-                    borderRaduis={20}
+                    borderRadius={20}
                     disabled={disableButton}
                     execFunc={() => skip_onboarding()}
                 />

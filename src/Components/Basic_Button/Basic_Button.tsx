@@ -8,7 +8,7 @@ interface BasicButtonProps {
     buttonText: string;
     marginTop?: number | string;
     marginBottom?: number | string;
-    borderRaduis?: number;
+    borderRadius?: number;
     marginHorizontal?: number;
     execFunc: () => void;
     disabled?: boolean;
@@ -19,7 +19,7 @@ const BasicButton: FunctionComponent<BasicButtonProps> = ({
     buttonText,
     marginTop,
     marginBottom,
-    borderRaduis,
+    borderRadius,
     marginHorizontal,
     execFunc,
     disabled,
@@ -36,7 +36,7 @@ const BasicButton: FunctionComponent<BasicButtonProps> = ({
                     maxHeight: buttonHeight,
                     marginTop: marginTop || 0,
                     marginBottom: marginBottom || 0,
-                    borderRadius: borderRaduis || 10,
+                    borderRadius: borderRadius || 10,
                     marginHorizontal: marginHorizontal || 0,
                 },
             ]}

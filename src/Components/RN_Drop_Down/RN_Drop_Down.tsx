@@ -20,6 +20,14 @@ interface DropDownProps {
     unFocusPlaceHolder?: string;
     value: any;
     setValue: Dispatch<SetStateAction<any>>;
+    height?: number;
+    marginTop?: number | string;
+    marginLeft?: number | string;
+    marginRight?: number | string;
+    marginBottom?: number | string;
+    marginHorizontal?: number;
+    paddingHorizontal?: number;
+    disable?: boolean;
 }
 
 const RNDropDown: FunctionComponent<DropDownProps> = ({
@@ -32,6 +40,14 @@ const RNDropDown: FunctionComponent<DropDownProps> = ({
     unFocusPlaceHolder,
     value,
     setValue,
+    height,
+    marginTop,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    paddingHorizontal,
+    disable,
 }) => {
     const [isFocus, setIsFocus] = useState<boolean>(false);
 
@@ -58,12 +74,26 @@ const RNDropDown: FunctionComponent<DropDownProps> = ({
         <View
             style={[
                 styles.container,
-                { backgroundColor: backgroundColor || Colors.Background },
+                {
+                    backgroundColor: backgroundColor || Colors.Background,
+                    height: height || 50,
+                    marginTop: marginTop || 0,
+                    marginBottom: marginBottom || 0,
+                    marginHorizontal: marginHorizontal || 0,
+                    marginLeft: marginLeft || 0,
+                    marginRight: marginRight || 0,
+                },
             ]}>
             {(showLabel || false) && renderLabel()}
             <Dropdown
+                disable={disable || false}
                 style={[
                     styles.dropdown,
+                    {
+                        height: height || 50,
+                        paddingLeft: paddingHorizontal || 12,
+                        paddingRight: paddingHorizontal || 12,
+                    },
                     isFocus && { borderColor: borderColor || Colors.Primary },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
@@ -111,14 +141,11 @@ const styles = StyleSheet.create({
     container: {
         padding: 0,
         paddingBottom: 0,
-        paddingTop: 5,
     },
     dropdown: {
-        height: 50,
         borderColor: 'gray',
         borderWidth: 0.5,
         borderRadius: 8,
-        paddingHorizontal: 12,
         paddingLeft: 16,
     },
     icon: {
@@ -134,13 +161,13 @@ const styles = StyleSheet.create({
     },
     placeholderStyle: {
         fontSize: 16,
-        fontFamily: fonts.Poppins_400,
-        color: Colors.InputText,
+        fontFamily: fonts.Urbanist_500,
+        color: Colors.DarkGrey,
     },
     selectedTextStyle: {
         fontSize: 16,
-        fontFamily: fonts.Poppins_400,
-        color: Colors.InputText,
+        fontFamily: fonts.Urbanist_500,
+        color: Colors.DarkGrey,
     },
     iconStyle: {
         width: 20,
@@ -151,7 +178,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     itemTextStyle: {
-        fontFamily: fonts.Poppins_400,
-        color: Colors.InputText,
+        fontFamily: fonts.Urbanist_500,
+        color: Colors.DarkGrey,
     },
 });
