@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
                 fontSize: 28,
                 color: Colors.Black,
                 textAlign: 'center',
-                marginTop: Platform?.OS === 'ios' ? 150 : 120,
+                marginTop: Platform.OS === 'ios' ? 150 : 120,
                 width: 290,
                 lineHeight: 32,
                 alignSelf: 'center',

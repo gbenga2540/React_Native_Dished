@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
                 padding: 3,
                 marginBottom: 20,
                 borderColor: Colors.Secondary,
-                marginTop: Platform?.OS === 'ios' ? 100 : 75,
+                marginTop: Platform.OS === 'ios' ? 100 : 75,
                 borderWidth: 2,
         },
         pp_w_i: {
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
         pp_c_n: {
                 textAlign: 'center',
                 color: Colors.InputText,
-                fontFamily: fonts?.Poppins_500,
+                fontFamily: fonts.Poppins_500,
                 fontSize: 20,
                 marginBottom: 30,
         },

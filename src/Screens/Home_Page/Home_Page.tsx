@@ -16,7 +16,7 @@ const HomePage: FunctionComponent = () => {
                         <ScrollView
                                 style={{
                                         flex: 1,
-                                        paddingTop: Platform?.OS === 'ios' ? 70 : 25,
+                                        paddingTop: Platform.OS === 'ios' ? 70 : 25,
                                 }}>
                                 <View style={{ flex: 1 }}>
                                         <SearchBar searchText={searchText} setSearchText={setSearchText} onSubmit={() => console.log('Searching for ' + searchText)} />

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         op_m_skip: {
                 position: 'absolute',
                 right: 30,
-                top: Platform?.OS === 'ios' ? 60 : 30,
+                top: Platform.OS === 'ios' ? 60 : 30,
                 zIndex: 100,
         },
 });
