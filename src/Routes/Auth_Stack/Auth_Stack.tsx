@@ -15,103 +15,73 @@ import VerifyMailPage from '../../Screens/Verify_Mail_Page/Verify_Mail_Page';
 import SelectDPPage from '../../Screens/Select_DP_Page/Select_DP_Page';
 
 type AuthStackParamList = {
-    SelectProfilePage: {};
-    FingerprintLoginPage: {};
-    SignUpPage: {};
-    VerifyConsumerPage: {};
-    VerifyRestaurantPage: {};
-    VerifyRidersPage: {};
-    ForgotPasswordPage: {};
-    ChangePasswordPage: {};
-    VerifyOTPPage: {};
-    SignInPage: {};
-    VerifyMailPage: {};
-    SelectDPPage: {};
+        SelectProfilePage: {};
+        FingerprintLoginPage: {};
+        SignUpPage: {};
+        VerifyConsumerPage: {};
+        VerifyRestaurantPage: {};
+        VerifyRidersPage: {};
+        ForgotPasswordPage: {};
+        ChangePasswordPage: {};
+        VerifyOTPPage: {};
+        SignInPage: {};
+        VerifyMailPage: {};
+        SelectDPPage: {};
 };
 
 const Auth_Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack: FunctionComponent = () => {
-    const [initializing, setInitializing] = useState<boolean>(true);
-    const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+        const [initializing, setInitializing] = useState<boolean>(true);
+        const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
-    const onAuthStateChanged = (res_user: FirebaseAuthTypes.User | null) => {
-        setUser(res_user);
-        setInitializing(false);
-    };
+        const onAuthStateChanged = (res_user: FirebaseAuthTypes.User | null) => {
+                setUser(res_user);
+                setInitializing(false);
+        };
 
-    useEffect(() => {
-        setInitializing(true);
-        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        return subscriber;
-    }, []);
+        useEffect(() => {
+                setInitializing(true);
+                const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+                return subscriber;
+        }, []);
 
-    if (initializing) {
-        return null;
-    } else {
-        return (
-            <Auth_Stack.Navigator
-                screenOptions={{
-                    headerShown: false,
-                }}
-                initialRouteName={
-                    user
-                        ? user?.emailVerified
-                            ? 'FingerprintLoginPage'
-                            : 'VerifyMailPage'
-                        : 'SignUpPage'
-                }>
-                <Auth_Stack.Screen
-                    name="SelectProfilePage"
-                    component={SelectProfilePage}
-                />
-                <Auth_Stack.Screen
-                    name="FingerprintLoginPage"
-                    component={FingerprintLoginPage}
-                />
-                <Auth_Stack.Screen name="SignUpPage" component={SignUpPage} />
-                <Auth_Stack.Screen
-                    name="VerifyConsumerPage"
-                    component={VerifyConsumerPage}
-                />
-                <Auth_Stack.Screen
-                    name="VerifyRestaurantPage"
-                    component={VerifyRestaurantPage}
-                />
-                <Auth_Stack.Screen
-                    name="VerifyRidersPage"
-                    component={VerifyRidersPage}
-                />
-                <Auth_Stack.Screen
-                    name="VerifyOTPPage"
-                    component={VerifyOTPPage}
-                />
-                <Auth_Stack.Screen
-                    name="ChangePasswordPage"
-                    component={ChangePasswordPage}
-                />
-                <Auth_Stack.Screen
-                    name="ForgotPasswordPage"
-                    component={ForgotPasswordPage}
-                />
-                <Auth_Stack.Screen name="SignInPage" component={SignInPage} />
-                <Auth_Stack.Screen
-                    name="VerifyMailPage"
-                    component={VerifyMailPage}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-                <Auth_Stack.Screen
-                    name="SelectDPPage"
-                    component={SelectDPPage}
-                    options={{
-                        headerShown: false,
-                    }}
-                />
-            </Auth_Stack.Navigator>
-        );
-    }
+        if (initializing) {
+                return null;
+        } else {
+                return (
+                        <Auth_Stack.Navigator
+                                screenOptions={{
+                                        headerShown: false,
+                                }}
+                                initialRouteName={user ? (user?.emailVerified ? 'FingerprintLoginPage' : 'VerifyMailPage') : 'SignUpPage'}>
+                                <Auth_Stack.Screen name="SelectProfilePage" component={SelectProfilePage} />
+                                <Auth_Stack.Screen name="FingerprintLoginPage" component={FingerprintLoginPage} />
+                                <Auth_Stack.Screen name="SignUpPage" component={SignUpPage} />
+                                <Auth_Stack.Screen name="VerifyConsumerPage" component={VerifyConsumerPage} />
+                                <Auth_Stack.Screen name="VerifyRestaurantPage" component={VerifyRestaurantPage} />
+                                <Auth_Stack.Screen name="VerifyRidersPage" component={VerifyRidersPage} />
+                                <Auth_Stack.Screen name="VerifyOTPPage" component={VerifyOTPPage} />
+                                <Auth_Stack.Screen name="ChangePasswordPage" component={ChangePasswordPage} />
+                                <Auth_Stack.Screen name="ForgotPasswordPage" component={ForgotPasswordPage} />
+                                <Auth_Stack.Screen name="SignInPage" component={SignInPage} />
+                                <Auth_Stack.Screen
+                                        name="VerifyMailPage"
+                                        component={VerifyMailPage}
+                                        options={{
+                                                headerShown: false,
+                                        }}
+                                />
+                                <Auth_Stack.Screen
+                                        name="SelectDPPage"
+                                        component={SelectDPPage}
+                                        options={{
+                                                headerShown: false,
+                                        }}
+                                />
+                        </Auth_Stack.Navigator>
+                );
+        }
 };
 
 export default AuthStack;

@@ -9,17 +9,14 @@ import { name as appName } from './app.json';
 import store from './src/Configs/Redux_Store/Redux_Store';
 import { Provider } from 'react-redux';
 
-LogBox.ignoreLogs([
-    'Non-serializable values were found in the navigation state',
-    'ViewPropTypes',
-]);
+LogBox.ignoreLogs(['Non-serializable values were found in the navigation state', 'ViewPropTypes']);
 
 const Root = () => {
-    return (
-        <Provider store={store}>
-            <App />
-        </Provider>
-    );
+        return (
+                <Provider store={store}>
+                        <App />
+                </Provider>
+        );
 };
 
 AppRegistry.registerComponent(appName, () => Root);
